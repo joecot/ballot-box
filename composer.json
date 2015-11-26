@@ -1,0 +1,7 @@
+{
+    "require": {
+        "propel/propel": "~2.0@dev",
+        "league/oauth2-client": "1.1.0",
+        "slim/slim": "2.*"
+    }
+}
