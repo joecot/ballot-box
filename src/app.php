@@ -99,7 +99,11 @@ $app->get('/oauth', function($request,$response,$args) use ($app){
             $resourceOwner = $provider->getResourceOwner($accessToken);
     
            $_SESSION['user'] = $resourceOwner->toArray();
-           if($_SESSION['jspath']) return $response->withStatus(301)->withHeader("Location", "/#".$_SESSION['jspath']);
+           if($_SESSION['jspath']){
+               $jspath = $_SESSION['jspath'];
+               unset($_SESSION['jspath']);
+               return $response->withStatus(301)->withHeader("Location", "/#".$jspath);
+           }
            else return $response->withStatus(301)->withHeader("Location", "/");
     
             
