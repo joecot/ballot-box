@@ -1,0 +1,15 @@
+{
+  "name": "mes-ballot-box",
+  "description": "A ballot box for the Mind's Eye Society",
+  "version": "0.0.0",
+  "homepage": "https://github.com/joecot/mes-ballot-box",
+  "license": "NCSA",
+  "private": true,
+  "dependencies": {
+    "angular": "1.4.x",
+    "angular-mocks": "1.4.x",
+    "jquery": "~2.1.1",
+    "bootstrap": "~3.1.1",
+    "angular-route": "1.4.x"
+  }
+}
