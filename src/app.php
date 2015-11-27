@@ -34,10 +34,16 @@ $app->get('/API/isLoggedIn', function ($request, $response, $args) use ($app) {
 $app->get('/login', function($request,$response,$args) use ($app){
     $params = $request->getQueryParams();
     if($params['jspath']) $_SESSION['jspath'] = $params['jspath'];
+    
+    $uri = $request->getUri();
+    $scheme = 'http';
+    if($uri->getPort() == 443) $scheme = 'https';
+    $redirectUrl = $scheme."://".$uri->getHost().$this->router->pathFor('oauth');
+    
     $provider = new \League\OAuth2\Client\Provider\GenericProvider([
         'clientId'                => OAUTHCLIENTID,    // The client ID assigned to you by the provider
         'clientSecret'            => OAUTHSECRET,   // The client password assigned to you by the provider
-        'redirectUri'             => 'https://mes-ballot-box-joecot.c9users.io/oauth',
+        'redirectUri'             => $redirectUrl,
         'urlAuthorize'            => 'http://portal.mindseyesociety.org/oauth/v2/auth',
         'urlAccessToken'          => 'http://portal.mindseyesociety.org/oauth/v2/token',
         'urlResourceOwnerDetails' => 'http://portal.mindseyesociety.org/api/authorized/user.json'
