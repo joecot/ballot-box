@@ -1,36 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="ballotboxApp">
 <script src="/js/vendor/angular/angular.min.js"></script>
 <script src="/js/vendor/angular-route/angular-route.min.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/controllers.js"></script>
 <body>
 
-<div ng-app="ballot-box" ng-controller="ballotIndex">
- 	<p>Name: <input type="text" ng-model="name"></p>
- 	<p ng-bind="name"></p>
-</div>
+<div ng-view></div>
 
 </body>
 </html>
-<script>
-/*global angular*/
-var app = angular.module('ballot-box', []);
-
-
-app.controller('ballotIndex', function($scope, $http, $location) {
-    $http.get("/API/isLoggedIn")
-        .then(
-            function successCallback(response) {
-                console.log('logged in');
-                console.log(response.data);
-            },
-            function errorCallback(response){
-                console.log('not logged in');
-                console.log(response);
-                console.log($location.path());
-                window.location = '/login?jspath='+$location.path();
-            }
-        );
-});
-
-
-</script>
