@@ -1,5 +1,22 @@
 @import 'normalize';
 html, body {
-    background-color: #ccc;
-    color: #999;
+    background-color: #000;
+    color: #333;
+    font-family: 'Georgia', serif;
+}
+
+.mes-header {
+    background-image: url('/images/MES-Banner.png');
+    background-position: top center;
+    background-repeat: no-repeat;
+    height: 170px;
+    margin-top: 50px;
+}
+
+.main-content {
+    margin: 0 auto;
+    width: 94%;
+    max-width: 1000px;
+    background-color: rgb(230, 208, 153);
+    background-image: url('/images/download.png');
 }
