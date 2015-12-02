@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="MESBallotBox\Propel">
+  <table name="User" idMethod="native" phpName="User">
+    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="membershipNumber" phpName="Membershipnumber" type="VARCHAR" size="20" required="true"/>
+    <unique name="membershipNumber">
+      <unique-column name="membershipNumber"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+</database>

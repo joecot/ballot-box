@@ -13,6 +13,10 @@ ballotboxApp.config(['$routeProvider',
         templateUrl: 'template/index.html',
         controller: 'indexController'
       }).
+      when('/ballot/create', {
+        templateUrl: 'template/ballotCreate.html',
+        controller: 'ballotCreateController'
+      }).
       otherwise({
         redirectTo: '/index'
       });

@@ -1,10 +1,7 @@
 <?php
 include('../vendor/autoload.php');
 include('../../credentials.php');
-//add back normal autoloader
-set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__));
-spl_autoload_extensions(".php");
-spl_autoload_register(spl_autoload,true,true);
+include('propel-config.php');
 
 session_start();
 

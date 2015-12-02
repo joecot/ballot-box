@@ -54,14 +54,23 @@ class Oauth{
                 // resource owner.
                 $resourceOwner = $provider->getResourceOwner($accessToken);
         
-               $_SESSION['user'] = $resourceOwner->toArray();
-               if($_SESSION['jspath']){
-                   $jspath = $_SESSION['jspath'];
-                   unset($_SESSION['jspath']);
-                   return $response->withStatus(301)->withHeader("Location", "/#".$jspath);
-               }
-               else return $response->withStatus(301)->withHeader("Location", "/");
-        
+                $_SESSION['user'] = $resourceOwner->toArray();
+                $userselect = \MESBallotBox\Propel\UserQuery::create();
+                $user = $userselect->findOneByMembershipNumber($_SESSION['user']['membershipNumber']);
+                if($user) $_SESSION['user']['id'] = $user->getId();
+                else{
+                    $user = new \MESBallotBox\Propel\User();
+                    $user->setMembershipNumber($_SESSION['user']['membershipNumber']);
+                    $user->save();
+                    $_SESSION['user']['id'] = $user->getId();
+                }
+                if($_SESSION['jspath']){
+                    $jspath = $_SESSION['jspath'];
+                    unset($_SESSION['jspath']);
+                    return $response->withStatus(301)->withHeader("Location", "/#".$jspath);
+                }
+                else return $response->withStatus(301)->withHeader("Location", "/");
+
                 
         
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {

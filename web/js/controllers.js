@@ -5,6 +5,7 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
     $http.get("/API/user")
         .then(
             function successCallback(response) {
+                console.log(response.data);
                 $scope.user = response.data;
             },
             function errorCallback(response){
@@ -13,4 +14,8 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
                 }
             }
         );
+}]);
+
+ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+
 }]);
