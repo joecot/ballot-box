@@ -54,16 +54,17 @@ class Oauth{
                 // resource owner.
                 $resourceOwner = $provider->getResourceOwner($accessToken);
         
-                $_SESSION['user'] = $resourceOwner->toArray();
+                $user = $resourceOwner->toArray();
                 $userselect = \MESBallotBox\Propel\UserQuery::create();
-                $user = $userselect->findOneByMembershipNumber($_SESSION['user']['membershipNumber']);
-                if($user) $_SESSION['user']['id'] = $user->getId();
+                $userRow = $userselect->findOneByMembershipNumber($user['membershipNumber']);
+                if($userRow) $user['id'] = $userRow->getId();
                 else{
-                    $user = new \MESBallotBox\Propel\User();
-                    $user->setMembershipNumber($_SESSION['user']['membershipNumber']);
-                    $user->save();
-                    $_SESSION['user']['id'] = $user->getId();
+                    $userRow = new \MESBallotBox\Propel\User();
+                    $userRow->setMembershipNumber($_SESSION['user']['membershipNumber']);
+                    $userRow->save();
+                    $user['id'] = $userRow->getId();
                 }
+                $_SESSION['user'] = $user;
                 if($_SESSION['jspath']){
                     $jspath = $_SESSION['jspath'];
                     unset($_SESSION['jspath']);
