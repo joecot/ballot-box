@@ -9,7 +9,7 @@
 propel:
     paths:
         # The directory where Propel expects to find your `schema.xml` file.
-        schemaDir: /home/ubuntu/workspace
+        schemaDir: /home/ubuntu/workspace/src/MESBallotBox/Propel
 
         # The directory where Propel should output generated object model classes.
         phpDir: src/

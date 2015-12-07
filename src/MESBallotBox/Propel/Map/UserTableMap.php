@@ -77,9 +77,9 @@ class UserTableMap extends TableMap
     const COL_ID = 'User.id';
 
     /**
-     * the column name for the membershipNumber field
+     * the column name for the membership_number field
      */
-    const COL_MEMBERSHIPNUMBER = 'User.membershipNumber';
+    const COL_MEMBERSHIP_NUMBER = 'User.membership_number';
 
     /**
      * The default string format for model objects of the related table
@@ -93,10 +93,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Membershipnumber', ),
-        self::TYPE_CAMELNAME     => array('id', 'membershipnumber', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_MEMBERSHIPNUMBER, ),
-        self::TYPE_FIELDNAME     => array('id', 'membershipNumber', ),
+        self::TYPE_PHPNAME       => array('Id', 'MembershipNumber', ),
+        self::TYPE_CAMELNAME     => array('id', 'membershipNumber', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_MEMBERSHIP_NUMBER, ),
+        self::TYPE_FIELDNAME     => array('id', 'membership_number', ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -107,10 +107,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Membershipnumber' => 1, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'membershipnumber' => 1, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_MEMBERSHIPNUMBER => 1, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'membershipNumber' => 1, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'MembershipNumber' => 1, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'membershipNumber' => 1, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_MEMBERSHIP_NUMBER => 1, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'membership_number' => 1, ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -132,7 +132,7 @@ class UserTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, 10, null);
-        $this->addColumn('membershipNumber', 'Membershipnumber', 'VARCHAR', true, 20, null);
+        $this->addColumn('membership_number', 'MembershipNumber', 'VARCHAR', true, 20, null);
     } // initialize()
 
     /**
@@ -284,10 +284,10 @@ class UserTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_MEMBERSHIPNUMBER);
+            $criteria->addSelectColumn(UserTableMap::COL_MEMBERSHIP_NUMBER);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.membershipNumber');
+            $criteria->addSelectColumn($alias . '.membership_number');
         }
     }
 

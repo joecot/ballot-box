@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="MESBallotBox\Propel">
   <table name="User" idMethod="native" phpName="User">
-    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="membershipNumber" phpName="Membershipnumber" type="VARCHAR" size="20" required="true"/>
-    <unique name="membershipNumber">
-      <unique-column name="membershipNumber"/>
+    <column name="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="membership_number" type="VARCHAR" size="20" required="true"/>
+    <unique name="membership_number">
+      <unique-column name="membership_number"/>
     </unique>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
+  </table>
+  <table name="Ballot" idMethod="native" phpName="Ballot">
+    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="name"  type="VARCHAR" size="20" required="true"/>
+    <column name="start_time" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="end_time" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="timezone" type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="true"/>
+    <index name="user_id">
+      <index-column name="user_id"/>
+    </index>
+    <index name="name">
+      <index-column name="name"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="timestampable" />
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Ballot name cannot be blank'}}" />
+      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Ballot name too short', maxMessage: 'Ballot name too long'}}" />
+      <parameter name="rule3" value="{column: start_time, validator: NotNull}" />
+      <parameter name="rule4" value="{column: end_time, validator: NotNull}" />
+    </behavior>
   </table>
 </database>

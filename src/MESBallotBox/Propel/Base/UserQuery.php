@@ -20,10 +20,10 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildUserQuery orderByMembershipnumber($order = Criteria::ASC) Order by the membershipNumber column
+ * @method     ChildUserQuery orderByMembershipNumber($order = Criteria::ASC) Order by the membership_number column
  *
  * @method     ChildUserQuery groupById() Group by the id column
- * @method     ChildUserQuery groupByMembershipnumber() Group by the membershipNumber column
+ * @method     ChildUserQuery groupByMembershipNumber() Group by the membership_number column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -37,17 +37,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
- * @method     ChildUser findOneByMembershipnumber(string $membershipNumber) Return the first ChildUser filtered by the membershipNumber column *
+ * @method     ChildUser findOneByMembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByMembershipnumber(string $membershipNumber) Return the first ChildUser filtered by the membershipNumber column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByMembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
- * @method     ChildUser[]|ObjectCollection findByMembershipnumber(string $membershipNumber) Return ChildUser objects filtered by the membershipNumber column
+ * @method     ChildUser[]|ObjectCollection findByMembershipNumber(string $membership_number) Return ChildUser objects filtered by the membership_number column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -140,7 +140,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, membershipNumber FROM User WHERE id = :p0';
+        $sql = 'SELECT id, membership_number FROM User WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -272,32 +272,32 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the membershipNumber column
+     * Filter the query on the membership_number column
      *
      * Example usage:
      * <code>
-     * $query->filterByMembershipnumber('fooValue');   // WHERE membershipNumber = 'fooValue'
-     * $query->filterByMembershipnumber('%fooValue%'); // WHERE membershipNumber LIKE '%fooValue%'
+     * $query->filterByMembershipNumber('fooValue');   // WHERE membership_number = 'fooValue'
+     * $query->filterByMembershipNumber('%fooValue%'); // WHERE membership_number LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $membershipnumber The value to use as filter.
+     * @param     string $membershipNumber The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByMembershipnumber($membershipnumber = null, $comparison = null)
+    public function filterByMembershipNumber($membershipNumber = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($membershipnumber)) {
+            if (is_array($membershipNumber)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $membershipnumber)) {
-                $membershipnumber = str_replace('*', '%', $membershipnumber);
+            } elseif (preg_match('/[\%\*]/', $membershipNumber)) {
+                $membershipNumber = str_replace('*', '%', $membershipNumber);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_MEMBERSHIPNUMBER, $membershipnumber, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_MEMBERSHIP_NUMBER, $membershipNumber, $comparison);
     }
 
     /**

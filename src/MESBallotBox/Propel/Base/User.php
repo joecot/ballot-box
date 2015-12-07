@@ -67,11 +67,11 @@ abstract class User implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the membershipnumber field.
+     * The value for the membership_number field.
      *
      * @var        string
      */
-    protected $membershipnumber;
+    protected $membership_number;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -317,13 +317,13 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [membershipnumber] column value.
+     * Get the [membership_number] column value.
      *
      * @return string
      */
-    public function getMembershipnumber()
+    public function getMembershipNumber()
     {
-        return $this->membershipnumber;
+        return $this->membership_number;
     }
 
     /**
@@ -347,24 +347,24 @@ abstract class User implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [membershipnumber] column.
+     * Set the value of [membership_number] column.
      *
      * @param string $v new value
      * @return $this|\MESBallotBox\Propel\User The current object (for fluent API support)
      */
-    public function setMembershipnumber($v)
+    public function setMembershipNumber($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->membershipnumber !== $v) {
-            $this->membershipnumber = $v;
-            $this->modifiedColumns[UserTableMap::COL_MEMBERSHIPNUMBER] = true;
+        if ($this->membership_number !== $v) {
+            $this->membership_number = $v;
+            $this->modifiedColumns[UserTableMap::COL_MEMBERSHIP_NUMBER] = true;
         }
 
         return $this;
-    } // setMembershipnumber()
+    } // setMembershipNumber()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -405,8 +405,8 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Membershipnumber', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->membershipnumber = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('MembershipNumber', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->membership_number = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -615,8 +615,8 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIPNUMBER)) {
-            $modifiedColumns[':p' . $index++]  = 'membershipNumber';
+        if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIP_NUMBER)) {
+            $modifiedColumns[':p' . $index++]  = 'membership_number';
         }
 
         $sql = sprintf(
@@ -632,8 +632,8 @@ abstract class User implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'membershipNumber':
-                        $stmt->bindValue($identifier, $this->membershipnumber, PDO::PARAM_STR);
+                    case 'membership_number':
+                        $stmt->bindValue($identifier, $this->membership_number, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -701,7 +701,7 @@ abstract class User implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getMembershipnumber();
+                return $this->getMembershipNumber();
                 break;
             default:
                 return null;
@@ -733,7 +733,7 @@ abstract class User implements ActiveRecordInterface
         $keys = UserTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getMembershipnumber(),
+            $keys[1] => $this->getMembershipNumber(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -777,7 +777,7 @@ abstract class User implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setMembershipnumber($value);
+                $this->setMembershipNumber($value);
                 break;
         } // switch()
 
@@ -809,7 +809,7 @@ abstract class User implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setMembershipnumber($arr[$keys[1]]);
+            $this->setMembershipNumber($arr[$keys[1]]);
         }
     }
 
@@ -855,8 +855,8 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_ID)) {
             $criteria->add(UserTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIPNUMBER)) {
-            $criteria->add(UserTableMap::COL_MEMBERSHIPNUMBER, $this->membershipnumber);
+        if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIP_NUMBER)) {
+            $criteria->add(UserTableMap::COL_MEMBERSHIP_NUMBER, $this->membership_number);
         }
 
         return $criteria;
@@ -944,7 +944,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setMembershipnumber($this->getMembershipnumber());
+        $copyObj->setMembershipNumber($this->getMembershipNumber());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -981,7 +981,7 @@ abstract class User implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->membershipnumber = null;
+        $this->membership_number = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
