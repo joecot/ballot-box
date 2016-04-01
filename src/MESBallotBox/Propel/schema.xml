@@ -11,12 +11,12 @@
     </vendor>
   </table>
   <table name="Ballot" idMethod="native" phpName="Ballot">
-    <column name="id" phpName="Id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="user_id" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="name"  type="VARCHAR" size="20" required="true"/>
-    <column name="start_time" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="end_time" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="timezone" type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="true"/>
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="name" phpName='name'  type="VARCHAR" size="20" required="true"/>
+    <column name="start_time" phpName='startTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="end_time" phpName='endTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="timezone" phpName='timezone' type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="true"/>
     <index name="user_id">
       <index-column name="user_id"/>
     </index>
@@ -32,6 +32,26 @@
       <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Ballot name too short', maxMessage: 'Ballot name too long'}}" />
       <parameter name="rule3" value="{column: start_time, validator: NotNull}" />
       <parameter name="rule4" value="{column: end_time, validator: NotNull}" />
+    </behavior>
+  </table>
+  <table name="Ballot_question" idMethod="native" phpName="BallotQuestion">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="type" phpName='type' type="enum" valueSet="proposition, office"/>
+    <column name="count" phpName='count' type="INTEGER" size="10" sqlType="int(10) unsigned"/>
+    <column name="name" phpName='name' type="VARCHAR" size="20" required="true"/>
+    <column name="description" phpName='description'  type="LONGVARCHAR" required="false"/>
+    <column name="readmore" phpName='readmore' type="varchar" size="255" required="false"/>
+    <column name="discussion" phpName='discussion' type="varchar" size="255" required="false"/>
+    <foreign-key foreignTable="Ballot">
+      <reference local="ballot_id" foreign="id"/>
+    </foreign-key>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Question name cannot be blank'}}" />
+      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
     </behavior>
   </table>
 </database>

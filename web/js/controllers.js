@@ -1,12 +1,10 @@
 /*global angular*/
 var ballotboxControllers = angular.module('ballotboxControllers', []);
 
-ballotboxControllers.controller('indexController', ['$scope', '$http', '$location', function($scope, $http, $location) {
-    $http.get("/API/user")
-        .then(
-            function successCallback(response) {
-                console.log(response.data);
-                $scope.user = response.data;
+ballotboxControllers.controller('indexController', ['$scope', '$http', '$location', 'User', 'Ballot', function($scope, $http, $location, User, Ballot) {
+    $scope.user = User.query({},
+        function successCallback(response) {
+                $scope.ballots = Ballot.query();
             },
             function errorCallback(response){
                 if(response.status == 401){
@@ -16,8 +14,8 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
         );
 }]);
 
-ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$location', function($scope, $http, $location) {
-    $scope.ballot={};
+ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$location', 'User', 'Ballot', function($scope, $http, $location, User, Ballot) {
+    $scope.ballot= new Ballot();
     $scope.ballot.start = new Date();
     $scope.ballot.start.setDate($scope.ballot.start.getDate()+1);
     $scope.ballot.start.setHours(0);
@@ -37,27 +35,28 @@ ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$
         postballot.start = start.getFullYear()+'-'+start.getMonth()+'-'+start.getDate()+' '+start.getHours()+':'+start.getMinutes()+':0';
         postballot.end = end.getFullYear()+'-'+end.getMonth()+'-'+end.getDate()+' '+end.getHours()+':'+end.getMinutes()+':59';
         console.log(postballot);
-        $http.post("/API/ballot/new",postballot)
-            .then(
-                function successCallback(response) {
-                    $location.path( "/ballot/"+response.data.id );
-                },
-                function errorCallback(response){
-                    if(response.status == 401){
-                        window.location = '/login?jspath='+$location.path();
-                    }
-                    console.log(response.data);
+        postballot.$save(
+            function successCallback(response) {
+                    console.log('saved ballot');
+                    console.log(response);
+                    console.log("/ballot/"+response.id);
+                    $location.path( "/ballot/"+response.id );
+            },
+            function errorCallback(response){
+                if(response.status == 401){
+                    window.location = '/login?jspath='+$location.path();
                 }
-            );
+                console.log(response.data);
+            }
+        );
+        
     };
 }]);
 
-ballotboxControllers.controller('ballotEditController', ['$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
-    $http.get("/API/ballot/"+$routeParams.ballotId)
-    .then(
+ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'BallotQuestion', function($scope, $http, $location, $routeParams, User, Ballot, BallotQuestion) {
+    $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
-            console.log(response.data);
-            $scope.ballot = response.data;
+            $scope.questions = BallotQuestion.query({'ballotId': $routeParams.ballotId});
         },
         function errorCallback(response){
             if(response.status == 401){
@@ -66,4 +65,28 @@ ballotboxControllers.controller('ballotEditController', ['$scope', '$http', '$lo
             console.log(response.data);
         }
     );
+}]);
+
+ballotboxControllers.controller('ballotQuestionCreateController', ['$scope', '$http', '$location', 'User', '$routeParams', 'Ballot', 'BallotQuestion', function($scope, $http, $location, User, $routeParams, Ballot, BallotQuestion) {
+    $scope.question= new BallotQuestion();
+    $scope.question.type="office";
+    $scope.question.count=1;
+    $scope.add = function(question){
+        question.ballotId=$routeParams.ballotId;
+        question.$save(
+            function successCallback(response) {
+                    console.log('saved question');
+                    console.log(response);
+                    console.log("/ballot/"+$routeParams.ballotId);
+                    $location.path( "/ballot/"+$routeParams.ballotId );
+            },
+            function errorCallback(response){
+                if(response.status == 401){
+                    window.location = '/login?jspath='+$location.path();
+                }
+                console.log(response.data);
+            }
+        );
+        
+    };
 }]);

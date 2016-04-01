@@ -10,6 +10,7 @@ use MESBallotBox\Propel\Map\BallotTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -19,21 +20,21 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  *
- * @method     ChildBallotQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildBallotQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildBallotQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildBallotQuery orderByStartTime($order = Criteria::ASC) Order by the start_time column
- * @method     ChildBallotQuery orderByEndTime($order = Criteria::ASC) Order by the end_time column
- * @method     ChildBallotQuery orderByTimezone($order = Criteria::ASC) Order by the timezone column
+ * @method     ChildBallotQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method     ChildBallotQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildBallotQuery orderByname($order = Criteria::ASC) Order by the name column
+ * @method     ChildBallotQuery orderBystartTime($order = Criteria::ASC) Order by the start_time column
+ * @method     ChildBallotQuery orderByendTime($order = Criteria::ASC) Order by the end_time column
+ * @method     ChildBallotQuery orderBytimezone($order = Criteria::ASC) Order by the timezone column
  * @method     ChildBallotQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildBallotQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
- * @method     ChildBallotQuery groupById() Group by the id column
- * @method     ChildBallotQuery groupByUserId() Group by the user_id column
- * @method     ChildBallotQuery groupByName() Group by the name column
- * @method     ChildBallotQuery groupByStartTime() Group by the start_time column
- * @method     ChildBallotQuery groupByEndTime() Group by the end_time column
- * @method     ChildBallotQuery groupByTimezone() Group by the timezone column
+ * @method     ChildBallotQuery groupByid() Group by the id column
+ * @method     ChildBallotQuery groupByuserId() Group by the user_id column
+ * @method     ChildBallotQuery groupByname() Group by the name column
+ * @method     ChildBallotQuery groupBystartTime() Group by the start_time column
+ * @method     ChildBallotQuery groupByendTime() Group by the end_time column
+ * @method     ChildBallotQuery groupBytimezone() Group by the timezone column
  * @method     ChildBallotQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildBallotQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -45,37 +46,49 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildBallotQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildBallotQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildBallotQuery leftJoinBallotQuestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery rightJoinBallotQuestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery innerJoinBallotQuestion($relationAlias = null) Adds a INNER JOIN clause to the query using the BallotQuestion relation
+ *
+ * @method     ChildBallotQuery joinWithBallotQuestion($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the BallotQuestion relation
+ *
+ * @method     ChildBallotQuery leftJoinWithBallotQuestion() Adds a LEFT JOIN clause and with to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery rightJoinWithBallotQuestion() Adds a RIGHT JOIN clause and with to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery innerJoinWithBallotQuestion() Adds a INNER JOIN clause and with to the query using the BallotQuestion relation
+ *
+ * @method     \MESBallotBox\Propel\BallotQuestionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildBallot findOne(ConnectionInterface $con = null) Return the first ChildBallot matching the query
  * @method     ChildBallot findOneOrCreate(ConnectionInterface $con = null) Return the first ChildBallot matching the query, or a new ChildBallot object populated from the query conditions when no match is found
  *
- * @method     ChildBallot findOneById(int $id) Return the first ChildBallot filtered by the id column
- * @method     ChildBallot findOneByUserId(int $user_id) Return the first ChildBallot filtered by the user_id column
- * @method     ChildBallot findOneByName(string $name) Return the first ChildBallot filtered by the name column
- * @method     ChildBallot findOneByStartTime(int $start_time) Return the first ChildBallot filtered by the start_time column
- * @method     ChildBallot findOneByEndTime(int $end_time) Return the first ChildBallot filtered by the end_time column
- * @method     ChildBallot findOneByTimezone(int $timezone) Return the first ChildBallot filtered by the timezone column
+ * @method     ChildBallot findOneByid(int $id) Return the first ChildBallot filtered by the id column
+ * @method     ChildBallot findOneByuserId(int $user_id) Return the first ChildBallot filtered by the user_id column
+ * @method     ChildBallot findOneByname(string $name) Return the first ChildBallot filtered by the name column
+ * @method     ChildBallot findOneBystartTime(int $start_time) Return the first ChildBallot filtered by the start_time column
+ * @method     ChildBallot findOneByendTime(int $end_time) Return the first ChildBallot filtered by the end_time column
+ * @method     ChildBallot findOneBytimezone(int $timezone) Return the first ChildBallot filtered by the timezone column
  * @method     ChildBallot findOneByCreatedAt(string $created_at) Return the first ChildBallot filtered by the created_at column
  * @method     ChildBallot findOneByUpdatedAt(string $updated_at) Return the first ChildBallot filtered by the updated_at column *
 
  * @method     ChildBallot requirePk($key, ConnectionInterface $con = null) Return the ChildBallot by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildBallot requireOne(ConnectionInterface $con = null) Return the first ChildBallot matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildBallot requireOneById(int $id) Return the first ChildBallot filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallot requireOneByUserId(int $user_id) Return the first ChildBallot filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallot requireOneByName(string $name) Return the first ChildBallot filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallot requireOneByStartTime(int $start_time) Return the first ChildBallot filtered by the start_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallot requireOneByEndTime(int $end_time) Return the first ChildBallot filtered by the end_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallot requireOneByTimezone(int $timezone) Return the first ChildBallot filtered by the timezone column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneByid(int $id) Return the first ChildBallot filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneByuserId(int $user_id) Return the first ChildBallot filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneByname(string $name) Return the first ChildBallot filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneBystartTime(int $start_time) Return the first ChildBallot filtered by the start_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneByendTime(int $end_time) Return the first ChildBallot filtered by the end_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildBallot requireOneBytimezone(int $timezone) Return the first ChildBallot filtered by the timezone column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildBallot requireOneByCreatedAt(string $created_at) Return the first ChildBallot filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildBallot requireOneByUpdatedAt(string $updated_at) Return the first ChildBallot filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildBallot[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildBallot objects based on current ModelCriteria
- * @method     ChildBallot[]|ObjectCollection findById(int $id) Return ChildBallot objects filtered by the id column
- * @method     ChildBallot[]|ObjectCollection findByUserId(int $user_id) Return ChildBallot objects filtered by the user_id column
- * @method     ChildBallot[]|ObjectCollection findByName(string $name) Return ChildBallot objects filtered by the name column
- * @method     ChildBallot[]|ObjectCollection findByStartTime(int $start_time) Return ChildBallot objects filtered by the start_time column
- * @method     ChildBallot[]|ObjectCollection findByEndTime(int $end_time) Return ChildBallot objects filtered by the end_time column
- * @method     ChildBallot[]|ObjectCollection findByTimezone(int $timezone) Return ChildBallot objects filtered by the timezone column
+ * @method     ChildBallot[]|ObjectCollection findByid(int $id) Return ChildBallot objects filtered by the id column
+ * @method     ChildBallot[]|ObjectCollection findByuserId(int $user_id) Return ChildBallot objects filtered by the user_id column
+ * @method     ChildBallot[]|ObjectCollection findByname(string $name) Return ChildBallot objects filtered by the name column
+ * @method     ChildBallot[]|ObjectCollection findBystartTime(int $start_time) Return ChildBallot objects filtered by the start_time column
+ * @method     ChildBallot[]|ObjectCollection findByendTime(int $end_time) Return ChildBallot objects filtered by the end_time column
+ * @method     ChildBallot[]|ObjectCollection findBytimezone(int $timezone) Return ChildBallot objects filtered by the timezone column
  * @method     ChildBallot[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildBallot objects filtered by the created_at column
  * @method     ChildBallot[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildBallot objects filtered by the updated_at column
  * @method     ChildBallot[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -140,7 +153,7 @@ abstract class BallotQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = BallotTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = BallotTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
@@ -184,7 +197,7 @@ abstract class BallotQuery extends ModelCriteria
             /** @var ChildBallot $obj */
             $obj = new ChildBallot();
             $obj->hydrate($row);
-            BallotTableMap::addInstanceToPool($obj, (string) $key);
+            BallotTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -265,9 +278,9 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * $query->filterByid(1234); // WHERE id = 1234
+     * $query->filterByid(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterByid(array('min' => 12)); // WHERE id > 12
      * </code>
      *
      * @param     mixed $id The value to use as filter.
@@ -278,7 +291,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterById($id = null, $comparison = null)
+    public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
@@ -306,9 +319,9 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByUserId(1234); // WHERE user_id = 1234
-     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
-     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
+     * $query->filterByuserId(1234); // WHERE user_id = 1234
+     * $query->filterByuserId(array(12, 34)); // WHERE user_id IN (12, 34)
+     * $query->filterByuserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
      * @param     mixed $userId The value to use as filter.
@@ -319,7 +332,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByUserId($userId = null, $comparison = null)
+    public function filterByuserId($userId = null, $comparison = null)
     {
         if (is_array($userId)) {
             $useMinMax = false;
@@ -347,8 +360,8 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByname('fooValue');   // WHERE name = 'fooValue'
+     * $query->filterByname('%fooValue%'); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
@@ -357,7 +370,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByName($name = null, $comparison = null)
+    public function filterByname($name = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($name)) {
@@ -376,9 +389,9 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByStartTime(1234); // WHERE start_time = 1234
-     * $query->filterByStartTime(array(12, 34)); // WHERE start_time IN (12, 34)
-     * $query->filterByStartTime(array('min' => 12)); // WHERE start_time > 12
+     * $query->filterBystartTime(1234); // WHERE start_time = 1234
+     * $query->filterBystartTime(array(12, 34)); // WHERE start_time IN (12, 34)
+     * $query->filterBystartTime(array('min' => 12)); // WHERE start_time > 12
      * </code>
      *
      * @param     mixed $startTime The value to use as filter.
@@ -389,7 +402,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByStartTime($startTime = null, $comparison = null)
+    public function filterBystartTime($startTime = null, $comparison = null)
     {
         if (is_array($startTime)) {
             $useMinMax = false;
@@ -417,9 +430,9 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByEndTime(1234); // WHERE end_time = 1234
-     * $query->filterByEndTime(array(12, 34)); // WHERE end_time IN (12, 34)
-     * $query->filterByEndTime(array('min' => 12)); // WHERE end_time > 12
+     * $query->filterByendTime(1234); // WHERE end_time = 1234
+     * $query->filterByendTime(array(12, 34)); // WHERE end_time IN (12, 34)
+     * $query->filterByendTime(array('min' => 12)); // WHERE end_time > 12
      * </code>
      *
      * @param     mixed $endTime The value to use as filter.
@@ -430,7 +443,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByEndTime($endTime = null, $comparison = null)
+    public function filterByendTime($endTime = null, $comparison = null)
     {
         if (is_array($endTime)) {
             $useMinMax = false;
@@ -458,9 +471,9 @@ abstract class BallotQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByTimezone(1234); // WHERE timezone = 1234
-     * $query->filterByTimezone(array(12, 34)); // WHERE timezone IN (12, 34)
-     * $query->filterByTimezone(array('min' => 12)); // WHERE timezone > 12
+     * $query->filterBytimezone(1234); // WHERE timezone = 1234
+     * $query->filterBytimezone(array(12, 34)); // WHERE timezone IN (12, 34)
+     * $query->filterBytimezone(array('min' => 12)); // WHERE timezone > 12
      * </code>
      *
      * @param     mixed $timezone The value to use as filter.
@@ -471,7 +484,7 @@ abstract class BallotQuery extends ModelCriteria
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByTimezone($timezone = null, $comparison = null)
+    public function filterBytimezone($timezone = null, $comparison = null)
     {
         if (is_array($timezone)) {
             $useMinMax = false;
@@ -581,6 +594,79 @@ abstract class BallotQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \MESBallotBox\Propel\BallotQuestion object
+     *
+     * @param \MESBallotBox\Propel\BallotQuestion|ObjectCollection $ballotQuestion the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildBallotQuery The current query, for fluid interface
+     */
+    public function filterByBallotQuestion($ballotQuestion, $comparison = null)
+    {
+        if ($ballotQuestion instanceof \MESBallotBox\Propel\BallotQuestion) {
+            return $this
+                ->addUsingAlias(BallotTableMap::COL_ID, $ballotQuestion->getballotId(), $comparison);
+        } elseif ($ballotQuestion instanceof ObjectCollection) {
+            return $this
+                ->useBallotQuestionQuery()
+                ->filterByPrimaryKeys($ballotQuestion->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByBallotQuestion() only accepts arguments of type \MESBallotBox\Propel\BallotQuestion or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the BallotQuestion relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildBallotQuery The current query, for fluid interface
+     */
+    public function joinBallotQuestion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('BallotQuestion');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'BallotQuestion');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the BallotQuestion relation BallotQuestion object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\BallotQuestionQuery A secondary query class using the current class as primary query
+     */
+    public function useBallotQuestionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinBallotQuestion($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'BallotQuestion', '\MESBallotBox\Propel\BallotQuestionQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildBallot $ballot Object to remove from the list of results
@@ -590,7 +676,7 @@ abstract class BallotQuery extends ModelCriteria
     public function prune($ballot = null)
     {
         if ($ballot) {
-            $this->addUsingAlias(BallotTableMap::COL_ID, $ballot->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(BallotTableMap::COL_ID, $ballot->getid(), Criteria::NOT_EQUAL);
         }
 
         return $this;

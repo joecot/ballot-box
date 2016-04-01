@@ -1,8 +1,8 @@
-{% raw %}
 <div class="main-content" ng-controller="indexController">
 Hello, {{user.firstName}} {{user.lastName}}!
 
 <a class="linkbutton" href="#/ballot/create">Create new ballot</a>
-<a class="linkbutton" href="#/ballot">View your existing ballots</a>
+<ul>
+<li  ng-repeat="(ballotid, ballot) in ballots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}">{{ ballot.name }}</a></li>
+</ul>
 </div>
-{% endraw %}

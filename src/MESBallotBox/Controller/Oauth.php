@@ -5,9 +5,9 @@ class Oauth{
             'clientId'                => OAUTHCLIENTID,    // The client ID assigned to you by the provider
             'clientSecret'            => OAUTHSECRET,   // The client password assigned to you by the provider
             'redirectUri'             => $redirectUrl,
-            'urlAuthorize'            => 'http://portal.mindseyesociety.org/oauth/v2/auth',
-            'urlAccessToken'          => 'http://portal.mindseyesociety.org/oauth/v2/token',
-            'urlResourceOwnerDetails' => 'http://portal.mindseyesociety.org/api/authorized/user.json'
+            'urlAuthorize'            => 'https://portal.mindseyesociety.org/oauth/v2/auth',
+            'urlAccessToken'          => 'https://portal.mindseyesociety.org/oauth/v2/token',
+            'urlResourceOwnerDetails' => 'https://portal.mindseyesociety.org/api/authorized/user.json'
         ];
         $provider = new \League\OAuth2\Client\Provider\GenericProvider($config);
         return $provider;
@@ -45,7 +45,7 @@ class Oauth{
                 $accessToken = $provider->getAccessToken('authorization_code', [
                     'code' => $_GET['code']
                 ]);
-        
+  
                 // We have an access token, which we may use in authenticated
                 // requests against the service provider's API.
                 
@@ -53,18 +53,20 @@ class Oauth{
                 // Using the access token, we may look up details about the
                 // resource owner.
                 $resourceOwner = $provider->getResourceOwner($accessToken);
-        
+
                 $user = $resourceOwner->toArray();
+
                 $userselect = \MESBallotBox\Propel\UserQuery::create();
                 $userRow = $userselect->findOneByMembershipNumber($user['membershipNumber']);
                 if($userRow) $user['id'] = $userRow->getId();
                 else{
                     $userRow = new \MESBallotBox\Propel\User();
-                    $userRow->setMembershipNumber($_SESSION['user']['membershipNumber']);
+                    $userRow->setMembershipNumber($user['membershipNumber']);
                     $userRow->save();
                     $user['id'] = $userRow->getId();
                 }
                 $_SESSION['user'] = $user;
+                $_SESSION['accessToken'] = $accessToken;
                 if($_SESSION['jspath']){
                     $jspath = $_SESSION['jspath'];
                     unset($_SESSION['jspath']);

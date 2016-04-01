@@ -5,23 +5,29 @@ var ballotboxApp = angular.module(
         'ngRoute',
         'ballotboxControllers',
         'ui.bootstrap',
-        'ui.bootstrap.datetimepicker'
+        'ui.bootstrap.datetimepicker',
+        'ngResource',
+        'ballotboxServices'
     ]
 );
 ballotboxApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/index', {
-        templateUrl: 'template/index.html',
+        templateUrl: '/templates/index.html',
         controller: 'indexController'
       }).
       when('/ballot/create', {
-        templateUrl: 'template/ballotCreate.html',
+        templateUrl: '/templates/ballotCreate.html',
         controller: 'ballotCreateController'
       }).
       when('/ballot/:ballotId', {
-        templateUrl: 'template/ballotEdit.html',
-        controller: 'ballotEditController'
+        templateUrl: '/templates/ballotView.html',
+        controller: 'ballotViewController'
+      }).
+      when('/ballot/:ballotId/question/create', {
+        templateUrl: '/templates/ballotQuestionCreate.html',
+        controller: 'ballotQuestionCreateController'
       }).
       otherwise({
         redirectTo: '/index'

@@ -1,0 +1,35 @@
+<div class="main-content" ng-controller="ballotQuestionCreateController">
+<form novalidate ng-submit="add(question)" class="question-form">
+    <label>
+        Name:
+    <input type="text" ng-model="question.name">
+  </label><br/>
+    <label>Type:</label><br/>
+    <label>
+    <input type="radio" ng-model="question.type" value="proposition">
+    Proposition (ex: Referendum)
+  </label><br/>
+  <label>
+    <input type="radio" ng-model="question.type" value="office">
+    Officer Election
+  </label>
+  <label ng-show="question.type=='office'">
+      <input type="number" name="input" ng-model="question.count"
+           min="1" default="1" max="9" ng-required="question.type=='office'">
+    Number of open positions
+  </label><br/>
+  <label>
+        Description:
+    <textarea ng-model="question.description" />
+  </label><br/>
+  <label>
+        Read More URL:
+    <input type="text" ng-model="question.readmore">
+  </label><br/>
+    <label>
+        Discussion URL:
+    <input type="text" ng-model="question.discussion">
+  </label><br/>
+   <input type="submit" value="Add Question" />
+</form>
+</div>
