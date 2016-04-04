@@ -6,13 +6,18 @@ use \Exception;
 use \PDO;
 use MESBallotBox\Propel\Ballot as ChildBallot;
 use MESBallotBox\Propel\BallotQuery as ChildBallotQuery;
-use MESBallotBox\Propel\BallotQuestionQuery as ChildBallotQuestionQuery;
-use MESBallotBox\Propel\Map\BallotQuestionTableMap;
+use MESBallotBox\Propel\Candidate as ChildCandidate;
+use MESBallotBox\Propel\CandidateQuery as ChildCandidateQuery;
+use MESBallotBox\Propel\Question as ChildQuestion;
+use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
+use MESBallotBox\Propel\Map\CandidateTableMap;
+use MESBallotBox\Propel\Map\QuestionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -32,18 +37,18 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Base class that represents a row from the 'Ballot_question' table.
+ * Base class that represents a row from the 'Question' table.
  *
  *
  *
 * @package    propel.generator.MESBallotBox.Propel.Base
 */
-abstract class BallotQuestion implements ActiveRecordInterface
+abstract class Question implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\MESBallotBox\\Propel\\Map\\BallotQuestionTableMap';
+    const TABLE_MAP = '\\MESBallotBox\\Propel\\Map\\QuestionTableMap';
 
 
     /**
@@ -134,6 +139,12 @@ abstract class BallotQuestion implements ActiveRecordInterface
     protected $aBallot;
 
     /**
+     * @var        ObjectCollection|ChildCandidate[] Collection to store aggregation of ChildCandidate objects.
+     */
+    protected $collCandidates;
+    protected $collCandidatesPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -159,7 +170,13 @@ abstract class BallotQuestion implements ActiveRecordInterface
     protected $validationFailures;
 
     /**
-     * Initializes internal state of MESBallotBox\Propel\Base\BallotQuestion object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildCandidate[]
+     */
+    protected $candidatesScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of MESBallotBox\Propel\Base\Question object.
      */
     public function __construct()
     {
@@ -254,9 +271,9 @@ abstract class BallotQuestion implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>BallotQuestion</code> instance.  If
-     * <code>obj</code> is an instance of <code>BallotQuestion</code>, delegates to
-     * <code>equals(BallotQuestion)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Question</code> instance.  If
+     * <code>obj</code> is an instance of <code>Question</code>, delegates to
+     * <code>equals(Question)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -322,7 +339,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|BallotQuestion The current object, for fluid interface
+     * @return $this|Question The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -414,7 +431,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
         if (null === $this->type) {
             return null;
         }
-        $valueSet = BallotQuestionTableMap::getValueSet(BallotQuestionTableMap::COL_TYPE);
+        $valueSet = QuestionTableMap::getValueSet(QuestionTableMap::COL_TYPE);
         if (!isset($valueSet[$this->type])) {
             throw new PropelException('Unknown stored enum key: ' . $this->type);
         }
@@ -476,7 +493,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setid($v)
     {
@@ -486,7 +503,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_ID] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_ID] = true;
         }
 
         return $this;
@@ -496,7 +513,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [ballot_id] column.
      *
      * @param int $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setballotId($v)
     {
@@ -506,7 +523,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->ballot_id !== $v) {
             $this->ballot_id = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_BALLOT_ID] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_BALLOT_ID] = true;
         }
 
         if ($this->aBallot !== null && $this->aBallot->getid() !== $v) {
@@ -520,13 +537,13 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [type] column.
      *
      * @param  string $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function settype($v)
     {
         if ($v !== null) {
-            $valueSet = BallotQuestionTableMap::getValueSet(BallotQuestionTableMap::COL_TYPE);
+            $valueSet = QuestionTableMap::getValueSet(QuestionTableMap::COL_TYPE);
             if (!in_array($v, $valueSet)) {
                 throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $v));
             }
@@ -535,7 +552,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->type !== $v) {
             $this->type = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_TYPE] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_TYPE] = true;
         }
 
         return $this;
@@ -545,7 +562,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [count] column.
      *
      * @param int $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setcount($v)
     {
@@ -555,7 +572,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->count !== $v) {
             $this->count = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_COUNT] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_COUNT] = true;
         }
 
         return $this;
@@ -565,7 +582,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setname($v)
     {
@@ -575,7 +592,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->name !== $v) {
             $this->name = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_NAME] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_NAME] = true;
         }
 
         return $this;
@@ -585,7 +602,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [description] column.
      *
      * @param string $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setdescription($v)
     {
@@ -595,7 +612,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->description !== $v) {
             $this->description = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_DESCRIPTION] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_DESCRIPTION] = true;
         }
 
         return $this;
@@ -605,7 +622,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [readmore] column.
      *
      * @param string $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setreadmore($v)
     {
@@ -615,7 +632,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->readmore !== $v) {
             $this->readmore = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_READMORE] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_READMORE] = true;
         }
 
         return $this;
@@ -625,7 +642,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Set the value of [discussion] column.
      *
      * @param string $v new value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      */
     public function setdiscussion($v)
     {
@@ -635,7 +652,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
         if ($this->discussion !== $v) {
             $this->discussion = $v;
-            $this->modifiedColumns[BallotQuestionTableMap::COL_DISCUSSION] = true;
+            $this->modifiedColumns[QuestionTableMap::COL_DISCUSSION] = true;
         }
 
         return $this;
@@ -677,28 +694,28 @@ abstract class BallotQuestion implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : BallotQuestionTableMap::translateFieldName('id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : QuestionTableMap::translateFieldName('id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : BallotQuestionTableMap::translateFieldName('ballotId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : QuestionTableMap::translateFieldName('ballotId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->ballot_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : BallotQuestionTableMap::translateFieldName('type', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionTableMap::translateFieldName('type', TableMap::TYPE_PHPNAME, $indexType)];
             $this->type = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : BallotQuestionTableMap::translateFieldName('count', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionTableMap::translateFieldName('count', TableMap::TYPE_PHPNAME, $indexType)];
             $this->count = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : BallotQuestionTableMap::translateFieldName('name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionTableMap::translateFieldName('name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : BallotQuestionTableMap::translateFieldName('description', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionTableMap::translateFieldName('description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : BallotQuestionTableMap::translateFieldName('readmore', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionTableMap::translateFieldName('readmore', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readmore = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : BallotQuestionTableMap::translateFieldName('discussion', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : QuestionTableMap::translateFieldName('discussion', TableMap::TYPE_PHPNAME, $indexType)];
             $this->discussion = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -708,10 +725,10 @@ abstract class BallotQuestion implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = BallotQuestionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\BallotQuestion'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Question'), 0, $e);
         }
     }
 
@@ -756,13 +773,13 @@ abstract class BallotQuestion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildBallotQuestionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildQuestionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -773,6 +790,8 @@ abstract class BallotQuestion implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aBallot = null;
+            $this->collCandidates = null;
+
         } // if (deep)
     }
 
@@ -782,8 +801,8 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see BallotQuestion::setDeleted()
-     * @see BallotQuestion::isDeleted()
+     * @see Question::setDeleted()
+     * @see Question::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -792,11 +811,11 @@ abstract class BallotQuestion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildBallotQuestionQuery::create()
+            $deleteQuery = ChildQuestionQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -827,7 +846,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -846,7 +865,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                BallotQuestionTableMap::addInstanceToPool($this);
+                QuestionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -895,6 +914,23 @@ abstract class BallotQuestion implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->candidatesScheduledForDeletion !== null) {
+                if (!$this->candidatesScheduledForDeletion->isEmpty()) {
+                    \MESBallotBox\Propel\CandidateQuery::create()
+                        ->filterByPrimaryKeys($this->candidatesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->candidatesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collCandidates !== null) {
+                foreach ($this->collCandidates as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -915,39 +951,39 @@ abstract class BallotQuestion implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[BallotQuestionTableMap::COL_ID] = true;
+        $this->modifiedColumns[QuestionTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . BallotQuestionTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . QuestionTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_ID)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_BALLOT_ID)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_BALLOT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'ballot_id';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_TYPE)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_TYPE)) {
             $modifiedColumns[':p' . $index++]  = 'type';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_COUNT)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_COUNT)) {
             $modifiedColumns[':p' . $index++]  = 'count';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_NAME)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_DESCRIPTION)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'description';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_READMORE)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_READMORE)) {
             $modifiedColumns[':p' . $index++]  = 'readmore';
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_DISCUSSION)) {
+        if ($this->isColumnModified(QuestionTableMap::COL_DISCUSSION)) {
             $modifiedColumns[':p' . $index++]  = 'discussion';
         }
 
         $sql = sprintf(
-            'INSERT INTO Ballot_question (%s) VALUES (%s)',
+            'INSERT INTO Question (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1026,7 +1062,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = BallotQuestionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = QuestionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1090,11 +1126,11 @@ abstract class BallotQuestion implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['BallotQuestion'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Question'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['BallotQuestion'][$this->hashCode()] = true;
-        $keys = BallotQuestionTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Question'][$this->hashCode()] = true;
+        $keys = QuestionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getid(),
             $keys[1] => $this->getballotId(),
@@ -1126,6 +1162,21 @@ abstract class BallotQuestion implements ActiveRecordInterface
 
                 $result[$key] = $this->aBallot->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
+            if (null !== $this->collCandidates) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'candidates';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Candidates';
+                        break;
+                    default:
+                        $key = 'Candidates';
+                }
+
+                $result[$key] = $this->collCandidates->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
         }
 
         return $result;
@@ -1140,11 +1191,11 @@ abstract class BallotQuestion implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\MESBallotBox\Propel\BallotQuestion
+     * @return $this|\MESBallotBox\Propel\Question
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = BallotQuestionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = QuestionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1155,7 +1206,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\MESBallotBox\Propel\BallotQuestion
+     * @return $this|\MESBallotBox\Propel\Question
      */
     public function setByPosition($pos, $value)
     {
@@ -1167,7 +1218,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
                 $this->setballotId($value);
                 break;
             case 2:
-                $valueSet = BallotQuestionTableMap::getValueSet(BallotQuestionTableMap::COL_TYPE);
+                $valueSet = QuestionTableMap::getValueSet(QuestionTableMap::COL_TYPE);
                 if (isset($valueSet[$value])) {
                     $value = $valueSet[$value];
                 }
@@ -1212,7 +1263,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = BallotQuestionTableMap::getFieldNames($keyType);
+        $keys = QuestionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setid($arr[$keys[0]]);
@@ -1257,7 +1308,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object, for fluid interface
+     * @return $this|\MESBallotBox\Propel\Question The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1277,31 +1328,31 @@ abstract class BallotQuestion implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(BallotQuestionTableMap::DATABASE_NAME);
+        $criteria = new Criteria(QuestionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_ID)) {
-            $criteria->add(BallotQuestionTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(QuestionTableMap::COL_ID)) {
+            $criteria->add(QuestionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_BALLOT_ID)) {
-            $criteria->add(BallotQuestionTableMap::COL_BALLOT_ID, $this->ballot_id);
+        if ($this->isColumnModified(QuestionTableMap::COL_BALLOT_ID)) {
+            $criteria->add(QuestionTableMap::COL_BALLOT_ID, $this->ballot_id);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_TYPE)) {
-            $criteria->add(BallotQuestionTableMap::COL_TYPE, $this->type);
+        if ($this->isColumnModified(QuestionTableMap::COL_TYPE)) {
+            $criteria->add(QuestionTableMap::COL_TYPE, $this->type);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_COUNT)) {
-            $criteria->add(BallotQuestionTableMap::COL_COUNT, $this->count);
+        if ($this->isColumnModified(QuestionTableMap::COL_COUNT)) {
+            $criteria->add(QuestionTableMap::COL_COUNT, $this->count);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_NAME)) {
-            $criteria->add(BallotQuestionTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(QuestionTableMap::COL_NAME)) {
+            $criteria->add(QuestionTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_DESCRIPTION)) {
-            $criteria->add(BallotQuestionTableMap::COL_DESCRIPTION, $this->description);
+        if ($this->isColumnModified(QuestionTableMap::COL_DESCRIPTION)) {
+            $criteria->add(QuestionTableMap::COL_DESCRIPTION, $this->description);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_READMORE)) {
-            $criteria->add(BallotQuestionTableMap::COL_READMORE, $this->readmore);
+        if ($this->isColumnModified(QuestionTableMap::COL_READMORE)) {
+            $criteria->add(QuestionTableMap::COL_READMORE, $this->readmore);
         }
-        if ($this->isColumnModified(BallotQuestionTableMap::COL_DISCUSSION)) {
-            $criteria->add(BallotQuestionTableMap::COL_DISCUSSION, $this->discussion);
+        if ($this->isColumnModified(QuestionTableMap::COL_DISCUSSION)) {
+            $criteria->add(QuestionTableMap::COL_DISCUSSION, $this->discussion);
         }
 
         return $criteria;
@@ -1319,8 +1370,8 @@ abstract class BallotQuestion implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildBallotQuestionQuery::create();
-        $criteria->add(BallotQuestionTableMap::COL_ID, $this->id);
+        $criteria = ChildQuestionQuery::create();
+        $criteria->add(QuestionTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1382,7 +1433,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \MESBallotBox\Propel\BallotQuestion (or compatible) type.
+     * @param      object $copyObj An object of \MESBallotBox\Propel\Question (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1396,6 +1447,20 @@ abstract class BallotQuestion implements ActiveRecordInterface
         $copyObj->setdescription($this->getdescription());
         $copyObj->setreadmore($this->getreadmore());
         $copyObj->setdiscussion($this->getdiscussion());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getCandidates() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addCandidate($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
@@ -1411,7 +1476,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \MESBallotBox\Propel\BallotQuestion Clone of current object.
+     * @return \MESBallotBox\Propel\Question Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1428,7 +1493,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      * Declares an association between this object and a ChildBallot object.
      *
      * @param  ChildBallot $v
-     * @return $this|\MESBallotBox\Propel\BallotQuestion The current object (for fluent API support)
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
      * @throws PropelException
      */
     public function setBallot(ChildBallot $v = null)
@@ -1444,7 +1509,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildBallot object, it will not be re-added.
         if ($v !== null) {
-            $v->addBallotQuestion($this);
+            $v->addQuestion($this);
         }
 
 
@@ -1468,11 +1533,277 @@ abstract class BallotQuestion implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aBallot->addBallotQuestions($this);
+                $this->aBallot->addQuestions($this);
              */
         }
 
         return $this->aBallot;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Candidate' == $relationName) {
+            return $this->initCandidates();
+        }
+    }
+
+    /**
+     * Clears out the collCandidates collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addCandidates()
+     */
+    public function clearCandidates()
+    {
+        $this->collCandidates = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collCandidates collection loaded partially.
+     */
+    public function resetPartialCandidates($v = true)
+    {
+        $this->collCandidatesPartial = $v;
+    }
+
+    /**
+     * Initializes the collCandidates collection.
+     *
+     * By default this just sets the collCandidates collection to an empty array (like clearcollCandidates());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initCandidates($overrideExisting = true)
+    {
+        if (null !== $this->collCandidates && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = CandidateTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collCandidates = new $collectionClassName;
+        $this->collCandidates->setModel('\MESBallotBox\Propel\Candidate');
+    }
+
+    /**
+     * Gets an array of ChildCandidate objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildQuestion is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildCandidate[] List of ChildCandidate objects
+     * @throws PropelException
+     */
+    public function getCandidates(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCandidatesPartial && !$this->isNew();
+        if (null === $this->collCandidates || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collCandidates) {
+                // return empty collection
+                $this->initCandidates();
+            } else {
+                $collCandidates = ChildCandidateQuery::create(null, $criteria)
+                    ->filterByQuestion($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collCandidatesPartial && count($collCandidates)) {
+                        $this->initCandidates(false);
+
+                        foreach ($collCandidates as $obj) {
+                            if (false == $this->collCandidates->contains($obj)) {
+                                $this->collCandidates->append($obj);
+                            }
+                        }
+
+                        $this->collCandidatesPartial = true;
+                    }
+
+                    return $collCandidates;
+                }
+
+                if ($partial && $this->collCandidates) {
+                    foreach ($this->collCandidates as $obj) {
+                        if ($obj->isNew()) {
+                            $collCandidates[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCandidates = $collCandidates;
+                $this->collCandidatesPartial = false;
+            }
+        }
+
+        return $this->collCandidates;
+    }
+
+    /**
+     * Sets a collection of ChildCandidate objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $candidates A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function setCandidates(Collection $candidates, ConnectionInterface $con = null)
+    {
+        /** @var ChildCandidate[] $candidatesToDelete */
+        $candidatesToDelete = $this->getCandidates(new Criteria(), $con)->diff($candidates);
+
+
+        $this->candidatesScheduledForDeletion = $candidatesToDelete;
+
+        foreach ($candidatesToDelete as $candidateRemoved) {
+            $candidateRemoved->setQuestion(null);
+        }
+
+        $this->collCandidates = null;
+        foreach ($candidates as $candidate) {
+            $this->addCandidate($candidate);
+        }
+
+        $this->collCandidates = $candidates;
+        $this->collCandidatesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Candidate objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Candidate objects.
+     * @throws PropelException
+     */
+    public function countCandidates(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCandidatesPartial && !$this->isNew();
+        if (null === $this->collCandidates || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCandidates) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getCandidates());
+            }
+
+            $query = ChildCandidateQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByQuestion($this)
+                ->count($con);
+        }
+
+        return count($this->collCandidates);
+    }
+
+    /**
+     * Method called to associate a ChildCandidate object to this object
+     * through the ChildCandidate foreign key attribute.
+     *
+     * @param  ChildCandidate $l ChildCandidate
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function addCandidate(ChildCandidate $l)
+    {
+        if ($this->collCandidates === null) {
+            $this->initCandidates();
+            $this->collCandidatesPartial = true;
+        }
+
+        if (!$this->collCandidates->contains($l)) {
+            $this->doAddCandidate($l);
+
+            if ($this->candidatesScheduledForDeletion and $this->candidatesScheduledForDeletion->contains($l)) {
+                $this->candidatesScheduledForDeletion->remove($this->candidatesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildCandidate $candidate The ChildCandidate object to add.
+     */
+    protected function doAddCandidate(ChildCandidate $candidate)
+    {
+        $this->collCandidates[]= $candidate;
+        $candidate->setQuestion($this);
+    }
+
+    /**
+     * @param  ChildCandidate $candidate The ChildCandidate object to remove.
+     * @return $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function removeCandidate(ChildCandidate $candidate)
+    {
+        if ($this->getCandidates()->contains($candidate)) {
+            $pos = $this->collCandidates->search($candidate);
+            $this->collCandidates->remove($pos);
+            if (null === $this->candidatesScheduledForDeletion) {
+                $this->candidatesScheduledForDeletion = clone $this->collCandidates;
+                $this->candidatesScheduledForDeletion->clear();
+            }
+            $this->candidatesScheduledForDeletion[]= clone $candidate;
+            $candidate->setQuestion(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Question is new, it will return
+     * an empty collection; or if this Question has previously
+     * been saved, it will retrieve related Candidates from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Question.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildCandidate[] List of ChildCandidate objects
+     */
+    public function getCandidatesJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildCandidateQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getCandidates($query, $con);
     }
 
     /**
@@ -1483,7 +1814,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aBallot) {
-            $this->aBallot->removeBallotQuestion($this);
+            $this->aBallot->removeQuestion($this);
         }
         $this->id = null;
         $this->ballot_id = null;
@@ -1511,8 +1842,14 @@ abstract class BallotQuestion implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collCandidates) {
+                foreach ($this->collCandidates as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collCandidates = null;
         $this->aBallot = null;
     }
 
@@ -1523,7 +1860,7 @@ abstract class BallotQuestion implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(BallotQuestionTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(QuestionTableMap::DEFAULT_STRING_FORMAT);
     }
 
     // validate behavior
@@ -1580,6 +1917,15 @@ abstract class BallotQuestion implements ActiveRecordInterface
                 $failureMap->addAll($retval);
             }
 
+            if (null !== $this->collCandidates) {
+                foreach ($this->collCandidates as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
 
             $this->alreadyInValidation = false;
         }

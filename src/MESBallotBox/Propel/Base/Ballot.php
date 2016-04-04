@@ -7,10 +7,10 @@ use \Exception;
 use \PDO;
 use MESBallotBox\Propel\Ballot as ChildBallot;
 use MESBallotBox\Propel\BallotQuery as ChildBallotQuery;
-use MESBallotBox\Propel\BallotQuestion as ChildBallotQuestion;
-use MESBallotBox\Propel\BallotQuestionQuery as ChildBallotQuestionQuery;
-use MESBallotBox\Propel\Map\BallotQuestionTableMap;
+use MESBallotBox\Propel\Question as ChildQuestion;
+use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
 use MESBallotBox\Propel\Map\BallotTableMap;
+use MESBallotBox\Propel\Map\QuestionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -134,10 +134,10 @@ abstract class Ballot implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildBallotQuestion[] Collection to store aggregation of ChildBallotQuestion objects.
+     * @var        ObjectCollection|ChildQuestion[] Collection to store aggregation of ChildQuestion objects.
      */
-    protected $collBallotQuestions;
-    protected $collBallotQuestionsPartial;
+    protected $collQuestions;
+    protected $collQuestionsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -166,9 +166,9 @@ abstract class Ballot implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildBallotQuestion[]
+     * @var ObjectCollection|ChildQuestion[]
      */
-    protected $ballotQuestionsScheduledForDeletion = null;
+    protected $questionsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of MESBallotBox\Propel\Base\Ballot object.
@@ -789,7 +789,7 @@ abstract class Ballot implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collBallotQuestions = null;
+            $this->collQuestions = null;
 
         } // if (deep)
     }
@@ -913,17 +913,17 @@ abstract class Ballot implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->ballotQuestionsScheduledForDeletion !== null) {
-                if (!$this->ballotQuestionsScheduledForDeletion->isEmpty()) {
-                    \MESBallotBox\Propel\BallotQuestionQuery::create()
-                        ->filterByPrimaryKeys($this->ballotQuestionsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->questionsScheduledForDeletion !== null) {
+                if (!$this->questionsScheduledForDeletion->isEmpty()) {
+                    \MESBallotBox\Propel\QuestionQuery::create()
+                        ->filterByPrimaryKeys($this->questionsScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->ballotQuestionsScheduledForDeletion = null;
+                    $this->questionsScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collBallotQuestions !== null) {
-                foreach ($this->collBallotQuestions as $referrerFK) {
+            if ($this->collQuestions !== null) {
+                foreach ($this->collQuestions as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1154,20 +1154,20 @@ abstract class Ballot implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collBallotQuestions) {
+            if (null !== $this->collQuestions) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'ballotQuestions';
+                        $key = 'questions';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'Ballot_questions';
+                        $key = 'Questions';
                         break;
                     default:
-                        $key = 'BallotQuestions';
+                        $key = 'Questions';
                 }
 
-                $result[$key] = $this->collBallotQuestions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collQuestions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1441,9 +1441,9 @@ abstract class Ballot implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getBallotQuestions() as $relObj) {
+            foreach ($this->getQuestions() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addBallotQuestion($relObj->copy($deepCopy));
+                    $copyObj->addQuestion($relObj->copy($deepCopy));
                 }
             }
 
@@ -1488,37 +1488,37 @@ abstract class Ballot implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('BallotQuestion' == $relationName) {
-            return $this->initBallotQuestions();
+        if ('Question' == $relationName) {
+            return $this->initQuestions();
         }
     }
 
     /**
-     * Clears out the collBallotQuestions collection
+     * Clears out the collQuestions collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addBallotQuestions()
+     * @see        addQuestions()
      */
-    public function clearBallotQuestions()
+    public function clearQuestions()
     {
-        $this->collBallotQuestions = null; // important to set this to NULL since that means it is uninitialized
+        $this->collQuestions = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collBallotQuestions collection loaded partially.
+     * Reset is the collQuestions collection loaded partially.
      */
-    public function resetPartialBallotQuestions($v = true)
+    public function resetPartialQuestions($v = true)
     {
-        $this->collBallotQuestionsPartial = $v;
+        $this->collQuestionsPartial = $v;
     }
 
     /**
-     * Initializes the collBallotQuestions collection.
+     * Initializes the collQuestions collection.
      *
-     * By default this just sets the collBallotQuestions collection to an empty array (like clearcollBallotQuestions());
+     * By default this just sets the collQuestions collection to an empty array (like clearcollQuestions());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1527,20 +1527,20 @@ abstract class Ballot implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initBallotQuestions($overrideExisting = true)
+    public function initQuestions($overrideExisting = true)
     {
-        if (null !== $this->collBallotQuestions && !$overrideExisting) {
+        if (null !== $this->collQuestions && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = BallotQuestionTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = QuestionTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collBallotQuestions = new $collectionClassName;
-        $this->collBallotQuestions->setModel('\MESBallotBox\Propel\BallotQuestion');
+        $this->collQuestions = new $collectionClassName;
+        $this->collQuestions->setModel('\MESBallotBox\Propel\Question');
     }
 
     /**
-     * Gets an array of ChildBallotQuestion objects which contain a foreign key that references this object.
+     * Gets an array of ChildQuestion objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1550,108 +1550,108 @@ abstract class Ballot implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildBallotQuestion[] List of ChildBallotQuestion objects
+     * @return ObjectCollection|ChildQuestion[] List of ChildQuestion objects
      * @throws PropelException
      */
-    public function getBallotQuestions(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getQuestions(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collBallotQuestionsPartial && !$this->isNew();
-        if (null === $this->collBallotQuestions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collBallotQuestions) {
+        $partial = $this->collQuestionsPartial && !$this->isNew();
+        if (null === $this->collQuestions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collQuestions) {
                 // return empty collection
-                $this->initBallotQuestions();
+                $this->initQuestions();
             } else {
-                $collBallotQuestions = ChildBallotQuestionQuery::create(null, $criteria)
+                $collQuestions = ChildQuestionQuery::create(null, $criteria)
                     ->filterByBallot($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collBallotQuestionsPartial && count($collBallotQuestions)) {
-                        $this->initBallotQuestions(false);
+                    if (false !== $this->collQuestionsPartial && count($collQuestions)) {
+                        $this->initQuestions(false);
 
-                        foreach ($collBallotQuestions as $obj) {
-                            if (false == $this->collBallotQuestions->contains($obj)) {
-                                $this->collBallotQuestions->append($obj);
+                        foreach ($collQuestions as $obj) {
+                            if (false == $this->collQuestions->contains($obj)) {
+                                $this->collQuestions->append($obj);
                             }
                         }
 
-                        $this->collBallotQuestionsPartial = true;
+                        $this->collQuestionsPartial = true;
                     }
 
-                    return $collBallotQuestions;
+                    return $collQuestions;
                 }
 
-                if ($partial && $this->collBallotQuestions) {
-                    foreach ($this->collBallotQuestions as $obj) {
+                if ($partial && $this->collQuestions) {
+                    foreach ($this->collQuestions as $obj) {
                         if ($obj->isNew()) {
-                            $collBallotQuestions[] = $obj;
+                            $collQuestions[] = $obj;
                         }
                     }
                 }
 
-                $this->collBallotQuestions = $collBallotQuestions;
-                $this->collBallotQuestionsPartial = false;
+                $this->collQuestions = $collQuestions;
+                $this->collQuestionsPartial = false;
             }
         }
 
-        return $this->collBallotQuestions;
+        return $this->collQuestions;
     }
 
     /**
-     * Sets a collection of ChildBallotQuestion objects related by a one-to-many relationship
+     * Sets a collection of ChildQuestion objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $ballotQuestions A Propel collection.
+     * @param      Collection $questions A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildBallot The current object (for fluent API support)
      */
-    public function setBallotQuestions(Collection $ballotQuestions, ConnectionInterface $con = null)
+    public function setQuestions(Collection $questions, ConnectionInterface $con = null)
     {
-        /** @var ChildBallotQuestion[] $ballotQuestionsToDelete */
-        $ballotQuestionsToDelete = $this->getBallotQuestions(new Criteria(), $con)->diff($ballotQuestions);
+        /** @var ChildQuestion[] $questionsToDelete */
+        $questionsToDelete = $this->getQuestions(new Criteria(), $con)->diff($questions);
 
 
-        $this->ballotQuestionsScheduledForDeletion = $ballotQuestionsToDelete;
+        $this->questionsScheduledForDeletion = $questionsToDelete;
 
-        foreach ($ballotQuestionsToDelete as $ballotQuestionRemoved) {
-            $ballotQuestionRemoved->setBallot(null);
+        foreach ($questionsToDelete as $questionRemoved) {
+            $questionRemoved->setBallot(null);
         }
 
-        $this->collBallotQuestions = null;
-        foreach ($ballotQuestions as $ballotQuestion) {
-            $this->addBallotQuestion($ballotQuestion);
+        $this->collQuestions = null;
+        foreach ($questions as $question) {
+            $this->addQuestion($question);
         }
 
-        $this->collBallotQuestions = $ballotQuestions;
-        $this->collBallotQuestionsPartial = false;
+        $this->collQuestions = $questions;
+        $this->collQuestionsPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related BallotQuestion objects.
+     * Returns the number of related Question objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related BallotQuestion objects.
+     * @return int             Count of related Question objects.
      * @throws PropelException
      */
-    public function countBallotQuestions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countQuestions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collBallotQuestionsPartial && !$this->isNew();
-        if (null === $this->collBallotQuestions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collBallotQuestions) {
+        $partial = $this->collQuestionsPartial && !$this->isNew();
+        if (null === $this->collQuestions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collQuestions) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getBallotQuestions());
+                return count($this->getQuestions());
             }
 
-            $query = ChildBallotQuestionQuery::create(null, $criteria);
+            $query = ChildQuestionQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1661,28 +1661,28 @@ abstract class Ballot implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collBallotQuestions);
+        return count($this->collQuestions);
     }
 
     /**
-     * Method called to associate a ChildBallotQuestion object to this object
-     * through the ChildBallotQuestion foreign key attribute.
+     * Method called to associate a ChildQuestion object to this object
+     * through the ChildQuestion foreign key attribute.
      *
-     * @param  ChildBallotQuestion $l ChildBallotQuestion
+     * @param  ChildQuestion $l ChildQuestion
      * @return $this|\MESBallotBox\Propel\Ballot The current object (for fluent API support)
      */
-    public function addBallotQuestion(ChildBallotQuestion $l)
+    public function addQuestion(ChildQuestion $l)
     {
-        if ($this->collBallotQuestions === null) {
-            $this->initBallotQuestions();
-            $this->collBallotQuestionsPartial = true;
+        if ($this->collQuestions === null) {
+            $this->initQuestions();
+            $this->collQuestionsPartial = true;
         }
 
-        if (!$this->collBallotQuestions->contains($l)) {
-            $this->doAddBallotQuestion($l);
+        if (!$this->collQuestions->contains($l)) {
+            $this->doAddQuestion($l);
 
-            if ($this->ballotQuestionsScheduledForDeletion and $this->ballotQuestionsScheduledForDeletion->contains($l)) {
-                $this->ballotQuestionsScheduledForDeletion->remove($this->ballotQuestionsScheduledForDeletion->search($l));
+            if ($this->questionsScheduledForDeletion and $this->questionsScheduledForDeletion->contains($l)) {
+                $this->questionsScheduledForDeletion->remove($this->questionsScheduledForDeletion->search($l));
             }
         }
 
@@ -1690,29 +1690,29 @@ abstract class Ballot implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildBallotQuestion $ballotQuestion The ChildBallotQuestion object to add.
+     * @param ChildQuestion $question The ChildQuestion object to add.
      */
-    protected function doAddBallotQuestion(ChildBallotQuestion $ballotQuestion)
+    protected function doAddQuestion(ChildQuestion $question)
     {
-        $this->collBallotQuestions[]= $ballotQuestion;
-        $ballotQuestion->setBallot($this);
+        $this->collQuestions[]= $question;
+        $question->setBallot($this);
     }
 
     /**
-     * @param  ChildBallotQuestion $ballotQuestion The ChildBallotQuestion object to remove.
+     * @param  ChildQuestion $question The ChildQuestion object to remove.
      * @return $this|ChildBallot The current object (for fluent API support)
      */
-    public function removeBallotQuestion(ChildBallotQuestion $ballotQuestion)
+    public function removeQuestion(ChildQuestion $question)
     {
-        if ($this->getBallotQuestions()->contains($ballotQuestion)) {
-            $pos = $this->collBallotQuestions->search($ballotQuestion);
-            $this->collBallotQuestions->remove($pos);
-            if (null === $this->ballotQuestionsScheduledForDeletion) {
-                $this->ballotQuestionsScheduledForDeletion = clone $this->collBallotQuestions;
-                $this->ballotQuestionsScheduledForDeletion->clear();
+        if ($this->getQuestions()->contains($question)) {
+            $pos = $this->collQuestions->search($question);
+            $this->collQuestions->remove($pos);
+            if (null === $this->questionsScheduledForDeletion) {
+                $this->questionsScheduledForDeletion = clone $this->collQuestions;
+                $this->questionsScheduledForDeletion->clear();
             }
-            $this->ballotQuestionsScheduledForDeletion[]= clone $ballotQuestion;
-            $ballotQuestion->setBallot(null);
+            $this->questionsScheduledForDeletion[]= clone $question;
+            $question->setBallot(null);
         }
 
         return $this;
@@ -1751,14 +1751,14 @@ abstract class Ballot implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collBallotQuestions) {
-                foreach ($this->collBallotQuestions as $o) {
+            if ($this->collQuestions) {
+                foreach ($this->collQuestions as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collBallotQuestions = null;
+        $this->collQuestions = null;
     }
 
     /**
@@ -1830,8 +1830,8 @@ abstract class Ballot implements ActiveRecordInterface
                 $failureMap->addAll($retval);
             }
 
-            if (null !== $this->collBallotQuestions) {
-                foreach ($this->collBallotQuestions as $referrerFK) {
+            if (null !== $this->collQuestions) {
+                foreach ($this->collQuestions as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

@@ -1,0 +1,26 @@
+<div class="main-content" ng-controller="questionViewController">
+<label>Name:</label> {{question.name}}<br/>
+<label>Type:</label> {{question.type}}<br/>
+<label>Description:</label> {{question.description}}<br/>
+<label>Read More link:</label> {{question.readmore}}<br/>
+<label>Discussion link:</label> {{question.discussion}}<br/>
+<div ng-show="question.type=='office' && candidates">
+<label>Candidates</label><br/>
+<ul>
+<li  ng-repeat="(candidateid, candidate) in candidates"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/questions/{{ question.id }}/candidate/{{ candidate.id }}">{{ candidate.firstName }} {{ candidate.lastName}} ({{ candidate.membershipNumber }})</a></li>
+</ul>
+<a ng-click="showAddCandidateForm()">Add Candidate</a>
+<form ng-show="addCandidateForm" novalidate ng-submit="addCandidate(newcandidate)" class="ballot-form">
+     <label>
+        Membership Number:
+    <input type="text" ng-model="newcandidate.membershipNumber">
+  </label><br/>
+  <label>
+        Application URL:
+    <input type="text" ng-model="newcandidate.application">
+  </label><br/>
+  ballotid {{newcandidate.ballotId}}
+  <input type="submit" value="Add Candidate" />
+</form>
+</div>
+</div>

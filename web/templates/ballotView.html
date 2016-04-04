@@ -4,6 +4,6 @@ Ballot Start: {{ballot.start}} {{ballot.timezone}}<br/>
 Ballot End: {{ballot.end}} {{ballot.timezone}}<br/>
 <a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a>
 <ul>
-<li  ng-repeat="(questionid, question) in questions"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/questions/{{ question.id }}">{{ question.name }}</a></li>
+<li  ng-repeat="(questionid, question) in questions"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a></li>
 </ul>
 </div>

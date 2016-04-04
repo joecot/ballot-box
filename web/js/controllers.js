@@ -53,10 +53,10 @@ ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$
     };
 }]);
 
-ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'BallotQuestion', function($scope, $http, $location, $routeParams, User, Ballot, BallotQuestion) {
+ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', function($scope, $http, $location, $routeParams, User, Ballot, Question) {
     $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
-            $scope.questions = BallotQuestion.query({'ballotId': $routeParams.ballotId});
+            $scope.questions = Question.query({'ballotId': $routeParams.ballotId});
         },
         function errorCallback(response){
             if(response.status == 401){
@@ -67,8 +67,8 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
     );
 }]);
 
-ballotboxControllers.controller('ballotQuestionCreateController', ['$scope', '$http', '$location', 'User', '$routeParams', 'Ballot', 'BallotQuestion', function($scope, $http, $location, User, $routeParams, Ballot, BallotQuestion) {
-    $scope.question= new BallotQuestion();
+ballotboxControllers.controller('questionCreateController', ['$scope', '$http', '$location', 'User', '$routeParams', 'Ballot', 'Question', function($scope, $http, $location, User, $routeParams, Ballot, Question) {
+    $scope.question= new Question();
     $scope.question.type="office";
     $scope.question.count=1;
     $scope.add = function(question){
@@ -77,8 +77,13 @@ ballotboxControllers.controller('ballotQuestionCreateController', ['$scope', '$h
             function successCallback(response) {
                     console.log('saved question');
                     console.log(response);
-                    console.log("/ballot/"+$routeParams.ballotId);
-                    $location.path( "/ballot/"+$routeParams.ballotId );
+                    console.log(question);
+                    if(question.type=='office')
+                        var path = "/ballot/"+$routeParams.ballotId+'/question/'+question.id;
+                    else
+                        var path = "/ballot/"+$routeParams.ballotId;
+                    console.log(path);
+                    $location.path(path);
             },
             function errorCallback(response){
                 if(response.status == 401){
@@ -89,4 +94,46 @@ ballotboxControllers.controller('ballotQuestionCreateController', ['$scope', '$h
         );
         
     };
+}]);
+
+ballotboxControllers.controller('questionViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', 'Candidate', function($scope, $http, $location, $routeParams, User, Ballot, Question, Candidate) {
+    $scope.question = Question.get({'ballotId': $routeParams.ballotId, 'questionId': $routeParams.questionId},
+        function successCallback(response) {
+            //$scope.questions = Question.query({'ballotId': $routeParams.ballotId});
+            $scope.newcandidate= new Candidate();
+            $scope.newcandidate.questionId = $scope.question.id;
+            $scope.newcandidate.ballotId = $scope.question.ballotId;
+            $scope.candidates = Candidate.query({ballotId: $scope.question.ballotId, questionId: $scope.question.id});
+        },
+        function errorCallback(response){
+            if(response.status == 401){
+                window.location = '/login?jspath='+$location.path();
+            }
+            console.log(response.data);
+        }
+    );
+    
+    $scope.addCandidateForm = false;
+    $scope.showAddCandidateForm = function(){
+        $scope.addCandidateForm=true;
+    }
+    $scope.addCandidate = function (newcandidate){
+        newcandidate.$save(
+            function successCallback(response) {
+                    console.log('saved question');
+                    console.log(response);
+                    console.log(newcandidate);
+                    $scope.newcandidate = new Candidate();
+                    $scope.newcandidate.questionId = $scope.question.id;
+                    $scope.newcandidate.ballotId = $scope.question.ballotId;
+                    $scope.candidates = Candidate.query({ballotId: $scope.question.ballotId, questionId: $scope.question.id});
+            },
+            function errorCallback(response){
+                if(response.status == 401){
+                    window.location = '/login?jspath='+$location.path();
+                }
+                console.log(response.data);
+            }
+        );
+    }
 }]);

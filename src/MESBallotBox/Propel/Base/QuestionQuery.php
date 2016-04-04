@@ -4,9 +4,9 @@ namespace MESBallotBox\Propel\Base;
 
 use \Exception;
 use \PDO;
-use MESBallotBox\Propel\BallotQuestion as ChildBallotQuestion;
-use MESBallotBox\Propel\BallotQuestionQuery as ChildBallotQuestionQuery;
-use MESBallotBox\Propel\Map\BallotQuestionTableMap;
+use MESBallotBox\Propel\Question as ChildQuestion;
+use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
+use MESBallotBox\Propel\Map\QuestionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,114 +16,124 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'Ballot_question' table.
+ * Base class that represents a query for the 'Question' table.
  *
  *
  *
- * @method     ChildBallotQuestionQuery orderByid($order = Criteria::ASC) Order by the id column
- * @method     ChildBallotQuestionQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
- * @method     ChildBallotQuestionQuery orderBytype($order = Criteria::ASC) Order by the type column
- * @method     ChildBallotQuestionQuery orderBycount($order = Criteria::ASC) Order by the count column
- * @method     ChildBallotQuestionQuery orderByname($order = Criteria::ASC) Order by the name column
- * @method     ChildBallotQuestionQuery orderBydescription($order = Criteria::ASC) Order by the description column
- * @method     ChildBallotQuestionQuery orderByreadmore($order = Criteria::ASC) Order by the readmore column
- * @method     ChildBallotQuestionQuery orderBydiscussion($order = Criteria::ASC) Order by the discussion column
+ * @method     ChildQuestionQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method     ChildQuestionQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
+ * @method     ChildQuestionQuery orderBytype($order = Criteria::ASC) Order by the type column
+ * @method     ChildQuestionQuery orderBycount($order = Criteria::ASC) Order by the count column
+ * @method     ChildQuestionQuery orderByname($order = Criteria::ASC) Order by the name column
+ * @method     ChildQuestionQuery orderBydescription($order = Criteria::ASC) Order by the description column
+ * @method     ChildQuestionQuery orderByreadmore($order = Criteria::ASC) Order by the readmore column
+ * @method     ChildQuestionQuery orderBydiscussion($order = Criteria::ASC) Order by the discussion column
  *
- * @method     ChildBallotQuestionQuery groupByid() Group by the id column
- * @method     ChildBallotQuestionQuery groupByballotId() Group by the ballot_id column
- * @method     ChildBallotQuestionQuery groupBytype() Group by the type column
- * @method     ChildBallotQuestionQuery groupBycount() Group by the count column
- * @method     ChildBallotQuestionQuery groupByname() Group by the name column
- * @method     ChildBallotQuestionQuery groupBydescription() Group by the description column
- * @method     ChildBallotQuestionQuery groupByreadmore() Group by the readmore column
- * @method     ChildBallotQuestionQuery groupBydiscussion() Group by the discussion column
+ * @method     ChildQuestionQuery groupByid() Group by the id column
+ * @method     ChildQuestionQuery groupByballotId() Group by the ballot_id column
+ * @method     ChildQuestionQuery groupBytype() Group by the type column
+ * @method     ChildQuestionQuery groupBycount() Group by the count column
+ * @method     ChildQuestionQuery groupByname() Group by the name column
+ * @method     ChildQuestionQuery groupBydescription() Group by the description column
+ * @method     ChildQuestionQuery groupByreadmore() Group by the readmore column
+ * @method     ChildQuestionQuery groupBydiscussion() Group by the discussion column
  *
- * @method     ChildBallotQuestionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildBallotQuestionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildBallotQuestionQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildQuestionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildQuestionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildQuestionQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildBallotQuestionQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
- * @method     ChildBallotQuestionQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
- * @method     ChildBallotQuestionQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ * @method     ChildQuestionQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildQuestionQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildQuestionQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildBallotQuestionQuery leftJoinBallot($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ballot relation
- * @method     ChildBallotQuestionQuery rightJoinBallot($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ballot relation
- * @method     ChildBallotQuestionQuery innerJoinBallot($relationAlias = null) Adds a INNER JOIN clause to the query using the Ballot relation
+ * @method     ChildQuestionQuery leftJoinBallot($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ballot relation
+ * @method     ChildQuestionQuery rightJoinBallot($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ballot relation
+ * @method     ChildQuestionQuery innerJoinBallot($relationAlias = null) Adds a INNER JOIN clause to the query using the Ballot relation
  *
- * @method     ChildBallotQuestionQuery joinWithBallot($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Ballot relation
+ * @method     ChildQuestionQuery joinWithBallot($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Ballot relation
  *
- * @method     ChildBallotQuestionQuery leftJoinWithBallot() Adds a LEFT JOIN clause and with to the query using the Ballot relation
- * @method     ChildBallotQuestionQuery rightJoinWithBallot() Adds a RIGHT JOIN clause and with to the query using the Ballot relation
- * @method     ChildBallotQuestionQuery innerJoinWithBallot() Adds a INNER JOIN clause and with to the query using the Ballot relation
+ * @method     ChildQuestionQuery leftJoinWithBallot() Adds a LEFT JOIN clause and with to the query using the Ballot relation
+ * @method     ChildQuestionQuery rightJoinWithBallot() Adds a RIGHT JOIN clause and with to the query using the Ballot relation
+ * @method     ChildQuestionQuery innerJoinWithBallot() Adds a INNER JOIN clause and with to the query using the Ballot relation
  *
- * @method     \MESBallotBox\Propel\BallotQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildQuestionQuery leftJoinCandidate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Candidate relation
+ * @method     ChildQuestionQuery rightJoinCandidate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Candidate relation
+ * @method     ChildQuestionQuery innerJoinCandidate($relationAlias = null) Adds a INNER JOIN clause to the query using the Candidate relation
  *
- * @method     ChildBallotQuestion findOne(ConnectionInterface $con = null) Return the first ChildBallotQuestion matching the query
- * @method     ChildBallotQuestion findOneOrCreate(ConnectionInterface $con = null) Return the first ChildBallotQuestion matching the query, or a new ChildBallotQuestion object populated from the query conditions when no match is found
+ * @method     ChildQuestionQuery joinWithCandidate($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Candidate relation
  *
- * @method     ChildBallotQuestion findOneByid(int $id) Return the first ChildBallotQuestion filtered by the id column
- * @method     ChildBallotQuestion findOneByballotId(int $ballot_id) Return the first ChildBallotQuestion filtered by the ballot_id column
- * @method     ChildBallotQuestion findOneBytype(int $type) Return the first ChildBallotQuestion filtered by the type column
- * @method     ChildBallotQuestion findOneBycount(int $count) Return the first ChildBallotQuestion filtered by the count column
- * @method     ChildBallotQuestion findOneByname(string $name) Return the first ChildBallotQuestion filtered by the name column
- * @method     ChildBallotQuestion findOneBydescription(string $description) Return the first ChildBallotQuestion filtered by the description column
- * @method     ChildBallotQuestion findOneByreadmore(string $readmore) Return the first ChildBallotQuestion filtered by the readmore column
- * @method     ChildBallotQuestion findOneBydiscussion(string $discussion) Return the first ChildBallotQuestion filtered by the discussion column *
+ * @method     ChildQuestionQuery leftJoinWithCandidate() Adds a LEFT JOIN clause and with to the query using the Candidate relation
+ * @method     ChildQuestionQuery rightJoinWithCandidate() Adds a RIGHT JOIN clause and with to the query using the Candidate relation
+ * @method     ChildQuestionQuery innerJoinWithCandidate() Adds a INNER JOIN clause and with to the query using the Candidate relation
+ *
+ * @method     \MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\CandidateQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
+ * @method     ChildQuestion findOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query
+ * @method     ChildQuestion findOneOrCreate(ConnectionInterface $con = null) Return the first ChildQuestion matching the query, or a new ChildQuestion object populated from the query conditions when no match is found
+ *
+ * @method     ChildQuestion findOneByid(int $id) Return the first ChildQuestion filtered by the id column
+ * @method     ChildQuestion findOneByballotId(int $ballot_id) Return the first ChildQuestion filtered by the ballot_id column
+ * @method     ChildQuestion findOneBytype(int $type) Return the first ChildQuestion filtered by the type column
+ * @method     ChildQuestion findOneBycount(int $count) Return the first ChildQuestion filtered by the count column
+ * @method     ChildQuestion findOneByname(string $name) Return the first ChildQuestion filtered by the name column
+ * @method     ChildQuestion findOneBydescription(string $description) Return the first ChildQuestion filtered by the description column
+ * @method     ChildQuestion findOneByreadmore(string $readmore) Return the first ChildQuestion filtered by the readmore column
+ * @method     ChildQuestion findOneBydiscussion(string $discussion) Return the first ChildQuestion filtered by the discussion column *
 
- * @method     ChildBallotQuestion requirePk($key, ConnectionInterface $con = null) Return the ChildBallotQuestion by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOne(ConnectionInterface $con = null) Return the first ChildBallotQuestion matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requirePk($key, ConnectionInterface $con = null) Return the ChildQuestion by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildBallotQuestion requireOneByid(int $id) Return the first ChildBallotQuestion filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneByballotId(int $ballot_id) Return the first ChildBallotQuestion filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneBytype(int $type) Return the first ChildBallotQuestion filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneBycount(int $count) Return the first ChildBallotQuestion filtered by the count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneByname(string $name) Return the first ChildBallotQuestion filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneBydescription(string $description) Return the first ChildBallotQuestion filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneByreadmore(string $readmore) Return the first ChildBallotQuestion filtered by the readmore column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildBallotQuestion requireOneBydiscussion(string $discussion) Return the first ChildBallotQuestion filtered by the discussion column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByid(int $id) Return the first ChildQuestion filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByballotId(int $ballot_id) Return the first ChildQuestion filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneBytype(int $type) Return the first ChildQuestion filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneBycount(int $count) Return the first ChildQuestion filtered by the count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByname(string $name) Return the first ChildQuestion filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneBydescription(string $description) Return the first ChildQuestion filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByreadmore(string $readmore) Return the first ChildQuestion filtered by the readmore column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneBydiscussion(string $discussion) Return the first ChildQuestion filtered by the discussion column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildBallotQuestion[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildBallotQuestion objects based on current ModelCriteria
- * @method     ChildBallotQuestion[]|ObjectCollection findByid(int $id) Return ChildBallotQuestion objects filtered by the id column
- * @method     ChildBallotQuestion[]|ObjectCollection findByballotId(int $ballot_id) Return ChildBallotQuestion objects filtered by the ballot_id column
- * @method     ChildBallotQuestion[]|ObjectCollection findBytype(int $type) Return ChildBallotQuestion objects filtered by the type column
- * @method     ChildBallotQuestion[]|ObjectCollection findBycount(int $count) Return ChildBallotQuestion objects filtered by the count column
- * @method     ChildBallotQuestion[]|ObjectCollection findByname(string $name) Return ChildBallotQuestion objects filtered by the name column
- * @method     ChildBallotQuestion[]|ObjectCollection findBydescription(string $description) Return ChildBallotQuestion objects filtered by the description column
- * @method     ChildBallotQuestion[]|ObjectCollection findByreadmore(string $readmore) Return ChildBallotQuestion objects filtered by the readmore column
- * @method     ChildBallotQuestion[]|ObjectCollection findBydiscussion(string $discussion) Return ChildBallotQuestion objects filtered by the discussion column
- * @method     ChildBallotQuestion[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildQuestion[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestion objects based on current ModelCriteria
+ * @method     ChildQuestion[]|ObjectCollection findByid(int $id) Return ChildQuestion objects filtered by the id column
+ * @method     ChildQuestion[]|ObjectCollection findByballotId(int $ballot_id) Return ChildQuestion objects filtered by the ballot_id column
+ * @method     ChildQuestion[]|ObjectCollection findBytype(int $type) Return ChildQuestion objects filtered by the type column
+ * @method     ChildQuestion[]|ObjectCollection findBycount(int $count) Return ChildQuestion objects filtered by the count column
+ * @method     ChildQuestion[]|ObjectCollection findByname(string $name) Return ChildQuestion objects filtered by the name column
+ * @method     ChildQuestion[]|ObjectCollection findBydescription(string $description) Return ChildQuestion objects filtered by the description column
+ * @method     ChildQuestion[]|ObjectCollection findByreadmore(string $readmore) Return ChildQuestion objects filtered by the readmore column
+ * @method     ChildQuestion[]|ObjectCollection findBydiscussion(string $discussion) Return ChildQuestion objects filtered by the discussion column
+ * @method     ChildQuestion[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class BallotQuestionQuery extends ModelCriteria
+abstract class QuestionQuery extends ModelCriteria
 {
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \MESBallotBox\Propel\Base\BallotQuestionQuery object.
+     * Initializes internal state of \MESBallotBox\Propel\Base\QuestionQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'default', $modelName = '\\MESBallotBox\\Propel\\BallotQuestion', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\MESBallotBox\\Propel\\Question', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildBallotQuestionQuery object.
+     * Returns a new ChildQuestionQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildBallotQuestionQuery
+     * @return ChildQuestionQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildBallotQuestionQuery) {
+        if ($criteria instanceof ChildQuestionQuery) {
             return $criteria;
         }
-        $query = new ChildBallotQuestionQuery();
+        $query = new ChildQuestionQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -146,19 +156,19 @@ abstract class BallotQuestionQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildBallotQuestion|array|mixed the result, formatted by the current formatter
+     * @return ChildQuestion|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = BallotQuestionTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
+        if ((null !== ($obj = QuestionTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(QuestionTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -179,11 +189,11 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildBallotQuestion A model object, or null if the key is not found
+     * @return ChildQuestion A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ballot_id, type, count, name, description, readmore, discussion FROM Ballot_question WHERE id = :p0';
+        $sql = 'SELECT id, ballot_id, type, count, name, description, readmore, discussion FROM Question WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -194,10 +204,10 @@ abstract class BallotQuestionQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildBallotQuestion $obj */
-            $obj = new ChildBallotQuestion();
+            /** @var ChildQuestion $obj */
+            $obj = new ChildQuestion();
             $obj->hydrate($row);
-            BallotQuestionTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            QuestionTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -210,7 +220,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildBallotQuestion|array|mixed the result, formatted by the current formatter
+     * @return ChildQuestion|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -252,12 +262,12 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(QuestionTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -265,12 +275,12 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(QuestionTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -289,18 +299,18 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -311,7 +321,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_ID, $id, $comparison);
     }
 
     /**
@@ -332,18 +342,18 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByballotId($ballotId = null, $comparison = null)
     {
         if (is_array($ballotId)) {
             $useMinMax = false;
             if (isset($ballotId['min'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_BALLOT_ID, $ballotId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballotId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($ballotId['max'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_BALLOT_ID, $ballotId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballotId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -354,7 +364,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_BALLOT_ID, $ballotId, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballotId, $comparison);
     }
 
     /**
@@ -363,11 +373,11 @@ abstract class BallotQuestionQuery extends ModelCriteria
      * @param     mixed $type The value to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterBytype($type = null, $comparison = null)
     {
-        $valueSet = BallotQuestionTableMap::getValueSet(BallotQuestionTableMap::COL_TYPE);
+        $valueSet = QuestionTableMap::getValueSet(QuestionTableMap::COL_TYPE);
         if (is_scalar($type)) {
             if (!in_array($type, $valueSet)) {
                 throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $type));
@@ -387,7 +397,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_TYPE, $type, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_TYPE, $type, $comparison);
     }
 
     /**
@@ -406,18 +416,18 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterBycount($count = null, $comparison = null)
     {
         if (is_array($count)) {
             $useMinMax = false;
             if (isset($count['min'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_COUNT, $count['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_COUNT, $count['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($count['max'])) {
-                $this->addUsingAlias(BallotQuestionTableMap::COL_COUNT, $count['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(QuestionTableMap::COL_COUNT, $count['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -428,7 +438,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_COUNT, $count, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_COUNT, $count, $comparison);
     }
 
     /**
@@ -444,7 +454,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByname($name = null, $comparison = null)
     {
@@ -457,7 +467,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_NAME, $name, $comparison);
     }
 
     /**
@@ -473,7 +483,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterBydescription($description = null, $comparison = null)
     {
@@ -486,7 +496,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_DESCRIPTION, $description, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_DESCRIPTION, $description, $comparison);
     }
 
     /**
@@ -502,7 +512,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByreadmore($readmore = null, $comparison = null)
     {
@@ -515,7 +525,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_READMORE, $readmore, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_READMORE, $readmore, $comparison);
     }
 
     /**
@@ -531,7 +541,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function filterBydiscussion($discussion = null, $comparison = null)
     {
@@ -544,7 +554,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(BallotQuestionTableMap::COL_DISCUSSION, $discussion, $comparison);
+        return $this->addUsingAlias(QuestionTableMap::COL_DISCUSSION, $discussion, $comparison);
     }
 
     /**
@@ -555,20 +565,20 @@ abstract class BallotQuestionQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildBallotQuestionQuery The current query, for fluid interface
+     * @return ChildQuestionQuery The current query, for fluid interface
      */
     public function filterByBallot($ballot, $comparison = null)
     {
         if ($ballot instanceof \MESBallotBox\Propel\Ballot) {
             return $this
-                ->addUsingAlias(BallotQuestionTableMap::COL_BALLOT_ID, $ballot->getid(), $comparison);
+                ->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballot->getid(), $comparison);
         } elseif ($ballot instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(BallotQuestionTableMap::COL_BALLOT_ID, $ballot->toKeyValue('PrimaryKey', 'id'), $comparison);
+                ->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballot->toKeyValue('PrimaryKey', 'id'), $comparison);
         } else {
             throw new PropelException('filterByBallot() only accepts arguments of type \MESBallotBox\Propel\Ballot or Collection');
         }
@@ -580,7 +590,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
      */
     public function joinBallot($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -625,23 +635,96 @@ abstract class BallotQuestionQuery extends ModelCriteria
     }
 
     /**
-     * Exclude object from result
+     * Filter the query by a related \MESBallotBox\Propel\Candidate object
      *
-     * @param   ChildBallotQuestion $ballotQuestion Object to remove from the list of results
+     * @param \MESBallotBox\Propel\Candidate|ObjectCollection $candidate the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildBallotQuestionQuery The current query, for fluid interface
+     * @return ChildQuestionQuery The current query, for fluid interface
      */
-    public function prune($ballotQuestion = null)
+    public function filterByCandidate($candidate, $comparison = null)
     {
-        if ($ballotQuestion) {
-            $this->addUsingAlias(BallotQuestionTableMap::COL_ID, $ballotQuestion->getid(), Criteria::NOT_EQUAL);
+        if ($candidate instanceof \MESBallotBox\Propel\Candidate) {
+            return $this
+                ->addUsingAlias(QuestionTableMap::COL_ID, $candidate->getquestionId(), $comparison);
+        } elseif ($candidate instanceof ObjectCollection) {
+            return $this
+                ->useCandidateQuery()
+                ->filterByPrimaryKeys($candidate->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByCandidate() only accepts arguments of type \MESBallotBox\Propel\Candidate or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Candidate relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function joinCandidate($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Candidate');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Candidate');
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the Ballot_question table.
+     * Use the Candidate relation Candidate object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\CandidateQuery A secondary query class using the current class as primary query
+     */
+    public function useCandidateQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinCandidate($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Candidate', '\MESBallotBox\Propel\CandidateQuery');
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param   ChildQuestion $question Object to remove from the list of results
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function prune($question = null)
+    {
+        if ($question) {
+            $this->addUsingAlias(QuestionTableMap::COL_ID, $question->getid(), Criteria::NOT_EQUAL);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Deletes all rows from the Question table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -649,7 +732,7 @@ abstract class BallotQuestionQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -660,8 +743,8 @@ abstract class BallotQuestionQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            BallotQuestionTableMap::clearInstancePool();
-            BallotQuestionTableMap::clearRelatedInstancePool();
+            QuestionTableMap::clearInstancePool();
+            QuestionTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -679,26 +762,26 @@ abstract class BallotQuestionQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(BallotQuestionTableMap::DATABASE_NAME);
+        $criteria->setDbName(QuestionTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            BallotQuestionTableMap::removeInstanceFromPool($criteria);
+            QuestionTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            BallotQuestionTableMap::clearRelatedInstancePool();
+            QuestionTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
     }
 
-} // BallotQuestionQuery
+} // QuestionQuery

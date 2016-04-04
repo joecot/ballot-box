@@ -26,8 +26,12 @@ ballotboxApp.config(['$routeProvider',
         controller: 'ballotViewController'
       }).
       when('/ballot/:ballotId/question/create', {
-        templateUrl: '/templates/ballotQuestionCreate.html',
-        controller: 'ballotQuestionCreateController'
+        templateUrl: '/templates/questionCreate.html',
+        controller: 'questionCreateController'
+      }).
+       when('/ballot/:ballotId/question/:questionId', {
+        templateUrl: '/templates/questionView.html',
+        controller: 'questionViewController'
       }).
       otherwise({
         redirectTo: '/index'

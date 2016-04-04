@@ -30,11 +30,32 @@ $app = new \Slim\App($container);
 $app->get('/', function ($request, $response) {
     return $this->view->render($response, 'index.html', []);
 })->setName('index');
-
+$app->get('/logout', function($request, $response){
+    unset($_SESSION['user']);
+    return $response->withStatus(301)->withHeader("Location", '/');
+});
+$app->get('/session', function($request, $response){
+    print_r($_SESSION);
+});
 $app->group('/API/', function(){
     $this->get('users/current', function ($request, $response) {
         echo json_encode($_SESSION['user']);
     })->setName('API/users/current');
+    $this->get('users/{membershipNumber}', function ($request, $response,$args) {
+        $q = new \MESBallotBox\Propel\UserQuery();
+        $user = $q->filterByMembershipNumber($args['membershipNumber'])->findOne();
+        if(!$user){
+            $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($args['membershipNumber']);
+            if(!$userInfo['remoteId']){
+                return $response->withStatus(400)->write('User not found');
+            }
+            $user = new \MESBallotBox\Propel\User();
+            $user->fromArray($userInfo);
+            $user->save();
+        }
+        //return json_encode($args);
+        return $response->write($user->toJSON());
+    });
     $this->group('ballots', function(){
         $this->post('', function($request, $response){
             $vars = $request->getParsedBody();
@@ -53,7 +74,7 @@ $app->group('/API/', function(){
             }catch(Exception $e){
                 return $response->withStatus(500)->write($e->getMessage());
             }
-            return $response->write(json_encode(Array('id' => $ballot->getId())));
+            return $response->write($ballot->toJSON());
         });
         $this->get('', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\BallotQuery();
@@ -82,8 +103,8 @@ $app->group('/API/', function(){
             $result['timezone'] = $ballot->getTimezoneNice();
             return $response->write(json_encode($result));
         });
-        $this->get('/{ballotId}/questions', function($request, $response, $args){
-             $q = new \MESBallotBox\Propel\BallotQuestionQuery();
+        $this->get('/{ballotId}/question', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\QuestionQuery();
             $questions = $q->filterByBallotId($args['ballotId'])->find();
             $results = Array();
             foreach($questions as $question){
@@ -92,21 +113,67 @@ $app->group('/API/', function(){
             
             return $response->write(json_encode($results));
         });
-         $this->post('/{ballotId}/questions', function($request, $response){
+        $this->get('/{ballotId}/question/{questionId}', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $question = $q->findPK($args['questionId']);
+            
+            return $response->write($question->toJSON());
+        });
+         $this->post('/{ballotId}/question', function($request, $response){
             $vars = $request->getParsedBody();
 
-            $question = new \MESBallotBox\Propel\BallotQuestion();
+            $question = new \MESBallotBox\Propel\Question();
             $question->fromArray($vars);
             
             if(!$question->validate()){
-                return $response->withStatus(400)->write($question->getValidationFailures()->__toString().$question->toJson());
+                return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
             }
             try{
                 $question->save();
             }catch(Exception $e){
                 return $response->withStatus(500)->write($e->getMessage());
             }
-            return $response->write(json_encode(Array('id' => $question->getId())));
+            return $response->write($question->toJSON());
+        });
+        $this->post('/{ballotId}/question/{questionId}/candidate', function($request, $response, $args){
+            $vars = $request->getParsedBody();
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $question = $q->findPK($vars['questionId']);
+            
+            $q = new \MESBallotBox\Propel\UserQuery();
+            $user = $q->filterByMembershipNumber($vars['membershipNumber'])->findOne();
+            if(!$user){
+                $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($vars['membershipNumber']);
+                if(!$userInfo['remoteId']){
+                    return $response->withStatus(400)->write('User not found');
+                }
+                $user = new \MESBallotBox\Propel\User();
+                $user->fromArray($userInfo);
+                $user->save();
+            }
+            
+            $candidate = new \MESBallotBox\Propel\Candidate();
+            $candidate->setQuestionId($question->getId());
+            $candidate->setUserId($user->getId());
+            $candidate->setApplication($vars['application']);
+            if(!$candidate->validate()){
+                return $response->withStatus(400)->write($candidate->getValidationFailures()->__toString());
+            }
+            try{
+                $candidate->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write($candidate->toJSON());
+        });
+        $this->get('/{ballotId}/question/{questionId}/candidate', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\CandidateQuery();
+            $candidates = $q->filterByQuestionId($args['questionId'])->find();
+            $results = Array();
+            foreach($candidates as $candidate){
+                $results[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
+            }
+            return $response->write(json_encode($results));
         });
     });
 })->add(function ($request, $response, $next) {

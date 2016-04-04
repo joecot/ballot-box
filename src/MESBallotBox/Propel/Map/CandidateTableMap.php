@@ -2,8 +2,8 @@
 
 namespace MESBallotBox\Propel\Map;
 
-use MESBallotBox\Propel\BallotQuestion;
-use MESBallotBox\Propel\BallotQuestionQuery;
+use MESBallotBox\Propel\Candidate;
+use MESBallotBox\Propel\CandidateQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'Ballot_question' table.
+ * This class defines the structure of the 'Candidate' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class BallotQuestionTableMap extends TableMap
+class CandidateTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class BallotQuestionTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'MESBallotBox.Propel.Map.BallotQuestionTableMap';
+    const CLASS_NAME = 'MESBallotBox.Propel.Map.CandidateTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class BallotQuestionTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'Ballot_question';
+    const TABLE_NAME = 'Candidate';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\MESBallotBox\\Propel\\BallotQuestion';
+    const OM_CLASS = '\\MESBallotBox\\Propel\\Candidate';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'MESBallotBox.Propel.BallotQuestion';
+    const CLASS_DEFAULT = 'MESBallotBox.Propel.Candidate';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,56 +69,32 @@ class BallotQuestionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'Ballot_question.id';
+    const COL_ID = 'Candidate.id';
 
     /**
-     * the column name for the ballot_id field
+     * the column name for the question_id field
      */
-    const COL_BALLOT_ID = 'Ballot_question.ballot_id';
+    const COL_QUESTION_ID = 'Candidate.question_id';
 
     /**
-     * the column name for the type field
+     * the column name for the user_id field
      */
-    const COL_TYPE = 'Ballot_question.type';
+    const COL_USER_ID = 'Candidate.user_id';
 
     /**
-     * the column name for the count field
+     * the column name for the application field
      */
-    const COL_COUNT = 'Ballot_question.count';
-
-    /**
-     * the column name for the name field
-     */
-    const COL_NAME = 'Ballot_question.name';
-
-    /**
-     * the column name for the description field
-     */
-    const COL_DESCRIPTION = 'Ballot_question.description';
-
-    /**
-     * the column name for the readmore field
-     */
-    const COL_READMORE = 'Ballot_question.readmore';
-
-    /**
-     * the column name for the discussion field
-     */
-    const COL_DISCUSSION = 'Ballot_question.discussion';
+    const COL_APPLICATION = 'Candidate.application';
 
     /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
-
-    /** The enumerated values for the type field */
-    const COL_TYPE_PROPOSITION = 'proposition';
-    const COL_TYPE_OFFICE = 'office';
 
     /**
      * holds an array of fieldnames
@@ -127,11 +103,11 @@ class BallotQuestionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_COLNAME       => array(BallotQuestionTableMap::COL_ID, BallotQuestionTableMap::COL_BALLOT_ID, BallotQuestionTableMap::COL_TYPE, BallotQuestionTableMap::COL_COUNT, BallotQuestionTableMap::COL_NAME, BallotQuestionTableMap::COL_DESCRIPTION, BallotQuestionTableMap::COL_READMORE, BallotQuestionTableMap::COL_DISCUSSION, ),
-        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id', 'questionId', 'userId', 'application', ),
+        self::TYPE_CAMELNAME     => array('id', 'questionId', 'userId', 'application', ),
+        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID, CandidateTableMap::COL_QUESTION_ID, CandidateTableMap::COL_USER_ID, CandidateTableMap::COL_APPLICATION, ),
+        self::TYPE_FIELDNAME     => array('id', 'question_id', 'user_id', 'application', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -141,41 +117,12 @@ class BallotQuestionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_COLNAME       => array(BallotQuestionTableMap::COL_ID => 0, BallotQuestionTableMap::COL_BALLOT_ID => 1, BallotQuestionTableMap::COL_TYPE => 2, BallotQuestionTableMap::COL_COUNT => 3, BallotQuestionTableMap::COL_NAME => 4, BallotQuestionTableMap::COL_DESCRIPTION => 5, BallotQuestionTableMap::COL_READMORE => 6, BallotQuestionTableMap::COL_DISCUSSION => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'questionId' => 1, 'userId' => 2, 'application' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'questionId' => 1, 'userId' => 2, 'application' => 3, ),
+        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID => 0, CandidateTableMap::COL_QUESTION_ID => 1, CandidateTableMap::COL_USER_ID => 2, CandidateTableMap::COL_APPLICATION => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'question_id' => 1, 'user_id' => 2, 'application' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
-
-    /** The enumerated values for this table */
-    protected static $enumValueSets = array(
-                BallotQuestionTableMap::COL_TYPE => array(
-                            self::COL_TYPE_PROPOSITION,
-            self::COL_TYPE_OFFICE,
-        ),
-    );
-
-    /**
-     * Gets the list of values for all ENUM and SET columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return static::$enumValueSets;
-    }
-
-    /**
-     * Gets the list of values for an ENUM or SET column
-     * @param string $colname
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet($colname)
-    {
-        $valueSets = self::getValueSets();
-
-        return $valueSets[$colname];
-    }
 
     /**
      * Initialize the table attributes and columns
@@ -187,25 +134,17 @@ class BallotQuestionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('Ballot_question');
-        $this->setPhpName('BallotQuestion');
+        $this->setName('Candidate');
+        $this->setPhpName('Candidate');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\MESBallotBox\\Propel\\BallotQuestion');
+        $this->setClassName('\\MESBallotBox\\Propel\\Candidate');
         $this->setPackage('MESBallotBox.Propel');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, 10, null);
-        $this->addForeignKey('ballot_id', 'ballotId', 'INTEGER', 'Ballot', 'id', true, 10, null);
-        $this->addColumn('type', 'type', 'ENUM', false, null, null);
-        $this->getColumn('type')->setValueSet(array (
-  0 => 'proposition',
-  1 => 'office',
-));
-        $this->addColumn('count', 'count', 'INTEGER', false, 10, null);
-        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
-        $this->addColumn('description', 'description', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('readmore', 'readmore', 'VARCHAR', false, 255, null);
-        $this->addColumn('discussion', 'discussion', 'VARCHAR', false, 255, null);
+        $this->addForeignKey('question_id', 'questionId', 'INTEGER', 'Question', 'id', true, 10, null);
+        $this->addForeignKey('user_id', 'userId', 'INTEGER', 'User', 'id', true, 10, null);
+        $this->addColumn('application', 'application', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -213,10 +152,17 @@ class BallotQuestionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Ballot', '\\MESBallotBox\\Propel\\Ballot', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Question', '\\MESBallotBox\\Propel\\Question', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':ballot_id',
+    0 => ':question_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
+        $this->addRelation('User', '\\MESBallotBox\\Propel\\User', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':user_id',
     1 => ':id',
   ),
 ), null, null, null, false);
@@ -231,7 +177,7 @@ class BallotQuestionTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
-            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Question name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',),), ),
+            'validate' => array('rule1' => array ('column' => 'user_id','validator' => 'NotNull','options' => array ('message' => 'Candidate not available',),), ),
         );
     } // getBehaviors()
 
@@ -292,7 +238,7 @@ class BallotQuestionTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? BallotQuestionTableMap::CLASS_DEFAULT : BallotQuestionTableMap::OM_CLASS;
+        return $withPrefix ? CandidateTableMap::CLASS_DEFAULT : CandidateTableMap::OM_CLASS;
     }
 
     /**
@@ -306,22 +252,22 @@ class BallotQuestionTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (BallotQuestion object, last column rank)
+     * @return array           (Candidate object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = BallotQuestionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = BallotQuestionTableMap::getInstanceFromPool($key))) {
+        $key = CandidateTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = CandidateTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + BallotQuestionTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + CandidateTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = BallotQuestionTableMap::OM_CLASS;
-            /** @var BallotQuestion $obj */
+            $cls = CandidateTableMap::OM_CLASS;
+            /** @var Candidate $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            BallotQuestionTableMap::addInstanceToPool($obj, $key);
+            CandidateTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -344,18 +290,18 @@ class BallotQuestionTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = BallotQuestionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = BallotQuestionTableMap::getInstanceFromPool($key))) {
+            $key = CandidateTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = CandidateTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var BallotQuestion $obj */
+                /** @var Candidate $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                BallotQuestionTableMap::addInstanceToPool($obj, $key);
+                CandidateTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -376,23 +322,15 @@ class BallotQuestionTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_ID);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_BALLOT_ID);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_TYPE);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_COUNT);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_NAME);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_READMORE);
-            $criteria->addSelectColumn(BallotQuestionTableMap::COL_DISCUSSION);
+            $criteria->addSelectColumn(CandidateTableMap::COL_ID);
+            $criteria->addSelectColumn(CandidateTableMap::COL_QUESTION_ID);
+            $criteria->addSelectColumn(CandidateTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(CandidateTableMap::COL_APPLICATION);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.ballot_id');
-            $criteria->addSelectColumn($alias . '.type');
-            $criteria->addSelectColumn($alias . '.count');
-            $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.description');
-            $criteria->addSelectColumn($alias . '.readmore');
-            $criteria->addSelectColumn($alias . '.discussion');
+            $criteria->addSelectColumn($alias . '.question_id');
+            $criteria->addSelectColumn($alias . '.user_id');
+            $criteria->addSelectColumn($alias . '.application');
         }
     }
 
@@ -405,7 +343,7 @@ class BallotQuestionTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(BallotQuestionTableMap::DATABASE_NAME)->getTable(BallotQuestionTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(CandidateTableMap::DATABASE_NAME)->getTable(CandidateTableMap::TABLE_NAME);
     }
 
     /**
@@ -413,16 +351,16 @@ class BallotQuestionTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(BallotQuestionTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(BallotQuestionTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new BallotQuestionTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(CandidateTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(CandidateTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new CandidateTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a BallotQuestion or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Candidate or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or BallotQuestion object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Candidate object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -433,27 +371,27 @@ class BallotQuestionTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CandidateTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \MESBallotBox\Propel\BallotQuestion) { // it's a model object
+        } elseif ($values instanceof \MESBallotBox\Propel\Candidate) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(BallotQuestionTableMap::DATABASE_NAME);
-            $criteria->add(BallotQuestionTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(CandidateTableMap::DATABASE_NAME);
+            $criteria->add(CandidateTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = BallotQuestionQuery::create()->mergeWith($criteria);
+        $query = CandidateQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            BallotQuestionTableMap::clearInstancePool();
+            CandidateTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                BallotQuestionTableMap::removeInstanceFromPool($singleval);
+                CandidateTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -461,20 +399,20 @@ class BallotQuestionTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the Ballot_question table.
+     * Deletes all rows from the Candidate table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return BallotQuestionQuery::create()->doDeleteAll($con);
+        return CandidateQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a BallotQuestion or Criteria object.
+     * Performs an INSERT on the database, given a Candidate or Criteria object.
      *
-     * @param mixed               $criteria Criteria or BallotQuestion object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Candidate object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -483,22 +421,22 @@ class BallotQuestionTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(BallotQuestionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CandidateTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from BallotQuestion object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Candidate object
         }
 
-        if ($criteria->containsKey(BallotQuestionTableMap::COL_ID) && $criteria->keyContainsValue(BallotQuestionTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.BallotQuestionTableMap::COL_ID.')');
+        if ($criteria->containsKey(CandidateTableMap::COL_ID) && $criteria->keyContainsValue(CandidateTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CandidateTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = BallotQuestionQuery::create()->mergeWith($criteria);
+        $query = CandidateQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -507,7 +445,7 @@ class BallotQuestionTableMap extends TableMap
         });
     }
 
-} // BallotQuestionTableMap
+} // CandidateTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BallotQuestionTableMap::buildTableMap();
+CandidateTableMap::buildTableMap();

@@ -176,13 +176,13 @@ class BallotTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('BallotQuestion', '\\MESBallotBox\\Propel\\BallotQuestion', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Question', '\\MESBallotBox\\Propel\\Question', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':ballot_id',
     1 => ':id',
   ),
-), null, null, 'BallotQuestions', false);
+), null, null, 'Questions', false);
     } // buildRelations()
 
     /**

@@ -2,10 +2,10 @@
 
 namespace MESBallotBox\Propel;
 
-use MESBallotBox\Propel\Base\BallotQuestionQuery as BaseBallotQuestionQuery;
+use MESBallotBox\Propel\Base\CandidateQuery as BaseCandidateQuery;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'Ballot_question' table.
+ * Skeleton subclass for performing query and update operations on the 'Candidate' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use MESBallotBox\Propel\Base\BallotQuestionQuery as BaseBallotQuestionQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class BallotQuestionQuery extends BaseBallotQuestionQuery
+class CandidateQuery extends BaseCandidateQuery
 {
 
 }

@@ -14,9 +14,16 @@ ballotboxServices.factory('Ballot', ['$resource',
       
     });
   }]);
-ballotboxServices.factory('BallotQuestion', ['$resource',
+ballotboxServices.factory('Question', ['$resource',
   function($resource){
-    return $resource('API/ballots/:ballotId/questions/:questionId', { ballotId: '@ballotId', questionId: '@id' }, {
+    return $resource('API/ballots/:ballotId/question/:questionId', { ballotId: '@ballotId', questionId: '@id' }, {
+      
+    });
+  }]);
+
+ballotboxServices.factory('Candidate', ['$resource',
+  function($resource){
+    return $resource('API/ballots/:ballotId/question/:questionId/candidate/:candidateId', { ballotId: '@ballotId', questionId: '@questionId', candidateid: '@id' }, {
       
     });
   }]);

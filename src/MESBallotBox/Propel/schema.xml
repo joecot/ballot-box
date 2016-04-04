@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="MESBallotBox\Propel">
   <table name="User" idMethod="native" phpName="User">
-    <column name="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="membership_number" type="VARCHAR" size="20" required="true"/>
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="remote_id" phpName="remoteId" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="membership_number" phpName="membershipNumber" type="VARCHAR" size="20" required="true"/>
+    <column name="first_name" phpName="firstName" type="VARCHAR" size="128" required="true"/>
+    <column name="last_name" phpName="lastName" type="VARCHAR" size="128" required="true"/>
+    <column name="email_address" phpName="emailAddress" type="VARCHAR" size="128" required="true"/>
+    <column name="affiliate_id" phpName="affiliateId" type="INTEGER" size="10" sqlType="int(10) unsigned"/>
     <unique name="membership_number">
       <unique-column name="membership_number"/>
+    </unique>
+    <unique name="remote_id">
+      <unique-column name="remote_id"/>
     </unique>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -34,7 +42,7 @@
       <parameter name="rule4" value="{column: end_time, validator: NotNull}" />
     </behavior>
   </table>
-  <table name="Ballot_question" idMethod="native" phpName="BallotQuestion">
+  <table name="Question" idMethod="native" phpName="Question">
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="type" phpName='type' type="enum" valueSet="proposition, office"/>
@@ -52,6 +60,24 @@
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Question name cannot be blank'}}" />
       <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
+    </behavior>
+  </table>
+  <table name="Candidate" idMethod="native" phpName="Candidate">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="question_id" phpName='questionId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="application" phpName='application' type="varchar" size="255" required="false"/>
+    <foreign-key foreignTable="Question">
+      <reference local="question_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="User">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: user_id, validator: NotNull, options: {message: 'Candidate not available'}}" />
     </behavior>
   </table>
 </database>

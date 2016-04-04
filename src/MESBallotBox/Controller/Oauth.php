@@ -57,14 +57,14 @@ class Oauth{
                 $user = $resourceOwner->toArray();
 
                 $userselect = \MESBallotBox\Propel\UserQuery::create();
-                $userRow = $userselect->findOneByMembershipNumber($user['membershipNumber']);
-                if($userRow) $user['id'] = $userRow->getId();
+                $userRow = $userselect->findOneByremoteId($user['remoteId']);
+                if($userRow) $userRow->fromArray($user);
                 else{
                     $userRow = new \MESBallotBox\Propel\User();
-                    $userRow->setMembershipNumber($user['membershipNumber']);
-                    $userRow->save();
-                    $user['id'] = $userRow->getId();
+                    $userRow->fromArray($user);
                 }
+                $userRow->save();
+                $user['id'] = $userRow->getId();
                 $_SESSION['user'] = $user;
                 $_SESSION['accessToken'] = $accessToken;
                 if($_SESSION['jspath']){
@@ -83,5 +83,11 @@ class Oauth{
         
             }
         }
+    }
+    static public function LookupByMembershipNumber($membershipNumber){
+        $provider = self::getProvider();
+        $url = 'https://portal.mindseyesociety.org/api/users/'.$membershipNumber.'/membershipnumber';
+        $request = $provider->getAuthenticatedRequest($provider::METHOD_GET, $url, $_SESSION['accessToken']);
+        return $provider->getResponse($request);
     }
 }

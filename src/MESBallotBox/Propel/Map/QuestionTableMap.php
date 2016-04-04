@@ -2,8 +2,8 @@
 
 namespace MESBallotBox\Propel\Map;
 
-use MESBallotBox\Propel\User;
-use MESBallotBox\Propel\UserQuery;
+use MESBallotBox\Propel\Question;
+use MESBallotBox\Propel\QuestionQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'User' table.
+ * This class defines the structure of the 'Question' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class UserTableMap extends TableMap
+class QuestionTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class UserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'MESBallotBox.Propel.Map.UserTableMap';
+    const CLASS_NAME = 'MESBallotBox.Propel.Map.QuestionTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'User';
+    const TABLE_NAME = 'Question';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\MESBallotBox\\Propel\\User';
+    const OM_CLASS = '\\MESBallotBox\\Propel\\Question';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'MESBallotBox.Propel.User';
+    const CLASS_DEFAULT = 'MESBallotBox.Propel.Question';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,47 +69,56 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'User.id';
+    const COL_ID = 'Question.id';
 
     /**
-     * the column name for the remote_id field
+     * the column name for the ballot_id field
      */
-    const COL_REMOTE_ID = 'User.remote_id';
+    const COL_BALLOT_ID = 'Question.ballot_id';
 
     /**
-     * the column name for the membership_number field
+     * the column name for the type field
      */
-    const COL_MEMBERSHIP_NUMBER = 'User.membership_number';
+    const COL_TYPE = 'Question.type';
 
     /**
-     * the column name for the first_name field
+     * the column name for the count field
      */
-    const COL_FIRST_NAME = 'User.first_name';
+    const COL_COUNT = 'Question.count';
 
     /**
-     * the column name for the last_name field
+     * the column name for the name field
      */
-    const COL_LAST_NAME = 'User.last_name';
+    const COL_NAME = 'Question.name';
 
     /**
-     * the column name for the email_address field
+     * the column name for the description field
      */
-    const COL_EMAIL_ADDRESS = 'User.email_address';
+    const COL_DESCRIPTION = 'Question.description';
 
     /**
-     * the column name for the affiliate_id field
+     * the column name for the readmore field
      */
-    const COL_AFFILIATE_ID = 'User.affiliate_id';
+    const COL_READMORE = 'Question.readmore';
+
+    /**
+     * the column name for the discussion field
+     */
+    const COL_DISCUSSION = 'Question.discussion';
 
     /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
+
+    /** The enumerated values for the type field */
+    const COL_TYPE_PROPOSITION = 'proposition';
+    const COL_TYPE_OFFICE = 'office';
 
     /**
      * holds an array of fieldnames
@@ -118,11 +127,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'remoteId', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', 'affiliateId', ),
-        self::TYPE_CAMELNAME     => array('id', 'remoteId', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', 'affiliateId', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_REMOTE_ID, UserTableMap::COL_MEMBERSHIP_NUMBER, UserTableMap::COL_FIRST_NAME, UserTableMap::COL_LAST_NAME, UserTableMap::COL_EMAIL_ADDRESS, UserTableMap::COL_AFFILIATE_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'remote_id', 'membership_number', 'first_name', 'last_name', 'email_address', 'affiliate_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
+        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BALLOT_ID, QuestionTableMap::COL_TYPE, QuestionTableMap::COL_COUNT, QuestionTableMap::COL_NAME, QuestionTableMap::COL_DESCRIPTION, QuestionTableMap::COL_READMORE, QuestionTableMap::COL_DISCUSSION, ),
+        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -132,12 +141,41 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'remoteId' => 1, 'membershipNumber' => 2, 'firstName' => 3, 'lastName' => 4, 'emailAddress' => 5, 'affiliateId' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'remoteId' => 1, 'membershipNumber' => 2, 'firstName' => 3, 'lastName' => 4, 'emailAddress' => 5, 'affiliateId' => 6, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_REMOTE_ID => 1, UserTableMap::COL_MEMBERSHIP_NUMBER => 2, UserTableMap::COL_FIRST_NAME => 3, UserTableMap::COL_LAST_NAME => 4, UserTableMap::COL_EMAIL_ADDRESS => 5, UserTableMap::COL_AFFILIATE_ID => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'remote_id' => 1, 'membership_number' => 2, 'first_name' => 3, 'last_name' => 4, 'email_address' => 5, 'affiliate_id' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BALLOT_ID => 1, QuestionTableMap::COL_TYPE => 2, QuestionTableMap::COL_COUNT => 3, QuestionTableMap::COL_NAME => 4, QuestionTableMap::COL_DESCRIPTION => 5, QuestionTableMap::COL_READMORE => 6, QuestionTableMap::COL_DISCUSSION => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
+
+    /** The enumerated values for this table */
+    protected static $enumValueSets = array(
+                QuestionTableMap::COL_TYPE => array(
+                            self::COL_TYPE_PROPOSITION,
+            self::COL_TYPE_OFFICE,
+        ),
+    );
+
+    /**
+     * Gets the list of values for all ENUM and SET columns
+     * @return array
+     */
+    public static function getValueSets()
+    {
+      return static::$enumValueSets;
+    }
+
+    /**
+     * Gets the list of values for an ENUM or SET column
+     * @param string $colname
+     * @return array list of possible values for the column
+     */
+    public static function getValueSet($colname)
+    {
+        $valueSets = self::getValueSets();
+
+        return $valueSets[$colname];
+    }
 
     /**
      * Initialize the table attributes and columns
@@ -149,20 +187,25 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('User');
-        $this->setPhpName('User');
+        $this->setName('Question');
+        $this->setPhpName('Question');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\MESBallotBox\\Propel\\User');
+        $this->setClassName('\\MESBallotBox\\Propel\\Question');
         $this->setPackage('MESBallotBox.Propel');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, 10, null);
-        $this->addColumn('remote_id', 'remoteId', 'INTEGER', true, 10, null);
-        $this->addColumn('membership_number', 'membershipNumber', 'VARCHAR', true, 20, null);
-        $this->addColumn('first_name', 'firstName', 'VARCHAR', true, 128, null);
-        $this->addColumn('last_name', 'lastName', 'VARCHAR', true, 128, null);
-        $this->addColumn('email_address', 'emailAddress', 'VARCHAR', true, 128, null);
-        $this->addColumn('affiliate_id', 'affiliateId', 'INTEGER', false, 10, null);
+        $this->addForeignKey('ballot_id', 'ballotId', 'INTEGER', 'Ballot', 'id', true, 10, null);
+        $this->addColumn('type', 'type', 'ENUM', false, null, null);
+        $this->getColumn('type')->setValueSet(array (
+  0 => 'proposition',
+  1 => 'office',
+));
+        $this->addColumn('count', 'count', 'INTEGER', false, 10, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
+        $this->addColumn('description', 'description', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('readmore', 'readmore', 'VARCHAR', false, 255, null);
+        $this->addColumn('discussion', 'discussion', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -170,14 +213,34 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Ballot', '\\MESBallotBox\\Propel\\Ballot', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':ballot_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
         $this->addRelation('Candidate', '\\MESBallotBox\\Propel\\Candidate', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':question_id',
     1 => ':id',
   ),
 ), null, null, 'Candidates', false);
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Question name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',),), ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -236,7 +299,7 @@ class UserTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserTableMap::CLASS_DEFAULT : UserTableMap::OM_CLASS;
+        return $withPrefix ? QuestionTableMap::CLASS_DEFAULT : QuestionTableMap::OM_CLASS;
     }
 
     /**
@@ -250,22 +313,22 @@ class UserTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (User object, last column rank)
+     * @return array           (Question object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+        $key = QuestionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = QuestionTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + QuestionTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserTableMap::OM_CLASS;
-            /** @var User $obj */
+            $cls = QuestionTableMap::OM_CLASS;
+            /** @var Question $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserTableMap::addInstanceToPool($obj, $key);
+            QuestionTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -288,18 +351,18 @@ class UserTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+            $key = QuestionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = QuestionTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var User $obj */
+                /** @var Question $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserTableMap::addInstanceToPool($obj, $key);
+                QuestionTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -320,21 +383,23 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_REMOTE_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_MEMBERSHIP_NUMBER);
-            $criteria->addSelectColumn(UserTableMap::COL_FIRST_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_LAST_NAME);
-            $criteria->addSelectColumn(UserTableMap::COL_EMAIL_ADDRESS);
-            $criteria->addSelectColumn(UserTableMap::COL_AFFILIATE_ID);
+            $criteria->addSelectColumn(QuestionTableMap::COL_ID);
+            $criteria->addSelectColumn(QuestionTableMap::COL_BALLOT_ID);
+            $criteria->addSelectColumn(QuestionTableMap::COL_TYPE);
+            $criteria->addSelectColumn(QuestionTableMap::COL_COUNT);
+            $criteria->addSelectColumn(QuestionTableMap::COL_NAME);
+            $criteria->addSelectColumn(QuestionTableMap::COL_DESCRIPTION);
+            $criteria->addSelectColumn(QuestionTableMap::COL_READMORE);
+            $criteria->addSelectColumn(QuestionTableMap::COL_DISCUSSION);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.remote_id');
-            $criteria->addSelectColumn($alias . '.membership_number');
-            $criteria->addSelectColumn($alias . '.first_name');
-            $criteria->addSelectColumn($alias . '.last_name');
-            $criteria->addSelectColumn($alias . '.email_address');
-            $criteria->addSelectColumn($alias . '.affiliate_id');
+            $criteria->addSelectColumn($alias . '.ballot_id');
+            $criteria->addSelectColumn($alias . '.type');
+            $criteria->addSelectColumn($alias . '.count');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.description');
+            $criteria->addSelectColumn($alias . '.readmore');
+            $criteria->addSelectColumn($alias . '.discussion');
         }
     }
 
@@ -347,7 +412,7 @@ class UserTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME)->getTable(UserTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(QuestionTableMap::DATABASE_NAME)->getTable(QuestionTableMap::TABLE_NAME);
     }
 
     /**
@@ -355,16 +420,16 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(QuestionTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(QuestionTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new QuestionTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a User or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Question or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or User object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Question object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -375,27 +440,27 @@ class UserTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \MESBallotBox\Propel\User) { // it's a model object
+        } elseif ($values instanceof \MESBallotBox\Propel\Question) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(QuestionTableMap::DATABASE_NAME);
+            $criteria->add(QuestionTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = QuestionQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            UserTableMap::clearInstancePool();
+            QuestionTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                UserTableMap::removeInstanceFromPool($singleval);
+                QuestionTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -403,20 +468,20 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the User table.
+     * Deletes all rows from the Question table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserQuery::create()->doDeleteAll($con);
+        return QuestionQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a User or Criteria object.
+     * Performs an INSERT on the database, given a Question or Criteria object.
      *
-     * @param mixed               $criteria Criteria or User object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Question object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -425,22 +490,22 @@ class UserTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from User object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Question object
         }
 
-        if ($criteria->containsKey(UserTableMap::COL_ID) && $criteria->keyContainsValue(UserTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::COL_ID.')');
+        if ($criteria->containsKey(QuestionTableMap::COL_ID) && $criteria->keyContainsValue(QuestionTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.QuestionTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = QuestionQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -449,7 +514,7 @@ class UserTableMap extends TableMap
         });
     }
 
-} // UserTableMap
+} // QuestionTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserTableMap::buildTableMap();
+QuestionTableMap::buildTableMap();

@@ -10,6 +10,7 @@ use MESBallotBox\Propel\Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -19,11 +20,21 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  *
- * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildUserQuery orderByMembershipNumber($order = Criteria::ASC) Order by the membership_number column
+ * @method     ChildUserQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method     ChildUserQuery orderByremoteId($order = Criteria::ASC) Order by the remote_id column
+ * @method     ChildUserQuery orderBymembershipNumber($order = Criteria::ASC) Order by the membership_number column
+ * @method     ChildUserQuery orderByfirstName($order = Criteria::ASC) Order by the first_name column
+ * @method     ChildUserQuery orderBylastName($order = Criteria::ASC) Order by the last_name column
+ * @method     ChildUserQuery orderByemailAddress($order = Criteria::ASC) Order by the email_address column
+ * @method     ChildUserQuery orderByaffiliateId($order = Criteria::ASC) Order by the affiliate_id column
  *
- * @method     ChildUserQuery groupById() Group by the id column
- * @method     ChildUserQuery groupByMembershipNumber() Group by the membership_number column
+ * @method     ChildUserQuery groupByid() Group by the id column
+ * @method     ChildUserQuery groupByremoteId() Group by the remote_id column
+ * @method     ChildUserQuery groupBymembershipNumber() Group by the membership_number column
+ * @method     ChildUserQuery groupByfirstName() Group by the first_name column
+ * @method     ChildUserQuery groupBylastName() Group by the last_name column
+ * @method     ChildUserQuery groupByemailAddress() Group by the email_address column
+ * @method     ChildUserQuery groupByaffiliateId() Group by the affiliate_id column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -33,21 +44,48 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildUserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildUserQuery leftJoinCandidate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Candidate relation
+ * @method     ChildUserQuery rightJoinCandidate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Candidate relation
+ * @method     ChildUserQuery innerJoinCandidate($relationAlias = null) Adds a INNER JOIN clause to the query using the Candidate relation
+ *
+ * @method     ChildUserQuery joinWithCandidate($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Candidate relation
+ *
+ * @method     ChildUserQuery leftJoinWithCandidate() Adds a LEFT JOIN clause and with to the query using the Candidate relation
+ * @method     ChildUserQuery rightJoinWithCandidate() Adds a RIGHT JOIN clause and with to the query using the Candidate relation
+ * @method     ChildUserQuery innerJoinWithCandidate() Adds a INNER JOIN clause and with to the query using the Candidate relation
+ *
+ * @method     \MESBallotBox\Propel\CandidateQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
- * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
- * @method     ChildUser findOneByMembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column *
+ * @method     ChildUser findOneByid(int $id) Return the first ChildUser filtered by the id column
+ * @method     ChildUser findOneByremoteId(int $remote_id) Return the first ChildUser filtered by the remote_id column
+ * @method     ChildUser findOneBymembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column
+ * @method     ChildUser findOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column
+ * @method     ChildUser findOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column
+ * @method     ChildUser findOneByemailAddress(string $email_address) Return the first ChildUser filtered by the email_address column
+ * @method     ChildUser findOneByaffiliateId(int $affiliate_id) Return the first ChildUser filtered by the affiliate_id column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByMembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByid(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByremoteId(int $remote_id) Return the first ChildUser filtered by the remote_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneBymembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByemailAddress(string $email_address) Return the first ChildUser filtered by the email_address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByaffiliateId(int $affiliate_id) Return the first ChildUser filtered by the affiliate_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
- * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
- * @method     ChildUser[]|ObjectCollection findByMembershipNumber(string $membership_number) Return ChildUser objects filtered by the membership_number column
+ * @method     ChildUser[]|ObjectCollection findByid(int $id) Return ChildUser objects filtered by the id column
+ * @method     ChildUser[]|ObjectCollection findByremoteId(int $remote_id) Return ChildUser objects filtered by the remote_id column
+ * @method     ChildUser[]|ObjectCollection findBymembershipNumber(string $membership_number) Return ChildUser objects filtered by the membership_number column
+ * @method     ChildUser[]|ObjectCollection findByfirstName(string $first_name) Return ChildUser objects filtered by the first_name column
+ * @method     ChildUser[]|ObjectCollection findBylastName(string $last_name) Return ChildUser objects filtered by the last_name column
+ * @method     ChildUser[]|ObjectCollection findByemailAddress(string $email_address) Return ChildUser objects filtered by the email_address column
+ * @method     ChildUser[]|ObjectCollection findByaffiliateId(int $affiliate_id) Return ChildUser objects filtered by the affiliate_id column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -140,7 +178,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, membership_number FROM User WHERE id = :p0';
+        $sql = 'SELECT id, remote_id, membership_number, first_name, last_name, email_address, affiliate_id FROM User WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -235,9 +273,9 @@ abstract class UserQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * $query->filterByid(1234); // WHERE id = 1234
+     * $query->filterByid(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterByid(array('min' => 12)); // WHERE id > 12
      * </code>
      *
      * @param     mixed $id The value to use as filter.
@@ -248,7 +286,7 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterById($id = null, $comparison = null)
+    public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
@@ -272,12 +310,53 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the remote_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByremoteId(1234); // WHERE remote_id = 1234
+     * $query->filterByremoteId(array(12, 34)); // WHERE remote_id IN (12, 34)
+     * $query->filterByremoteId(array('min' => 12)); // WHERE remote_id > 12
+     * </code>
+     *
+     * @param     mixed $remoteId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByremoteId($remoteId = null, $comparison = null)
+    {
+        if (is_array($remoteId)) {
+            $useMinMax = false;
+            if (isset($remoteId['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($remoteId['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId, $comparison);
+    }
+
+    /**
      * Filter the query on the membership_number column
      *
      * Example usage:
      * <code>
-     * $query->filterByMembershipNumber('fooValue');   // WHERE membership_number = 'fooValue'
-     * $query->filterByMembershipNumber('%fooValue%'); // WHERE membership_number LIKE '%fooValue%'
+     * $query->filterBymembershipNumber('fooValue');   // WHERE membership_number = 'fooValue'
+     * $query->filterBymembershipNumber('%fooValue%'); // WHERE membership_number LIKE '%fooValue%'
      * </code>
      *
      * @param     string $membershipNumber The value to use as filter.
@@ -286,7 +365,7 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByMembershipNumber($membershipNumber = null, $comparison = null)
+    public function filterBymembershipNumber($membershipNumber = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($membershipNumber)) {
@@ -301,6 +380,207 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the first_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByfirstName('fooValue');   // WHERE first_name = 'fooValue'
+     * $query->filterByfirstName('%fooValue%'); // WHERE first_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $firstName The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByfirstName($firstName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($firstName)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $firstName)) {
+                $firstName = str_replace('*', '%', $firstName);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_FIRST_NAME, $firstName, $comparison);
+    }
+
+    /**
+     * Filter the query on the last_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBylastName('fooValue');   // WHERE last_name = 'fooValue'
+     * $query->filterBylastName('%fooValue%'); // WHERE last_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $lastName The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterBylastName($lastName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($lastName)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $lastName)) {
+                $lastName = str_replace('*', '%', $lastName);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_LAST_NAME, $lastName, $comparison);
+    }
+
+    /**
+     * Filter the query on the email_address column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByemailAddress('fooValue');   // WHERE email_address = 'fooValue'
+     * $query->filterByemailAddress('%fooValue%'); // WHERE email_address LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $emailAddress The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByemailAddress($emailAddress = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($emailAddress)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $emailAddress)) {
+                $emailAddress = str_replace('*', '%', $emailAddress);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_EMAIL_ADDRESS, $emailAddress, $comparison);
+    }
+
+    /**
+     * Filter the query on the affiliate_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByaffiliateId(1234); // WHERE affiliate_id = 1234
+     * $query->filterByaffiliateId(array(12, 34)); // WHERE affiliate_id IN (12, 34)
+     * $query->filterByaffiliateId(array('min' => 12)); // WHERE affiliate_id > 12
+     * </code>
+     *
+     * @param     mixed $affiliateId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByaffiliateId($affiliateId = null, $comparison = null)
+    {
+        if (is_array($affiliateId)) {
+            $useMinMax = false;
+            if (isset($affiliateId['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($affiliateId['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \MESBallotBox\Propel\Candidate object
+     *
+     * @param \MESBallotBox\Propel\Candidate|ObjectCollection $candidate the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByCandidate($candidate, $comparison = null)
+    {
+        if ($candidate instanceof \MESBallotBox\Propel\Candidate) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $candidate->getuserId(), $comparison);
+        } elseif ($candidate instanceof ObjectCollection) {
+            return $this
+                ->useCandidateQuery()
+                ->filterByPrimaryKeys($candidate->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByCandidate() only accepts arguments of type \MESBallotBox\Propel\Candidate or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Candidate relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinCandidate($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Candidate');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Candidate');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Candidate relation Candidate object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\CandidateQuery A secondary query class using the current class as primary query
+     */
+    public function useCandidateQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinCandidate($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Candidate', '\MESBallotBox\Propel\CandidateQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildUser $user Object to remove from the list of results
@@ -310,7 +590,7 @@ abstract class UserQuery extends ModelCriteria
     public function prune($user = null)
     {
         if ($user) {
-            $this->addUsingAlias(UserTableMap::COL_ID, $user->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(UserTableMap::COL_ID, $user->getid(), Criteria::NOT_EQUAL);
         }
 
         return $this;

@@ -46,17 +46,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildBallotQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildBallotQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildBallotQuery leftJoinBallotQuestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the BallotQuestion relation
- * @method     ChildBallotQuery rightJoinBallotQuestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the BallotQuestion relation
- * @method     ChildBallotQuery innerJoinBallotQuestion($relationAlias = null) Adds a INNER JOIN clause to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery leftJoinQuestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the Question relation
+ * @method     ChildBallotQuery rightJoinQuestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Question relation
+ * @method     ChildBallotQuery innerJoinQuestion($relationAlias = null) Adds a INNER JOIN clause to the query using the Question relation
  *
- * @method     ChildBallotQuery joinWithBallotQuestion($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery joinWithQuestion($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Question relation
  *
- * @method     ChildBallotQuery leftJoinWithBallotQuestion() Adds a LEFT JOIN clause and with to the query using the BallotQuestion relation
- * @method     ChildBallotQuery rightJoinWithBallotQuestion() Adds a RIGHT JOIN clause and with to the query using the BallotQuestion relation
- * @method     ChildBallotQuery innerJoinWithBallotQuestion() Adds a INNER JOIN clause and with to the query using the BallotQuestion relation
+ * @method     ChildBallotQuery leftJoinWithQuestion() Adds a LEFT JOIN clause and with to the query using the Question relation
+ * @method     ChildBallotQuery rightJoinWithQuestion() Adds a RIGHT JOIN clause and with to the query using the Question relation
+ * @method     ChildBallotQuery innerJoinWithQuestion() Adds a INNER JOIN clause and with to the query using the Question relation
  *
- * @method     \MESBallotBox\Propel\BallotQuestionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \MESBallotBox\Propel\QuestionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildBallot findOne(ConnectionInterface $con = null) Return the first ChildBallot matching the query
  * @method     ChildBallot findOneOrCreate(ConnectionInterface $con = null) Return the first ChildBallot matching the query, or a new ChildBallot object populated from the query conditions when no match is found
@@ -594,40 +594,40 @@ abstract class BallotQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \MESBallotBox\Propel\BallotQuestion object
+     * Filter the query by a related \MESBallotBox\Propel\Question object
      *
-     * @param \MESBallotBox\Propel\BallotQuestion|ObjectCollection $ballotQuestion the related object to use as filter
+     * @param \MESBallotBox\Propel\Question|ObjectCollection $question the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildBallotQuery The current query, for fluid interface
      */
-    public function filterByBallotQuestion($ballotQuestion, $comparison = null)
+    public function filterByQuestion($question, $comparison = null)
     {
-        if ($ballotQuestion instanceof \MESBallotBox\Propel\BallotQuestion) {
+        if ($question instanceof \MESBallotBox\Propel\Question) {
             return $this
-                ->addUsingAlias(BallotTableMap::COL_ID, $ballotQuestion->getballotId(), $comparison);
-        } elseif ($ballotQuestion instanceof ObjectCollection) {
+                ->addUsingAlias(BallotTableMap::COL_ID, $question->getballotId(), $comparison);
+        } elseif ($question instanceof ObjectCollection) {
             return $this
-                ->useBallotQuestionQuery()
-                ->filterByPrimaryKeys($ballotQuestion->getPrimaryKeys())
+                ->useQuestionQuery()
+                ->filterByPrimaryKeys($question->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByBallotQuestion() only accepts arguments of type \MESBallotBox\Propel\BallotQuestion or Collection');
+            throw new PropelException('filterByQuestion() only accepts arguments of type \MESBallotBox\Propel\Question or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the BallotQuestion relation
+     * Adds a JOIN clause to the query using the Question relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildBallotQuery The current query, for fluid interface
      */
-    public function joinBallotQuestion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinQuestion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('BallotQuestion');
+        $relationMap = $tableMap->getRelation('Question');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -642,14 +642,14 @@ abstract class BallotQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'BallotQuestion');
+            $this->addJoinObject($join, 'Question');
         }
 
         return $this;
     }
 
     /**
-     * Use the BallotQuestion relation BallotQuestion object
+     * Use the Question relation Question object
      *
      * @see useQuery()
      *
@@ -657,13 +657,13 @@ abstract class BallotQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \MESBallotBox\Propel\BallotQuestionQuery A secondary query class using the current class as primary query
+     * @return \MESBallotBox\Propel\QuestionQuery A secondary query class using the current class as primary query
      */
-    public function useBallotQuestionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useQuestionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinBallotQuestion($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'BallotQuestion', '\MESBallotBox\Propel\BallotQuestionQuery');
+            ->joinQuestion($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Question', '\MESBallotBox\Propel\QuestionQuery');
     }
 
     /**
