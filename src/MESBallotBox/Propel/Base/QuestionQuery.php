@@ -28,6 +28,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionQuery orderBydescription($order = Criteria::ASC) Order by the description column
  * @method     ChildQuestionQuery orderByreadmore($order = Criteria::ASC) Order by the readmore column
  * @method     ChildQuestionQuery orderBydiscussion($order = Criteria::ASC) Order by the discussion column
+ * @method     ChildQuestionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildQuestionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildQuestionQuery groupByid() Group by the id column
  * @method     ChildQuestionQuery groupByballotId() Group by the ballot_id column
@@ -37,6 +39,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionQuery groupBydescription() Group by the description column
  * @method     ChildQuestionQuery groupByreadmore() Group by the readmore column
  * @method     ChildQuestionQuery groupBydiscussion() Group by the discussion column
+ * @method     ChildQuestionQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildQuestionQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildQuestionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildQuestionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -66,7 +70,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionQuery rightJoinWithCandidate() Adds a RIGHT JOIN clause and with to the query using the Candidate relation
  * @method     ChildQuestionQuery innerJoinWithCandidate() Adds a INNER JOIN clause and with to the query using the Candidate relation
  *
- * @method     \MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\CandidateQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildQuestionQuery leftJoinVoteItem($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteItem relation
+ * @method     ChildQuestionQuery rightJoinVoteItem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteItem relation
+ * @method     ChildQuestionQuery innerJoinVoteItem($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteItem relation
+ *
+ * @method     ChildQuestionQuery joinWithVoteItem($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the VoteItem relation
+ *
+ * @method     ChildQuestionQuery leftJoinWithVoteItem() Adds a LEFT JOIN clause and with to the query using the VoteItem relation
+ * @method     ChildQuestionQuery rightJoinWithVoteItem() Adds a RIGHT JOIN clause and with to the query using the VoteItem relation
+ * @method     ChildQuestionQuery innerJoinWithVoteItem() Adds a INNER JOIN clause and with to the query using the VoteItem relation
+ *
+ * @method     \MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\CandidateQuery|\MESBallotBox\Propel\VoteItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildQuestion findOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query
  * @method     ChildQuestion findOneOrCreate(ConnectionInterface $con = null) Return the first ChildQuestion matching the query, or a new ChildQuestion object populated from the query conditions when no match is found
@@ -78,7 +92,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion findOneByname(string $name) Return the first ChildQuestion filtered by the name column
  * @method     ChildQuestion findOneBydescription(string $description) Return the first ChildQuestion filtered by the description column
  * @method     ChildQuestion findOneByreadmore(string $readmore) Return the first ChildQuestion filtered by the readmore column
- * @method     ChildQuestion findOneBydiscussion(string $discussion) Return the first ChildQuestion filtered by the discussion column *
+ * @method     ChildQuestion findOneBydiscussion(string $discussion) Return the first ChildQuestion filtered by the discussion column
+ * @method     ChildQuestion findOneByCreatedAt(string $created_at) Return the first ChildQuestion filtered by the created_at column
+ * @method     ChildQuestion findOneByUpdatedAt(string $updated_at) Return the first ChildQuestion filtered by the updated_at column *
 
  * @method     ChildQuestion requirePk($key, ConnectionInterface $con = null) Return the ChildQuestion by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOne(ConnectionInterface $con = null) Return the first ChildQuestion matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -91,6 +107,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion requireOneBydescription(string $description) Return the first ChildQuestion filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneByreadmore(string $readmore) Return the first ChildQuestion filtered by the readmore column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneBydiscussion(string $discussion) Return the first ChildQuestion filtered by the discussion column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByCreatedAt(string $created_at) Return the first ChildQuestion filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByUpdatedAt(string $updated_at) Return the first ChildQuestion filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildQuestion[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestion objects based on current ModelCriteria
  * @method     ChildQuestion[]|ObjectCollection findByid(int $id) Return ChildQuestion objects filtered by the id column
@@ -101,6 +119,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion[]|ObjectCollection findBydescription(string $description) Return ChildQuestion objects filtered by the description column
  * @method     ChildQuestion[]|ObjectCollection findByreadmore(string $readmore) Return ChildQuestion objects filtered by the readmore column
  * @method     ChildQuestion[]|ObjectCollection findBydiscussion(string $discussion) Return ChildQuestion objects filtered by the discussion column
+ * @method     ChildQuestion[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildQuestion objects filtered by the created_at column
+ * @method     ChildQuestion[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildQuestion objects filtered by the updated_at column
  * @method     ChildQuestion[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -193,7 +213,7 @@ abstract class QuestionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ballot_id, type, count, name, description, readmore, discussion FROM Question WHERE id = :p0';
+        $sql = 'SELECT id, ballot_id, type, count, name, description, readmore, discussion, created_at, updated_at FROM Question WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -558,6 +578,92 @@ abstract class QuestionQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
      * Filter the query by a related \MESBallotBox\Propel\Ballot object
      *
      * @param \MESBallotBox\Propel\Ballot|ObjectCollection $ballot The related object(s) to use as filter
@@ -708,6 +814,79 @@ abstract class QuestionQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \MESBallotBox\Propel\VoteItem object
+     *
+     * @param \MESBallotBox\Propel\VoteItem|ObjectCollection $voteItem the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByVoteItem($voteItem, $comparison = null)
+    {
+        if ($voteItem instanceof \MESBallotBox\Propel\VoteItem) {
+            return $this
+                ->addUsingAlias(QuestionTableMap::COL_ID, $voteItem->getquestionId(), $comparison);
+        } elseif ($voteItem instanceof ObjectCollection) {
+            return $this
+                ->useVoteItemQuery()
+                ->filterByPrimaryKeys($voteItem->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByVoteItem() only accepts arguments of type \MESBallotBox\Propel\VoteItem or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the VoteItem relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function joinVoteItem($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('VoteItem');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'VoteItem');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the VoteItem relation VoteItem object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\VoteItemQuery A secondary query class using the current class as primary query
+     */
+    public function useVoteItemQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinVoteItem($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'VoteItem', '\MESBallotBox\Propel\VoteItemQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildQuestion $question Object to remove from the list of results
@@ -782,6 +961,72 @@ abstract class QuestionQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(QuestionTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(QuestionTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(QuestionTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(QuestionTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(QuestionTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(QuestionTableMap::COL_CREATED_AT);
     }
 
 } // QuestionQuery

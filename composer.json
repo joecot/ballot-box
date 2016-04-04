@@ -2,8 +2,7 @@
     "require": {
         "propel/propel": "~2.0@dev",
         "league/oauth2-client": "1.1.0",
-        "slim/slim": "^3.0@RC",
-        "slim/twig-view": "2.0"
+        "slim/slim": "^3.0@RC"
     },
     "autoload": {
         "psr-4": {"MESBallotBox\\": "src/MESBallotBox/"}

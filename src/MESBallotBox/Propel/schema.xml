@@ -57,6 +57,7 @@
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
+    <behavior name="timestampable" />
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Question name cannot be blank'}}" />
       <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
@@ -76,8 +77,50 @@
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
+    <behavior name="timestampable" />
     <behavior name="validate">
       <parameter name="rule1" value="{column: user_id, validator: NotNull, options: {message: 'Candidate not available'}}" />
+    </behavior>
+  </table>
+  <table name="Vote" idMethod="native" phpName="Vote">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <foreign-key foreignTable="Ballot">
+      <reference local="ballot_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="User">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <behavior name="timestampable" />
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: user_id, validator: NotNull, options: {message: 'User not available'}}" />
+    </behavior>
+  </table>
+  <table name="Vote_item" idMethod="native" phpName="VoteItem">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="vote_id" phpName='voteId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="question_id" phpName='questionId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="candidate_id" phpName='candidateId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
+    <column name="answer" phpName='answer' type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="false"/>
+    <foreign-key foreignTable="Vote">
+      <reference local="vote_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Question">
+      <reference local="question_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Candidate">
+      <reference local="candidate_id" foreign="id"/>
+    </foreign-key>
+    <behavior name="timestampable" />
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: question_id, validator: NotNull, options: {message: 'Question required'}}" />
     </behavior>
   </table>
 </database>

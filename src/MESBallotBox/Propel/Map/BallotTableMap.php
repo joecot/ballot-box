@@ -183,6 +183,13 @@ class BallotTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Questions', false);
+        $this->addRelation('Vote', '\\MESBallotBox\\Propel\\Vote', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':ballot_id',
+    1 => ':id',
+  ),
+), null, null, 'Votes', false);
     } // buildRelations()
 
     /**

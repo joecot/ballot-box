@@ -8,7 +8,7 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
             },
             function errorCallback(response){
                 if(response.status == 401){
-                    window.location = '/login?jspath='+$location.path();
+                    window.location = '/index.php/login?jspath='+$location.path();
                 }
             }
         );
@@ -44,7 +44,7 @@ ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$
             },
             function errorCallback(response){
                 if(response.status == 401){
-                    window.location = '/login?jspath='+$location.path();
+                    window.location = '/index.php/login?jspath='+$location.path();
                 }
                 console.log(response.data);
             }
@@ -60,7 +60,7 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
         },
         function errorCallback(response){
             if(response.status == 401){
-                window.location = '/login?jspath='+$location.path();
+                window.location = '/index.php/login?jspath='+$location.path();
             }
             console.log(response.data);
         }
@@ -87,7 +87,7 @@ ballotboxControllers.controller('questionCreateController', ['$scope', '$http', 
             },
             function errorCallback(response){
                 if(response.status == 401){
-                    window.location = '/login?jspath='+$location.path();
+                    window.location = '/index.php/login?jspath='+$location.path();
                 }
                 console.log(response.data);
             }
@@ -107,7 +107,7 @@ ballotboxControllers.controller('questionViewController', ['$scope', '$http', '$
         },
         function errorCallback(response){
             if(response.status == 401){
-                window.location = '/login?jspath='+$location.path();
+                window.location = '/index.php/login?jspath='+$location.path();
             }
             console.log(response.data);
         }
@@ -130,7 +130,7 @@ ballotboxControllers.controller('questionViewController', ['$scope', '$http', '$
             },
             function errorCallback(response){
                 if(response.status == 401){
-                    window.location = '/login?jspath='+$location.path();
+                    window.location = '/index.php/login?jspath='+$location.path();
                 }
                 console.log(response.data);
             }

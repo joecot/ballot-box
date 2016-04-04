@@ -2,25 +2,32 @@
 
 namespace MESBallotBox\Propel\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
+use MESBallotBox\Propel\Candidate as ChildCandidate;
 use MESBallotBox\Propel\CandidateQuery as ChildCandidateQuery;
 use MESBallotBox\Propel\Question as ChildQuestion;
 use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
 use MESBallotBox\Propel\User as ChildUser;
 use MESBallotBox\Propel\UserQuery as ChildUserQuery;
+use MESBallotBox\Propel\VoteItem as ChildVoteItem;
+use MESBallotBox\Propel\VoteItemQuery as ChildVoteItemQuery;
 use MESBallotBox\Propel\Map\CandidateTableMap;
+use MESBallotBox\Propel\Map\VoteItemTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -102,6 +109,20 @@ abstract class Candidate implements ActiveRecordInterface
     protected $application;
 
     /**
+     * The value for the created_at field.
+     *
+     * @var        DateTime
+     */
+    protected $created_at;
+
+    /**
+     * The value for the updated_at field.
+     *
+     * @var        DateTime
+     */
+    protected $updated_at;
+
+    /**
      * @var        ChildQuestion
      */
     protected $aQuestion;
@@ -110,6 +131,12 @@ abstract class Candidate implements ActiveRecordInterface
      * @var        ChildUser
      */
     protected $aUser;
+
+    /**
+     * @var        ObjectCollection|ChildVoteItem[] Collection to store aggregation of ChildVoteItem objects.
+     */
+    protected $collVoteItems;
+    protected $collVoteItemsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -135,6 +162,12 @@ abstract class Candidate implements ActiveRecordInterface
      * @var     ConstraintViolationList
      */
     protected $validationFailures;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildVoteItem[]
+     */
+    protected $voteItemsScheduledForDeletion = null;
 
     /**
      * Initializes internal state of MESBallotBox\Propel\Base\Candidate object.
@@ -402,6 +435,46 @@ abstract class Candidate implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [created_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getCreatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [updated_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getUpdatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -490,6 +563,46 @@ abstract class Candidate implements ActiveRecordInterface
     } // setapplication()
 
     /**
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setCreatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+                $this->created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[CandidateTableMap::COL_CREATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setCreatedAt()
+
+    /**
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setUpdatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[CandidateTableMap::COL_UPDATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setUpdatedAt()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -536,6 +649,18 @@ abstract class Candidate implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CandidateTableMap::translateFieldName('application', TableMap::TYPE_PHPNAME, $indexType)];
             $this->application = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CandidateTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CandidateTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -544,7 +669,7 @@ abstract class Candidate implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Candidate'), 0, $e);
@@ -613,6 +738,8 @@ abstract class Candidate implements ActiveRecordInterface
 
             $this->aQuestion = null;
             $this->aUser = null;
+            $this->collVoteItems = null;
+
         } // if (deep)
     }
 
@@ -675,8 +802,20 @@ abstract class Candidate implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(CandidateTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -742,6 +881,24 @@ abstract class Candidate implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->voteItemsScheduledForDeletion !== null) {
+                if (!$this->voteItemsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->voteItemsScheduledForDeletion as $voteItem) {
+                        // need to save related object because we set the relation to null
+                        $voteItem->save($con);
+                    }
+                    $this->voteItemsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collVoteItems !== null) {
+                foreach ($this->collVoteItems as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -780,6 +937,12 @@ abstract class Candidate implements ActiveRecordInterface
         if ($this->isColumnModified(CandidateTableMap::COL_APPLICATION)) {
             $modifiedColumns[':p' . $index++]  = 'application';
         }
+        if ($this->isColumnModified(CandidateTableMap::COL_CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'created_at';
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'updated_at';
+        }
 
         $sql = sprintf(
             'INSERT INTO Candidate (%s) VALUES (%s)',
@@ -802,6 +965,12 @@ abstract class Candidate implements ActiveRecordInterface
                         break;
                     case 'application':
                         $stmt->bindValue($identifier, $this->application, PDO::PARAM_STR);
+                        break;
+                    case 'created_at':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'updated_at':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -877,6 +1046,12 @@ abstract class Candidate implements ActiveRecordInterface
             case 3:
                 return $this->getapplication();
                 break;
+            case 4:
+                return $this->getCreatedAt();
+                break;
+            case 5:
+                return $this->getUpdatedAt();
+                break;
             default:
                 return null;
                 break;
@@ -911,7 +1086,17 @@ abstract class Candidate implements ActiveRecordInterface
             $keys[1] => $this->getquestionId(),
             $keys[2] => $this->getuserId(),
             $keys[3] => $this->getapplication(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -947,6 +1132,21 @@ abstract class Candidate implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collVoteItems) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'voteItems';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Vote_items';
+                        break;
+                    default:
+                        $key = 'VoteItems';
+                }
+
+                $result[$key] = $this->collVoteItems->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -994,6 +1194,12 @@ abstract class Candidate implements ActiveRecordInterface
             case 3:
                 $this->setapplication($value);
                 break;
+            case 4:
+                $this->setCreatedAt($value);
+                break;
+            case 5:
+                $this->setUpdatedAt($value);
+                break;
         } // switch()
 
         return $this;
@@ -1031,6 +1237,12 @@ abstract class Candidate implements ActiveRecordInterface
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setapplication($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setCreatedAt($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setUpdatedAt($arr[$keys[5]]);
         }
     }
 
@@ -1084,6 +1296,12 @@ abstract class Candidate implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CandidateTableMap::COL_APPLICATION)) {
             $criteria->add(CandidateTableMap::COL_APPLICATION, $this->application);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_CREATED_AT)) {
+            $criteria->add(CandidateTableMap::COL_CREATED_AT, $this->created_at);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
+            $criteria->add(CandidateTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1174,6 +1392,22 @@ abstract class Candidate implements ActiveRecordInterface
         $copyObj->setquestionId($this->getquestionId());
         $copyObj->setuserId($this->getuserId());
         $copyObj->setapplication($this->getapplication());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getVoteItems() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addVoteItem($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
@@ -1304,6 +1538,297 @@ abstract class Candidate implements ActiveRecordInterface
         return $this->aUser;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('VoteItem' == $relationName) {
+            return $this->initVoteItems();
+        }
+    }
+
+    /**
+     * Clears out the collVoteItems collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addVoteItems()
+     */
+    public function clearVoteItems()
+    {
+        $this->collVoteItems = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collVoteItems collection loaded partially.
+     */
+    public function resetPartialVoteItems($v = true)
+    {
+        $this->collVoteItemsPartial = $v;
+    }
+
+    /**
+     * Initializes the collVoteItems collection.
+     *
+     * By default this just sets the collVoteItems collection to an empty array (like clearcollVoteItems());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initVoteItems($overrideExisting = true)
+    {
+        if (null !== $this->collVoteItems && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = VoteItemTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collVoteItems = new $collectionClassName;
+        $this->collVoteItems->setModel('\MESBallotBox\Propel\VoteItem');
+    }
+
+    /**
+     * Gets an array of ChildVoteItem objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCandidate is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildVoteItem[] List of ChildVoteItem objects
+     * @throws PropelException
+     */
+    public function getVoteItems(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collVoteItemsPartial && !$this->isNew();
+        if (null === $this->collVoteItems || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collVoteItems) {
+                // return empty collection
+                $this->initVoteItems();
+            } else {
+                $collVoteItems = ChildVoteItemQuery::create(null, $criteria)
+                    ->filterByCandidate($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collVoteItemsPartial && count($collVoteItems)) {
+                        $this->initVoteItems(false);
+
+                        foreach ($collVoteItems as $obj) {
+                            if (false == $this->collVoteItems->contains($obj)) {
+                                $this->collVoteItems->append($obj);
+                            }
+                        }
+
+                        $this->collVoteItemsPartial = true;
+                    }
+
+                    return $collVoteItems;
+                }
+
+                if ($partial && $this->collVoteItems) {
+                    foreach ($this->collVoteItems as $obj) {
+                        if ($obj->isNew()) {
+                            $collVoteItems[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collVoteItems = $collVoteItems;
+                $this->collVoteItemsPartial = false;
+            }
+        }
+
+        return $this->collVoteItems;
+    }
+
+    /**
+     * Sets a collection of ChildVoteItem objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $voteItems A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function setVoteItems(Collection $voteItems, ConnectionInterface $con = null)
+    {
+        /** @var ChildVoteItem[] $voteItemsToDelete */
+        $voteItemsToDelete = $this->getVoteItems(new Criteria(), $con)->diff($voteItems);
+
+
+        $this->voteItemsScheduledForDeletion = $voteItemsToDelete;
+
+        foreach ($voteItemsToDelete as $voteItemRemoved) {
+            $voteItemRemoved->setCandidate(null);
+        }
+
+        $this->collVoteItems = null;
+        foreach ($voteItems as $voteItem) {
+            $this->addVoteItem($voteItem);
+        }
+
+        $this->collVoteItems = $voteItems;
+        $this->collVoteItemsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related VoteItem objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related VoteItem objects.
+     * @throws PropelException
+     */
+    public function countVoteItems(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collVoteItemsPartial && !$this->isNew();
+        if (null === $this->collVoteItems || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collVoteItems) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getVoteItems());
+            }
+
+            $query = ChildVoteItemQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCandidate($this)
+                ->count($con);
+        }
+
+        return count($this->collVoteItems);
+    }
+
+    /**
+     * Method called to associate a ChildVoteItem object to this object
+     * through the ChildVoteItem foreign key attribute.
+     *
+     * @param  ChildVoteItem $l ChildVoteItem
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function addVoteItem(ChildVoteItem $l)
+    {
+        if ($this->collVoteItems === null) {
+            $this->initVoteItems();
+            $this->collVoteItemsPartial = true;
+        }
+
+        if (!$this->collVoteItems->contains($l)) {
+            $this->doAddVoteItem($l);
+
+            if ($this->voteItemsScheduledForDeletion and $this->voteItemsScheduledForDeletion->contains($l)) {
+                $this->voteItemsScheduledForDeletion->remove($this->voteItemsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildVoteItem $voteItem The ChildVoteItem object to add.
+     */
+    protected function doAddVoteItem(ChildVoteItem $voteItem)
+    {
+        $this->collVoteItems[]= $voteItem;
+        $voteItem->setCandidate($this);
+    }
+
+    /**
+     * @param  ChildVoteItem $voteItem The ChildVoteItem object to remove.
+     * @return $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function removeVoteItem(ChildVoteItem $voteItem)
+    {
+        if ($this->getVoteItems()->contains($voteItem)) {
+            $pos = $this->collVoteItems->search($voteItem);
+            $this->collVoteItems->remove($pos);
+            if (null === $this->voteItemsScheduledForDeletion) {
+                $this->voteItemsScheduledForDeletion = clone $this->collVoteItems;
+                $this->voteItemsScheduledForDeletion->clear();
+            }
+            $this->voteItemsScheduledForDeletion[]= $voteItem;
+            $voteItem->setCandidate(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Candidate is new, it will return
+     * an empty collection; or if this Candidate has previously
+     * been saved, it will retrieve related VoteItems from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Candidate.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildVoteItem[] List of ChildVoteItem objects
+     */
+    public function getVoteItemsJoinVote(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildVoteItemQuery::create(null, $criteria);
+        $query->joinWith('Vote', $joinBehavior);
+
+        return $this->getVoteItems($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Candidate is new, it will return
+     * an empty collection; or if this Candidate has previously
+     * been saved, it will retrieve related VoteItems from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Candidate.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildVoteItem[] List of ChildVoteItem objects
+     */
+    public function getVoteItemsJoinQuestion(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildVoteItemQuery::create(null, $criteria);
+        $query->joinWith('Question', $joinBehavior);
+
+        return $this->getVoteItems($query, $con);
+    }
+
     /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
@@ -1321,6 +1846,8 @@ abstract class Candidate implements ActiveRecordInterface
         $this->question_id = null;
         $this->user_id = null;
         $this->application = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1339,8 +1866,14 @@ abstract class Candidate implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collVoteItems) {
+                foreach ($this->collVoteItems as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collVoteItems = null;
         $this->aQuestion = null;
         $this->aUser = null;
     }
@@ -1353,6 +1886,20 @@ abstract class Candidate implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(CandidateTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[CandidateTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     // validate behavior
@@ -1414,6 +1961,15 @@ abstract class Candidate implements ActiveRecordInterface
                 $failureMap->addAll($retval);
             }
 
+            if (null !== $this->collVoteItems) {
+                foreach ($this->collVoteItems as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
 
             $this->alreadyInValidation = false;
         }

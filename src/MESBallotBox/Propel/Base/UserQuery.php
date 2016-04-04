@@ -54,7 +54,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithCandidate() Adds a RIGHT JOIN clause and with to the query using the Candidate relation
  * @method     ChildUserQuery innerJoinWithCandidate() Adds a INNER JOIN clause and with to the query using the Candidate relation
  *
- * @method     \MESBallotBox\Propel\CandidateQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildUserQuery leftJoinVote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Vote relation
+ * @method     ChildUserQuery rightJoinVote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Vote relation
+ * @method     ChildUserQuery innerJoinVote($relationAlias = null) Adds a INNER JOIN clause to the query using the Vote relation
+ *
+ * @method     ChildUserQuery joinWithVote($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Vote relation
+ *
+ * @method     ChildUserQuery leftJoinWithVote() Adds a LEFT JOIN clause and with to the query using the Vote relation
+ * @method     ChildUserQuery rightJoinWithVote() Adds a RIGHT JOIN clause and with to the query using the Vote relation
+ * @method     ChildUserQuery innerJoinWithVote() Adds a INNER JOIN clause and with to the query using the Vote relation
+ *
+ * @method     \MESBallotBox\Propel\CandidateQuery|\MESBallotBox\Propel\VoteQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -578,6 +588,79 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->joinCandidate($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Candidate', '\MESBallotBox\Propel\CandidateQuery');
+    }
+
+    /**
+     * Filter the query by a related \MESBallotBox\Propel\Vote object
+     *
+     * @param \MESBallotBox\Propel\Vote|ObjectCollection $vote the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByVote($vote, $comparison = null)
+    {
+        if ($vote instanceof \MESBallotBox\Propel\Vote) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $vote->getuserId(), $comparison);
+        } elseif ($vote instanceof ObjectCollection) {
+            return $this
+                ->useVoteQuery()
+                ->filterByPrimaryKeys($vote->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByVote() only accepts arguments of type \MESBallotBox\Propel\Vote or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Vote relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinVote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Vote');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Vote');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Vote relation Vote object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\VoteQuery A secondary query class using the current class as primary query
+     */
+    public function useVoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinVote($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Vote', '\MESBallotBox\Propel\VoteQuery');
     }
 
     /**

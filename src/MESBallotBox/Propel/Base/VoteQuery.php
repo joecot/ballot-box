@@ -4,9 +4,9 @@ namespace MESBallotBox\Propel\Base;
 
 use \Exception;
 use \PDO;
-use MESBallotBox\Propel\Candidate as ChildCandidate;
-use MESBallotBox\Propel\CandidateQuery as ChildCandidateQuery;
-use MESBallotBox\Propel\Map\CandidateTableMap;
+use MESBallotBox\Propel\Vote as ChildVote;
+use MESBallotBox\Propel\VoteQuery as ChildVoteQuery;
+use MESBallotBox\Propel\Map\VoteTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,124 +16,119 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'Candidate' table.
+ * Base class that represents a query for the 'Vote' table.
  *
  *
  *
- * @method     ChildCandidateQuery orderByid($order = Criteria::ASC) Order by the id column
- * @method     ChildCandidateQuery orderByquestionId($order = Criteria::ASC) Order by the question_id column
- * @method     ChildCandidateQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildCandidateQuery orderByapplication($order = Criteria::ASC) Order by the application column
- * @method     ChildCandidateQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method     ChildCandidateQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildVoteQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method     ChildVoteQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
+ * @method     ChildVoteQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
+ * @method     ChildVoteQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
+ * @method     ChildVoteQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
- * @method     ChildCandidateQuery groupByid() Group by the id column
- * @method     ChildCandidateQuery groupByquestionId() Group by the question_id column
- * @method     ChildCandidateQuery groupByuserId() Group by the user_id column
- * @method     ChildCandidateQuery groupByapplication() Group by the application column
- * @method     ChildCandidateQuery groupByCreatedAt() Group by the created_at column
- * @method     ChildCandidateQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildVoteQuery groupByid() Group by the id column
+ * @method     ChildVoteQuery groupByballotId() Group by the ballot_id column
+ * @method     ChildVoteQuery groupByuserId() Group by the user_id column
+ * @method     ChildVoteQuery groupByCreatedAt() Group by the created_at column
+ * @method     ChildVoteQuery groupByUpdatedAt() Group by the updated_at column
  *
- * @method     ChildCandidateQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildCandidateQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildCandidateQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildVoteQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildVoteQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildVoteQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildCandidateQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
- * @method     ChildCandidateQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
- * @method     ChildCandidateQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ * @method     ChildVoteQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildVoteQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildVoteQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildCandidateQuery leftJoinQuestion($relationAlias = null) Adds a LEFT JOIN clause to the query using the Question relation
- * @method     ChildCandidateQuery rightJoinQuestion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Question relation
- * @method     ChildCandidateQuery innerJoinQuestion($relationAlias = null) Adds a INNER JOIN clause to the query using the Question relation
+ * @method     ChildVoteQuery leftJoinBallot($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ballot relation
+ * @method     ChildVoteQuery rightJoinBallot($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ballot relation
+ * @method     ChildVoteQuery innerJoinBallot($relationAlias = null) Adds a INNER JOIN clause to the query using the Ballot relation
  *
- * @method     ChildCandidateQuery joinWithQuestion($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Question relation
+ * @method     ChildVoteQuery joinWithBallot($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Ballot relation
  *
- * @method     ChildCandidateQuery leftJoinWithQuestion() Adds a LEFT JOIN clause and with to the query using the Question relation
- * @method     ChildCandidateQuery rightJoinWithQuestion() Adds a RIGHT JOIN clause and with to the query using the Question relation
- * @method     ChildCandidateQuery innerJoinWithQuestion() Adds a INNER JOIN clause and with to the query using the Question relation
+ * @method     ChildVoteQuery leftJoinWithBallot() Adds a LEFT JOIN clause and with to the query using the Ballot relation
+ * @method     ChildVoteQuery rightJoinWithBallot() Adds a RIGHT JOIN clause and with to the query using the Ballot relation
+ * @method     ChildVoteQuery innerJoinWithBallot() Adds a INNER JOIN clause and with to the query using the Ballot relation
  *
- * @method     ChildCandidateQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method     ChildCandidateQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method     ChildCandidateQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method     ChildVoteQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildVoteQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildVoteQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method     ChildCandidateQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ * @method     ChildVoteQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
  *
- * @method     ChildCandidateQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
- * @method     ChildCandidateQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
- * @method     ChildCandidateQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ * @method     ChildVoteQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildVoteQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildVoteQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
- * @method     ChildCandidateQuery leftJoinVoteItem($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteItem relation
- * @method     ChildCandidateQuery rightJoinVoteItem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteItem relation
- * @method     ChildCandidateQuery innerJoinVoteItem($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteItem relation
+ * @method     ChildVoteQuery leftJoinVoteItem($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteItem relation
+ * @method     ChildVoteQuery rightJoinVoteItem($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteItem relation
+ * @method     ChildVoteQuery innerJoinVoteItem($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteItem relation
  *
- * @method     ChildCandidateQuery joinWithVoteItem($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the VoteItem relation
+ * @method     ChildVoteQuery joinWithVoteItem($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the VoteItem relation
  *
- * @method     ChildCandidateQuery leftJoinWithVoteItem() Adds a LEFT JOIN clause and with to the query using the VoteItem relation
- * @method     ChildCandidateQuery rightJoinWithVoteItem() Adds a RIGHT JOIN clause and with to the query using the VoteItem relation
- * @method     ChildCandidateQuery innerJoinWithVoteItem() Adds a INNER JOIN clause and with to the query using the VoteItem relation
+ * @method     ChildVoteQuery leftJoinWithVoteItem() Adds a LEFT JOIN clause and with to the query using the VoteItem relation
+ * @method     ChildVoteQuery rightJoinWithVoteItem() Adds a RIGHT JOIN clause and with to the query using the VoteItem relation
+ * @method     ChildVoteQuery innerJoinWithVoteItem() Adds a INNER JOIN clause and with to the query using the VoteItem relation
  *
- * @method     \MESBallotBox\Propel\QuestionQuery|\MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\VoteItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\VoteItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildCandidate findOne(ConnectionInterface $con = null) Return the first ChildCandidate matching the query
- * @method     ChildCandidate findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCandidate matching the query, or a new ChildCandidate object populated from the query conditions when no match is found
+ * @method     ChildVote findOne(ConnectionInterface $con = null) Return the first ChildVote matching the query
+ * @method     ChildVote findOneOrCreate(ConnectionInterface $con = null) Return the first ChildVote matching the query, or a new ChildVote object populated from the query conditions when no match is found
  *
- * @method     ChildCandidate findOneByid(int $id) Return the first ChildCandidate filtered by the id column
- * @method     ChildCandidate findOneByquestionId(int $question_id) Return the first ChildCandidate filtered by the question_id column
- * @method     ChildCandidate findOneByuserId(int $user_id) Return the first ChildCandidate filtered by the user_id column
- * @method     ChildCandidate findOneByapplication(string $application) Return the first ChildCandidate filtered by the application column
- * @method     ChildCandidate findOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column
- * @method     ChildCandidate findOneByUpdatedAt(string $updated_at) Return the first ChildCandidate filtered by the updated_at column *
+ * @method     ChildVote findOneByid(int $id) Return the first ChildVote filtered by the id column
+ * @method     ChildVote findOneByballotId(int $ballot_id) Return the first ChildVote filtered by the ballot_id column
+ * @method     ChildVote findOneByuserId(int $user_id) Return the first ChildVote filtered by the user_id column
+ * @method     ChildVote findOneByCreatedAt(string $created_at) Return the first ChildVote filtered by the created_at column
+ * @method     ChildVote findOneByUpdatedAt(string $updated_at) Return the first ChildVote filtered by the updated_at column *
 
- * @method     ChildCandidate requirePk($key, ConnectionInterface $con = null) Return the ChildCandidate by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOne(ConnectionInterface $con = null) Return the first ChildCandidate matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requirePk($key, ConnectionInterface $con = null) Return the ChildVote by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOne(ConnectionInterface $con = null) Return the first ChildVote matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildCandidate requireOneByid(int $id) Return the first ChildCandidate filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOneByquestionId(int $question_id) Return the first ChildCandidate filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOneByuserId(int $user_id) Return the first ChildCandidate filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOneByapplication(string $application) Return the first ChildCandidate filtered by the application column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCandidate requireOneByUpdatedAt(string $updated_at) Return the first ChildCandidate filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOneByid(int $id) Return the first ChildVote filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOneByballotId(int $ballot_id) Return the first ChildVote filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOneByuserId(int $user_id) Return the first ChildVote filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOneByCreatedAt(string $created_at) Return the first ChildVote filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVote requireOneByUpdatedAt(string $updated_at) Return the first ChildVote filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildCandidate[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCandidate objects based on current ModelCriteria
- * @method     ChildCandidate[]|ObjectCollection findByid(int $id) Return ChildCandidate objects filtered by the id column
- * @method     ChildCandidate[]|ObjectCollection findByquestionId(int $question_id) Return ChildCandidate objects filtered by the question_id column
- * @method     ChildCandidate[]|ObjectCollection findByuserId(int $user_id) Return ChildCandidate objects filtered by the user_id column
- * @method     ChildCandidate[]|ObjectCollection findByapplication(string $application) Return ChildCandidate objects filtered by the application column
- * @method     ChildCandidate[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildCandidate objects filtered by the created_at column
- * @method     ChildCandidate[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildCandidate objects filtered by the updated_at column
- * @method     ChildCandidate[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildVote[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildVote objects based on current ModelCriteria
+ * @method     ChildVote[]|ObjectCollection findByid(int $id) Return ChildVote objects filtered by the id column
+ * @method     ChildVote[]|ObjectCollection findByballotId(int $ballot_id) Return ChildVote objects filtered by the ballot_id column
+ * @method     ChildVote[]|ObjectCollection findByuserId(int $user_id) Return ChildVote objects filtered by the user_id column
+ * @method     ChildVote[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildVote objects filtered by the created_at column
+ * @method     ChildVote[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildVote objects filtered by the updated_at column
+ * @method     ChildVote[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class CandidateQuery extends ModelCriteria
+abstract class VoteQuery extends ModelCriteria
 {
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \MESBallotBox\Propel\Base\CandidateQuery object.
+     * Initializes internal state of \MESBallotBox\Propel\Base\VoteQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'default', $modelName = '\\MESBallotBox\\Propel\\Candidate', $modelAlias = null)
+    public function __construct($dbName = 'default', $modelName = '\\MESBallotBox\\Propel\\Vote', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildCandidateQuery object.
+     * Returns a new ChildVoteQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildCandidateQuery
+     * @return ChildVoteQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildCandidateQuery) {
+        if ($criteria instanceof ChildVoteQuery) {
             return $criteria;
         }
-        $query = new ChildCandidateQuery();
+        $query = new ChildVoteQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -156,19 +151,19 @@ abstract class CandidateQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildCandidate|array|mixed the result, formatted by the current formatter
+     * @return ChildVote|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = CandidateTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
+        if ((null !== ($obj = VoteTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(CandidateTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(VoteTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -189,11 +184,11 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildCandidate A model object, or null if the key is not found
+     * @return ChildVote A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, question_id, user_id, application, created_at, updated_at FROM Candidate WHERE id = :p0';
+        $sql = 'SELECT id, ballot_id, user_id, created_at, updated_at FROM Vote WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -204,10 +199,10 @@ abstract class CandidateQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildCandidate $obj */
-            $obj = new ChildCandidate();
+            /** @var ChildVote $obj */
+            $obj = new ChildVote();
             $obj->hydrate($row);
-            CandidateTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
+            VoteTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -220,7 +215,7 @@ abstract class CandidateQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildCandidate|array|mixed the result, formatted by the current formatter
+     * @return ChildVote|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -262,12 +257,12 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(CandidateTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(VoteTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -275,12 +270,12 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(CandidateTableMap::COL_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(VoteTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -299,18 +294,18 @@ abstract class CandidateQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByid($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -321,39 +316,39 @@ abstract class CandidateQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CandidateTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(VoteTableMap::COL_ID, $id, $comparison);
     }
 
     /**
-     * Filter the query on the question_id column
+     * Filter the query on the ballot_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByquestionId(1234); // WHERE question_id = 1234
-     * $query->filterByquestionId(array(12, 34)); // WHERE question_id IN (12, 34)
-     * $query->filterByquestionId(array('min' => 12)); // WHERE question_id > 12
+     * $query->filterByballotId(1234); // WHERE ballot_id = 1234
+     * $query->filterByballotId(array(12, 34)); // WHERE ballot_id IN (12, 34)
+     * $query->filterByballotId(array('min' => 12)); // WHERE ballot_id > 12
      * </code>
      *
-     * @see       filterByQuestion()
+     * @see       filterByBallot()
      *
-     * @param     mixed $questionId The value to use as filter.
+     * @param     mixed $ballotId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
-    public function filterByquestionId($questionId = null, $comparison = null)
+    public function filterByballotId($ballotId = null, $comparison = null)
     {
-        if (is_array($questionId)) {
+        if (is_array($ballotId)) {
             $useMinMax = false;
-            if (isset($questionId['min'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $questionId['min'], Criteria::GREATER_EQUAL);
+            if (isset($ballotId['min'])) {
+                $this->addUsingAlias(VoteTableMap::COL_BALLOT_ID, $ballotId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($questionId['max'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $questionId['max'], Criteria::LESS_EQUAL);
+            if (isset($ballotId['max'])) {
+                $this->addUsingAlias(VoteTableMap::COL_BALLOT_ID, $ballotId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -364,7 +359,7 @@ abstract class CandidateQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $questionId, $comparison);
+        return $this->addUsingAlias(VoteTableMap::COL_BALLOT_ID, $ballotId, $comparison);
     }
 
     /**
@@ -385,18 +380,18 @@ abstract class CandidateQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByuserId($userId = null, $comparison = null)
     {
         if (is_array($userId)) {
             $useMinMax = false;
             if (isset($userId['min'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($userId['max'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -407,36 +402,7 @@ abstract class CandidateQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CandidateTableMap::COL_USER_ID, $userId, $comparison);
-    }
-
-    /**
-     * Filter the query on the application column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByapplication('fooValue');   // WHERE application = 'fooValue'
-     * $query->filterByapplication('%fooValue%'); // WHERE application LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $application The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
-     */
-    public function filterByapplication($application = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($application)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $application)) {
-                $application = str_replace('*', '%', $application);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(CandidateTableMap::COL_APPLICATION, $application, $comparison);
+        return $this->addUsingAlias(VoteTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
@@ -457,18 +423,18 @@ abstract class CandidateQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByCreatedAt($createdAt = null, $comparison = null)
     {
         if (is_array($createdAt)) {
             $useMinMax = false;
             if (isset($createdAt['min'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($createdAt['max'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -479,7 +445,7 @@ abstract class CandidateQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CandidateTableMap::COL_CREATED_AT, $createdAt, $comparison);
+        return $this->addUsingAlias(VoteTableMap::COL_CREATED_AT, $createdAt, $comparison);
     }
 
     /**
@@ -500,18 +466,18 @@ abstract class CandidateQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function filterByUpdatedAt($updatedAt = null, $comparison = null)
     {
         if (is_array($updatedAt)) {
             $useMinMax = false;
             if (isset($updatedAt['min'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($updatedAt['max'])) {
-                $this->addUsingAlias(CandidateTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(VoteTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -522,48 +488,48 @@ abstract class CandidateQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CandidateTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+        return $this->addUsingAlias(VoteTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
-     * Filter the query by a related \MESBallotBox\Propel\Question object
+     * Filter the query by a related \MESBallotBox\Propel\Ballot object
      *
-     * @param \MESBallotBox\Propel\Question|ObjectCollection $question The related object(s) to use as filter
+     * @param \MESBallotBox\Propel\Ballot|ObjectCollection $ballot The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildCandidateQuery The current query, for fluid interface
+     * @return ChildVoteQuery The current query, for fluid interface
      */
-    public function filterByQuestion($question, $comparison = null)
+    public function filterByBallot($ballot, $comparison = null)
     {
-        if ($question instanceof \MESBallotBox\Propel\Question) {
+        if ($ballot instanceof \MESBallotBox\Propel\Ballot) {
             return $this
-                ->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $question->getid(), $comparison);
-        } elseif ($question instanceof ObjectCollection) {
+                ->addUsingAlias(VoteTableMap::COL_BALLOT_ID, $ballot->getid(), $comparison);
+        } elseif ($ballot instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $question->toKeyValue('PrimaryKey', 'id'), $comparison);
+                ->addUsingAlias(VoteTableMap::COL_BALLOT_ID, $ballot->toKeyValue('PrimaryKey', 'id'), $comparison);
         } else {
-            throw new PropelException('filterByQuestion() only accepts arguments of type \MESBallotBox\Propel\Question or Collection');
+            throw new PropelException('filterByBallot() only accepts arguments of type \MESBallotBox\Propel\Ballot or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Question relation
+     * Adds a JOIN clause to the query using the Ballot relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
-    public function joinQuestion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinBallot($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Question');
+        $relationMap = $tableMap->getRelation('Ballot');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -578,14 +544,14 @@ abstract class CandidateQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Question');
+            $this->addJoinObject($join, 'Ballot');
         }
 
         return $this;
     }
 
     /**
-     * Use the Question relation Question object
+     * Use the Ballot relation Ballot object
      *
      * @see useQuery()
      *
@@ -593,13 +559,13 @@ abstract class CandidateQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \MESBallotBox\Propel\QuestionQuery A secondary query class using the current class as primary query
+     * @return \MESBallotBox\Propel\BallotQuery A secondary query class using the current class as primary query
      */
-    public function useQuestionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useBallotQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinQuestion($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Question', '\MESBallotBox\Propel\QuestionQuery');
+            ->joinBallot($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Ballot', '\MESBallotBox\Propel\BallotQuery');
     }
 
     /**
@@ -610,20 +576,20 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildCandidateQuery The current query, for fluid interface
+     * @return ChildVoteQuery The current query, for fluid interface
      */
     public function filterByUser($user, $comparison = null)
     {
         if ($user instanceof \MESBallotBox\Propel\User) {
             return $this
-                ->addUsingAlias(CandidateTableMap::COL_USER_ID, $user->getid(), $comparison);
+                ->addUsingAlias(VoteTableMap::COL_USER_ID, $user->getid(), $comparison);
         } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(CandidateTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'id'), $comparison);
+                ->addUsingAlias(VoteTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'id'), $comparison);
         } else {
             throw new PropelException('filterByUser() only accepts arguments of type \MESBallotBox\Propel\User or Collection');
         }
@@ -635,7 +601,7 @@ abstract class CandidateQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
     public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -685,13 +651,13 @@ abstract class CandidateQuery extends ModelCriteria
      * @param \MESBallotBox\Propel\VoteItem|ObjectCollection $voteItem the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildCandidateQuery The current query, for fluid interface
+     * @return ChildVoteQuery The current query, for fluid interface
      */
     public function filterByVoteItem($voteItem, $comparison = null)
     {
         if ($voteItem instanceof \MESBallotBox\Propel\VoteItem) {
             return $this
-                ->addUsingAlias(CandidateTableMap::COL_ID, $voteItem->getcandidateId(), $comparison);
+                ->addUsingAlias(VoteTableMap::COL_ID, $voteItem->getvoteId(), $comparison);
         } elseif ($voteItem instanceof ObjectCollection) {
             return $this
                 ->useVoteItemQuery()
@@ -708,9 +674,9 @@ abstract class CandidateQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
-    public function joinVoteItem($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinVoteItem($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('VoteItem');
@@ -745,7 +711,7 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @return \MESBallotBox\Propel\VoteItemQuery A secondary query class using the current class as primary query
      */
-    public function useVoteItemQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useVoteItemQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinVoteItem($relationAlias, $joinType)
@@ -755,21 +721,21 @@ abstract class CandidateQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   ChildCandidate $candidate Object to remove from the list of results
+     * @param   ChildVote $vote Object to remove from the list of results
      *
-     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     * @return $this|ChildVoteQuery The current query, for fluid interface
      */
-    public function prune($candidate = null)
+    public function prune($vote = null)
     {
-        if ($candidate) {
-            $this->addUsingAlias(CandidateTableMap::COL_ID, $candidate->getid(), Criteria::NOT_EQUAL);
+        if ($vote) {
+            $this->addUsingAlias(VoteTableMap::COL_ID, $vote->getid(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the Candidate table.
+     * Deletes all rows from the Vote table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -777,7 +743,7 @@ abstract class CandidateQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CandidateTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VoteTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -788,8 +754,8 @@ abstract class CandidateQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            CandidateTableMap::clearInstancePool();
-            CandidateTableMap::clearRelatedInstancePool();
+            VoteTableMap::clearInstancePool();
+            VoteTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -807,23 +773,23 @@ abstract class CandidateQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(CandidateTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VoteTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(CandidateTableMap::DATABASE_NAME);
+        $criteria->setDbName(VoteTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            CandidateTableMap::removeInstanceFromPool($criteria);
+            VoteTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            CandidateTableMap::clearRelatedInstancePool();
+            VoteTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -836,41 +802,41 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @param      int $nbDays Maximum age of the latest update in days
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function recentlyUpdated($nbDays = 7)
     {
-        return $this->addUsingAlias(CandidateTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+        return $this->addUsingAlias(VoteTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
 
     /**
      * Order by update date desc
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function lastUpdatedFirst()
     {
-        return $this->addDescendingOrderByColumn(CandidateTableMap::COL_UPDATED_AT);
+        return $this->addDescendingOrderByColumn(VoteTableMap::COL_UPDATED_AT);
     }
 
     /**
      * Order by update date asc
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function firstUpdatedFirst()
     {
-        return $this->addAscendingOrderByColumn(CandidateTableMap::COL_UPDATED_AT);
+        return $this->addAscendingOrderByColumn(VoteTableMap::COL_UPDATED_AT);
     }
 
     /**
      * Order by create date desc
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function lastCreatedFirst()
     {
-        return $this->addDescendingOrderByColumn(CandidateTableMap::COL_CREATED_AT);
+        return $this->addDescendingOrderByColumn(VoteTableMap::COL_CREATED_AT);
     }
 
     /**
@@ -878,21 +844,21 @@ abstract class CandidateQuery extends ModelCriteria
      *
      * @param      int $nbDays Maximum age of in days
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function recentlyCreated($nbDays = 7)
     {
-        return $this->addUsingAlias(CandidateTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+        return $this->addUsingAlias(VoteTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
 
     /**
      * Order by create date asc
      *
-     * @return     $this|ChildCandidateQuery The current query, for fluid interface
+     * @return     $this|ChildVoteQuery The current query, for fluid interface
      */
     public function firstCreatedFirst()
     {
-        return $this->addAscendingOrderByColumn(CandidateTableMap::COL_CREATED_AT);
+        return $this->addAscendingOrderByColumn(VoteTableMap::COL_CREATED_AT);
     }
 
-} // CandidateQuery
+} // VoteQuery

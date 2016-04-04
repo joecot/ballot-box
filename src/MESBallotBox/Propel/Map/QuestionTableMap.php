@@ -59,7 +59,7 @@ class QuestionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class QuestionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -112,6 +112,16 @@ class QuestionTableMap extends TableMap
     const COL_DISCUSSION = 'Question.discussion';
 
     /**
+     * the column name for the created_at field
+     */
+    const COL_CREATED_AT = 'Question.created_at';
+
+    /**
+     * the column name for the updated_at field
+     */
+    const COL_UPDATED_AT = 'Question.updated_at';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -127,11 +137,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BALLOT_ID, QuestionTableMap::COL_TYPE, QuestionTableMap::COL_COUNT, QuestionTableMap::COL_NAME, QuestionTableMap::COL_DESCRIPTION, QuestionTableMap::COL_READMORE, QuestionTableMap::COL_DISCUSSION, ),
-        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'type', 'count', 'name', 'description', 'readmore', 'discussion', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BALLOT_ID, QuestionTableMap::COL_TYPE, QuestionTableMap::COL_COUNT, QuestionTableMap::COL_NAME, QuestionTableMap::COL_DESCRIPTION, QuestionTableMap::COL_READMORE, QuestionTableMap::COL_DISCUSSION, QuestionTableMap::COL_CREATED_AT, QuestionTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -141,11 +151,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BALLOT_ID => 1, QuestionTableMap::COL_TYPE => 2, QuestionTableMap::COL_COUNT => 3, QuestionTableMap::COL_NAME => 4, QuestionTableMap::COL_DESCRIPTION => 5, QuestionTableMap::COL_READMORE => 6, QuestionTableMap::COL_DISCUSSION => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BALLOT_ID => 1, QuestionTableMap::COL_TYPE => 2, QuestionTableMap::COL_COUNT => 3, QuestionTableMap::COL_NAME => 4, QuestionTableMap::COL_DESCRIPTION => 5, QuestionTableMap::COL_READMORE => 6, QuestionTableMap::COL_DISCUSSION => 7, QuestionTableMap::COL_CREATED_AT => 8, QuestionTableMap::COL_UPDATED_AT => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'created_at' => 8, 'updated_at' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /** The enumerated values for this table */
@@ -206,6 +216,8 @@ class QuestionTableMap extends TableMap
         $this->addColumn('description', 'description', 'LONGVARCHAR', false, null, null);
         $this->addColumn('readmore', 'readmore', 'VARCHAR', false, 255, null);
         $this->addColumn('discussion', 'discussion', 'VARCHAR', false, 255, null);
+        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -227,6 +239,13 @@ class QuestionTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Candidates', false);
+        $this->addRelation('VoteItem', '\\MESBallotBox\\Propel\\VoteItem', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':question_id',
+    1 => ':id',
+  ),
+), null, null, 'VoteItems', false);
     } // buildRelations()
 
     /**
@@ -238,6 +257,7 @@ class QuestionTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
             'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Question name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',),), ),
         );
     } // getBehaviors()
@@ -391,6 +411,8 @@ class QuestionTableMap extends TableMap
             $criteria->addSelectColumn(QuestionTableMap::COL_DESCRIPTION);
             $criteria->addSelectColumn(QuestionTableMap::COL_READMORE);
             $criteria->addSelectColumn(QuestionTableMap::COL_DISCUSSION);
+            $criteria->addSelectColumn(QuestionTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(QuestionTableMap::COL_UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.ballot_id');
@@ -400,6 +422,8 @@ class QuestionTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.description');
             $criteria->addSelectColumn($alias . '.readmore');
             $criteria->addSelectColumn($alias . '.discussion');
+            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.updated_at');
         }
     }
 
