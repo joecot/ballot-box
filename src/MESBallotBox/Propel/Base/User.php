@@ -75,13 +75,6 @@ abstract class User implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the remote_id field.
-     *
-     * @var        int
-     */
-    protected $remote_id;
-
-    /**
      * The value for the membership_number field.
      *
      * @var        string
@@ -384,16 +377,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [remote_id] column value.
-     *
-     * @return int
-     */
-    public function getremoteId()
-    {
-        return $this->remote_id;
-    }
-
-    /**
      * Get the [membership_number] column value.
      *
      * @return string
@@ -462,26 +445,6 @@ abstract class User implements ActiveRecordInterface
 
         return $this;
     } // setid()
-
-    /**
-     * Set the value of [remote_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\MESBallotBox\Propel\User The current object (for fluent API support)
-     */
-    public function setremoteId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->remote_id !== $v) {
-            $this->remote_id = $v;
-            $this->modifiedColumns[UserTableMap::COL_REMOTE_ID] = true;
-        }
-
-        return $this;
-    } // setremoteId()
 
     /**
      * Set the value of [membership_number] column.
@@ -622,22 +585,19 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('remoteId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->remote_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('membershipNumber', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('membershipNumber', TableMap::TYPE_PHPNAME, $indexType)];
             $this->membership_number = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('firstName', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('firstName', TableMap::TYPE_PHPNAME, $indexType)];
             $this->first_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('lastName', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('lastName', TableMap::TYPE_PHPNAME, $indexType)];
             $this->last_name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('emailAddress', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('emailAddress', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email_address = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('affiliateId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('affiliateId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->affiliate_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -647,7 +607,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\User'), 0, $e);
@@ -885,9 +845,6 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserTableMap::COL_REMOTE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'remote_id';
-        }
         if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIP_NUMBER)) {
             $modifiedColumns[':p' . $index++]  = 'membership_number';
         }
@@ -916,9 +873,6 @@ abstract class User implements ActiveRecordInterface
                 switch ($columnName) {
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
-                        break;
-                    case 'remote_id':
-                        $stmt->bindValue($identifier, $this->remote_id, PDO::PARAM_INT);
                         break;
                     case 'membership_number':
                         $stmt->bindValue($identifier, $this->membership_number, PDO::PARAM_STR);
@@ -1001,21 +955,18 @@ abstract class User implements ActiveRecordInterface
                 return $this->getid();
                 break;
             case 1:
-                return $this->getremoteId();
-                break;
-            case 2:
                 return $this->getmembershipNumber();
                 break;
-            case 3:
+            case 2:
                 return $this->getfirstName();
                 break;
-            case 4:
+            case 3:
                 return $this->getlastName();
                 break;
-            case 5:
+            case 4:
                 return $this->getemailAddress();
                 break;
-            case 6:
+            case 5:
                 return $this->getaffiliateId();
                 break;
             default:
@@ -1049,12 +1000,11 @@ abstract class User implements ActiveRecordInterface
         $keys = UserTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getid(),
-            $keys[1] => $this->getremoteId(),
-            $keys[2] => $this->getmembershipNumber(),
-            $keys[3] => $this->getfirstName(),
-            $keys[4] => $this->getlastName(),
-            $keys[5] => $this->getemailAddress(),
-            $keys[6] => $this->getaffiliateId(),
+            $keys[1] => $this->getmembershipNumber(),
+            $keys[2] => $this->getfirstName(),
+            $keys[3] => $this->getlastName(),
+            $keys[4] => $this->getemailAddress(),
+            $keys[5] => $this->getaffiliateId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1130,21 +1080,18 @@ abstract class User implements ActiveRecordInterface
                 $this->setid($value);
                 break;
             case 1:
-                $this->setremoteId($value);
-                break;
-            case 2:
                 $this->setmembershipNumber($value);
                 break;
-            case 3:
+            case 2:
                 $this->setfirstName($value);
                 break;
-            case 4:
+            case 3:
                 $this->setlastName($value);
                 break;
-            case 5:
+            case 4:
                 $this->setemailAddress($value);
                 break;
-            case 6:
+            case 5:
                 $this->setaffiliateId($value);
                 break;
         } // switch()
@@ -1177,22 +1124,19 @@ abstract class User implements ActiveRecordInterface
             $this->setid($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setremoteId($arr[$keys[1]]);
+            $this->setmembershipNumber($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setmembershipNumber($arr[$keys[2]]);
+            $this->setfirstName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setfirstName($arr[$keys[3]]);
+            $this->setlastName($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setlastName($arr[$keys[4]]);
+            $this->setemailAddress($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setemailAddress($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setaffiliateId($arr[$keys[6]]);
+            $this->setaffiliateId($arr[$keys[5]]);
         }
     }
 
@@ -1237,9 +1181,6 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->isColumnModified(UserTableMap::COL_ID)) {
             $criteria->add(UserTableMap::COL_ID, $this->id);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_REMOTE_ID)) {
-            $criteria->add(UserTableMap::COL_REMOTE_ID, $this->remote_id);
         }
         if ($this->isColumnModified(UserTableMap::COL_MEMBERSHIP_NUMBER)) {
             $criteria->add(UserTableMap::COL_MEMBERSHIP_NUMBER, $this->membership_number);
@@ -1342,7 +1283,6 @@ abstract class User implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setremoteId($this->getremoteId());
         $copyObj->setmembershipNumber($this->getmembershipNumber());
         $copyObj->setfirstName($this->getfirstName());
         $copyObj->setlastName($this->getlastName());
@@ -1923,7 +1863,6 @@ abstract class User implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->remote_id = null;
         $this->membership_number = null;
         $this->first_name = null;
         $this->last_name = null;
@@ -1980,6 +1919,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1989,7 +1931,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1999,6 +1943,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -2008,7 +1955,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -2018,6 +1967,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -2027,7 +1979,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -2037,6 +1991,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -2046,7 +2003,9 @@ abstract class User implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 

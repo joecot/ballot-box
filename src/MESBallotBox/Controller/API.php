@@ -11,7 +11,7 @@ class API{
                 $user = $q->filterByMembershipNumber($args['membershipNumber'])->findOne();
                 if(!$user){
                     $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($args['membershipNumber']);
-                    if(!$userInfo['remoteId']){
+                    if(!$userInfo['membershipNumber']){
                         return $response->withStatus(400)->write('User not found');
                     }
                     $user = new \MESBallotBox\Propel\User();

@@ -1,32 +1,7 @@
 <div class="main-content" ng-controller="ballotCreateController">
+<a href="#/">Home</a><br/>
+<h1>Create New Ballot</h1>
 <form novalidate ng-submit="add(ballot)" class="ballot-form">
-    Ballot Name: <input type="text" ng-model="ballot.name" required><br/>
-    Vote Start:
-    <datetimepicker type="text" ng-model="ballot.start"
-      show-meridian="true"
-      date-disabled="disabled(date, mode)" 
-      readonly-date="false"
-      hidden-time="false"
-      hidden-date="false" 
-      show-spinners="true"
-      readonly-time="false"></datetimepicker></br>
-    Vote End:
-    <datetimepicker type="text" ng-model="ballot.end"
-      show-meridian="true"
-      date-disabled="disabled(date, mode)" 
-      readonly-date="false"
-      hidden-time="false"
-      hidden-date="false" 
-      show-spinners="true"
-      readonly-time="false"></datetimepicker></br>
-    <select ng-model="ballot.timezone">
-      <option value="1">Eastern</option>
-      <option value="2">Central</option>
-      <option value="3">Mountain</option>
-      <option value="4">West</option>
-      <option value="5">Alaska</option>
-      <option value="6">Hawaii</option>
-    </select>
-    <input type="submit" value="Add Ballot" />
+<div ng-include="'templates/ballotForm.html'"/>
 </form>
 </div>

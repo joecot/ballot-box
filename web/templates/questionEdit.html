@@ -1,0 +1,8 @@
+<div class="main-content" ng-controller="questionEditController">
+<a href="#/">Home</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}">{{ballot.name}}</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}/question/{{question.id}}">{{question.name}}</a><br/>
+<h1>Edit Ballot Question</h1>
+
+<form novalidate ng-submit="edit(question)" class="question-form">
+<div ng-include="'templates/questionForm.html'"></div>
+</form>
+</div>

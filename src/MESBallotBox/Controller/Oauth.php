@@ -55,9 +55,8 @@ class Oauth{
                 $resourceOwner = $provider->getResourceOwner($accessToken);
 
                 $user = $resourceOwner->toArray();
-
                 $userselect = \MESBallotBox\Propel\UserQuery::create();
-                $userRow = $userselect->findOneByremoteId($user['remoteId']);
+                $userRow = $userselect->findOneByMembershipNumber($user['membershipNumber']);
                 if($userRow) $userRow->fromArray($user);
                 else{
                     $userRow = new \MESBallotBox\Propel\User();

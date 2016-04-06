@@ -21,7 +21,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildUserQuery orderByid($order = Criteria::ASC) Order by the id column
- * @method     ChildUserQuery orderByremoteId($order = Criteria::ASC) Order by the remote_id column
  * @method     ChildUserQuery orderBymembershipNumber($order = Criteria::ASC) Order by the membership_number column
  * @method     ChildUserQuery orderByfirstName($order = Criteria::ASC) Order by the first_name column
  * @method     ChildUserQuery orderBylastName($order = Criteria::ASC) Order by the last_name column
@@ -29,7 +28,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByaffiliateId($order = Criteria::ASC) Order by the affiliate_id column
  *
  * @method     ChildUserQuery groupByid() Group by the id column
- * @method     ChildUserQuery groupByremoteId() Group by the remote_id column
  * @method     ChildUserQuery groupBymembershipNumber() Group by the membership_number column
  * @method     ChildUserQuery groupByfirstName() Group by the first_name column
  * @method     ChildUserQuery groupBylastName() Group by the last_name column
@@ -70,7 +68,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
  *
  * @method     ChildUser findOneByid(int $id) Return the first ChildUser filtered by the id column
- * @method     ChildUser findOneByremoteId(int $remote_id) Return the first ChildUser filtered by the remote_id column
  * @method     ChildUser findOneBymembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column
  * @method     ChildUser findOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column
  * @method     ChildUser findOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column
@@ -81,7 +78,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser requireOneByid(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByremoteId(int $remote_id) Return the first ChildUser filtered by the remote_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneBymembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -90,7 +86,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findByid(int $id) Return ChildUser objects filtered by the id column
- * @method     ChildUser[]|ObjectCollection findByremoteId(int $remote_id) Return ChildUser objects filtered by the remote_id column
  * @method     ChildUser[]|ObjectCollection findBymembershipNumber(string $membership_number) Return ChildUser objects filtered by the membership_number column
  * @method     ChildUser[]|ObjectCollection findByfirstName(string $first_name) Return ChildUser objects filtered by the first_name column
  * @method     ChildUser[]|ObjectCollection findBylastName(string $last_name) Return ChildUser objects filtered by the last_name column
@@ -158,21 +153,27 @@ abstract class UserQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = UserTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(UserTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = UserTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -188,7 +189,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, remote_id, membership_number, first_name, last_name, email_address, affiliate_id FROM User WHERE id = :p0';
+        $sql = 'SELECT id, membership_number, first_name, last_name, email_address, affiliate_id FROM User WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -317,47 +318,6 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_ID, $id, $comparison);
-    }
-
-    /**
-     * Filter the query on the remote_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByremoteId(1234); // WHERE remote_id = 1234
-     * $query->filterByremoteId(array(12, 34)); // WHERE remote_id IN (12, 34)
-     * $query->filterByremoteId(array('min' => 12)); // WHERE remote_id > 12
-     * </code>
-     *
-     * @param     mixed $remoteId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByremoteId($remoteId = null, $comparison = null)
-    {
-        if (is_array($remoteId)) {
-            $useMinMax = false;
-            if (isset($remoteId['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($remoteId['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(UserTableMap::COL_REMOTE_ID, $remoteId, $comparison);
     }
 
     /**

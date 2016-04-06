@@ -44,9 +44,30 @@ class Ballot{
             $result['id'] = $ballot->getId();
             $result['name'] = $ballot->getName();
             $result['start'] = $ballot->getStartDate();
+            $result['startArray'] = $ballot->getStartArray();
             $result['end'] = $ballot->getEndDate();
-            $result['timezone'] = $ballot->getTimezoneNice();
+            $result['endArray'] = $ballot->getEndArray();
+            $result['timezone'] = $ballot->getTimezone();
+            $result['timezoneNice'] = $ballot->getTimezoneNice();
             return $response->write(json_encode($result));
+        });
+        $slim->post('/{ballotId}', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\BallotQuery();
+            $ballot = $q->findPK($args['ballotId']);
+            $vars = $request->getParsedBody();
+            $ballot->setName($vars['name']);
+            $ballot->setTimezone($vars['timezone']);
+            $ballot->setStartDate($vars['start']);
+            $ballot->setEndDate($vars['end']);
+            if(!$ballot->validate()){
+                return $response->withStatus(400)->write($ballot->getValidationFailures()->__toString());
+            }
+            try{
+                $ballot->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write($ballot->toJSON());
         });
         $slim->get('/{ballotId}/question', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\QuestionQuery();
@@ -80,6 +101,23 @@ class Ballot{
             }
             return $response->write($question->toJSON());
         });
+        $slim->post('/{ballotId}/question/{questionId}', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $question = $q->findPK($args['questionId']);
+            $vars = $request->getParsedBody();
+            
+            $question->fromArray($vars);
+            
+            if(!$question->validate()){
+                return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
+            }
+            try{
+                $question->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write($question->toJSON());
+        });
         $slim->post('/{ballotId}/question/{questionId}/candidate', function($request, $response, $args){
             $vars = $request->getParsedBody();
             $q = new \MESBallotBox\Propel\QuestionQuery();
@@ -89,7 +127,7 @@ class Ballot{
             $user = $q->filterByMembershipNumber($vars['membershipNumber'])->findOne();
             if(!$user){
                 $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($vars['membershipNumber']);
-                if(!$userInfo['remoteId']){
+                if(!$userInfo['membershipNumber']){
                     return $response->withStatus(400)->write('User not found');
                 }
                 $user = new \MESBallotBox\Propel\User();

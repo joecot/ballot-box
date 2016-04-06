@@ -1,7 +1,8 @@
 <div class="main-content" ng-controller="ballotViewController">
-Ballot Name: {{ballot.name}}<br/>
-Ballot Start: {{ballot.start}} {{ballot.timezone}}<br/>
-Ballot End: {{ballot.end}} {{ballot.timezone}}<br/>
+<a href="#/">Home</a> > {{ballot.name}}| <a class="linkbutton" href="#/ballot/{{ballot.id}}/edit">Edit</a><br/>
+<label>Ballot Name:</label> {{ballot.name}}<br/>
+<label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
+<label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
 <a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a>
 <ul>
 <li  ng-repeat="(questionid, question) in questions"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a></li>

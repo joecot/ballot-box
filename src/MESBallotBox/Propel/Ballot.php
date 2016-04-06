@@ -40,11 +40,31 @@ class Ballot extends BaseBallot
         
     }
     
-    public function getStartDate(){
+    public function getStartDate($format='l, F jS Y h:i A'){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
         $startTime = new \DateTime(false,$timezone);
         $startTime->setTimestamp($this->getStarttime());
-        return $startTime->format('l, F jS Y h:i A');
+        return $startTime->format($format);
+    }
+    
+    public function getStartArray(){
+        $parts = explode('-',$this->getStartDate('Y-n-d-H-i-s'));
+        foreach($parts as &$part){
+            $part = (int)$part;
+        }
+        unset($part);
+        $parts[1] -= 1;
+        return $parts;
+    }
+    
+    public function getEndArray(){
+        $parts = explode('-',$this->getEndDate('Y-n-d-H-i-s'));
+        foreach($parts as &$part){
+            $part = (int)$part;
+        }
+        unset($part);
+        $parts[1] -= 1;
+        return $parts;
     }
     
     public function setEndDate($end){
@@ -53,11 +73,11 @@ class Ballot extends BaseBallot
         $this->setEndTime($endTime->format('U'));
     }
     
-    public function getEndDate(){
+    public function getEndDate($format='l, F jS Y h:i A'){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
         $endTime = new \DateTime(false,$timezone);
         $endTime->setTimestamp($this->getEndtime());
-        return $endTime->format('l, F jS Y h:i A');
+        return $endTime->format($format);
     }
 
     public function getTimezoneNice(){

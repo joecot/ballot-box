@@ -1,4 +1,5 @@
 <div class="main-content" ng-controller="questionViewController">
+<a href="#/">Home</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}">{{ballot.name}}</a> > {{question.name}} | <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}/edit">Edit</a><br/>
 <label>Name:</label> {{question.name}}<br/>
 <label>Type:</label> {{question.type}}<br/>
 <label>Description:</label> {{question.description}}<br/>
@@ -9,7 +10,7 @@
 <ul>
 <li  ng-repeat="(candidateid, candidate) in candidates"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/questions/{{ question.id }}/candidate/{{ candidate.id }}">{{ candidate.firstName }} {{ candidate.lastName}} ({{ candidate.membershipNumber }})</a></li>
 </ul>
-<a ng-click="showAddCandidateForm()">Add Candidate</a>
+<a ng-show="!addCandidateForm" ng-click="showAddCandidateForm()">Add Candidate</a>
 <form ng-show="addCandidateForm" novalidate ng-submit="addCandidate(newcandidate)" class="ballot-form">
      <label>
         Membership Number:
