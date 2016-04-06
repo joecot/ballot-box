@@ -445,10 +445,11 @@ th {
 html, body {
   background-color: #000;
   color: #333;
-  font-family: 'Georgia', serif;
+  font-family: 'Cardo', 'Georgia', serif;
+  font-size: 20px;
 }
 
-/* line 11, ../sass/style.scss */
+/* line 12, ../sass/style.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -457,7 +458,7 @@ html, body {
   margin-top: 50px;
 }
 
-/* line 19, ../sass/style.scss */
+/* line 20, ../sass/style.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
