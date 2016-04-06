@@ -9,6 +9,15 @@ html, body {
     font-size: 18px;
 }
 
+a {
+    color: #90a4af;
+    // color: #cfd8dc;
+}
+
+a:hover {
+    color: #b0bec6;
+}
+
 .mes-header {
     background-image: url('/images/MES-Banner.png');
     background-position: top center;
@@ -21,7 +30,7 @@ html, body {
     margin: 0 auto;
     width: 94%;
     max-width: 1000px;
-    color: white; 
+    color: #eef7f5; 
     // background-color: rgba(30, 30, 30, 1);
     // background-image: url('/images/download.png');
 }
