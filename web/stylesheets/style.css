@@ -443,7 +443,7 @@ th {
  * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
 /* line 5, ../sass/style.scss */
 html, body {
-  background-color: #000;
+  background-color: #1e1e1e;
   color: #333;
   font-family: 'Cardo', 'Georgia', serif;
   font-size: 18px;
@@ -464,5 +464,4 @@ html, body {
   width: 94%;
   max-width: 1000px;
   color: white;
-  background-color: black;
 }

@@ -3,7 +3,7 @@
 @import 'print';
 
 html, body {
-    background-color: #000;
+    background-color: rgba(30, 30, 30, 1);
     color: #333;
     font-family: 'Cardo', 'Georgia', serif;
     font-size: 18px;
@@ -22,6 +22,6 @@ html, body {
     width: 94%;
     max-width: 1000px;
     color: white; 
-    background-color: black;
-    //background-image: url('/images/download.png');
+    // background-color: rgba(30, 30, 30, 1);
+    // background-image: url('/images/download.png');
 }
