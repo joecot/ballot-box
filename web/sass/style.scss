@@ -1,4 +1,7 @@
 @import 'normalize';
+@import 'ie';
+@import 'print';
+
 html, body {
     background-color: #000;
     color: #333;
@@ -17,6 +20,7 @@ html, body {
     margin: 0 auto;
     width: 94%;
     max-width: 1000px;
-    background-color: rgb(230, 208, 153);
-    background-image: url('/images/download.png');
+    color: white; 
+    background-color: black;
+    //background-image: url('/images/download.png');
 }
