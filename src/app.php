@@ -26,7 +26,7 @@ $container = new \Slim\Container($configuration);
 };*/
 
 $app = new \Slim\App($container);
-//unset($app->getContainer()['errorHandler']);
+unset($app->getContainer()['errorHandler']);
 
 $app->get('/', function ($request, $response) {
     return file_get_contents('../web/index.html');

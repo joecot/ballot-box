@@ -1,0 +1,1 @@
+insert into Affiliate (id,name) VALUES (1,"Mind's Eye Society"), (2,"Mind's Eye Society Brazil"), (3,"Canada @ Midnight"), (4,"Worldwide Theater Games");

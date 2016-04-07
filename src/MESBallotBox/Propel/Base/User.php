@@ -10,9 +10,12 @@ use MESBallotBox\Propel\User as ChildUser;
 use MESBallotBox\Propel\UserQuery as ChildUserQuery;
 use MESBallotBox\Propel\Vote as ChildVote;
 use MESBallotBox\Propel\VoteQuery as ChildVoteQuery;
+use MESBallotBox\Propel\Voter as ChildVoter;
+use MESBallotBox\Propel\VoterQuery as ChildVoterQuery;
 use MESBallotBox\Propel\Map\CandidateTableMap;
 use MESBallotBox\Propel\Map\UserTableMap;
 use MESBallotBox\Propel\Map\VoteTableMap;
+use MESBallotBox\Propel\Map\VoterTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -110,6 +113,12 @@ abstract class User implements ActiveRecordInterface
     protected $affiliate_id;
 
     /**
+     * @var        ObjectCollection|ChildVoter[] Collection to store aggregation of ChildVoter objects.
+     */
+    protected $collVoters;
+    protected $collVotersPartial;
+
+    /**
      * @var        ObjectCollection|ChildCandidate[] Collection to store aggregation of ChildCandidate objects.
      */
     protected $collCandidates;
@@ -128,6 +137,12 @@ abstract class User implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildVoter[]
+     */
+    protected $votersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -668,6 +683,8 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collVoters = null;
+
             $this->collCandidates = null;
 
             $this->collVotes = null;
@@ -780,6 +797,24 @@ abstract class User implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->votersScheduledForDeletion !== null) {
+                if (!$this->votersScheduledForDeletion->isEmpty()) {
+                    foreach ($this->votersScheduledForDeletion as $voter) {
+                        // need to save related object because we set the relation to null
+                        $voter->save($con);
+                    }
+                    $this->votersScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collVoters !== null) {
+                foreach ($this->collVoters as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->candidatesScheduledForDeletion !== null) {
@@ -1012,6 +1047,21 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collVoters) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'voters';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Voters';
+                        break;
+                    default:
+                        $key = 'Voters';
+                }
+
+                $result[$key] = $this->collVoters->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collCandidates) {
 
                 switch ($keyType) {
@@ -1294,6 +1344,12 @@ abstract class User implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
+            foreach ($this->getVoters() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addVoter($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getCandidates() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addCandidate($relObj->copy($deepCopy));
@@ -1347,12 +1403,290 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Voter' == $relationName) {
+            return $this->initVoters();
+        }
         if ('Candidate' == $relationName) {
             return $this->initCandidates();
         }
         if ('Vote' == $relationName) {
             return $this->initVotes();
         }
+    }
+
+    /**
+     * Clears out the collVoters collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addVoters()
+     */
+    public function clearVoters()
+    {
+        $this->collVoters = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collVoters collection loaded partially.
+     */
+    public function resetPartialVoters($v = true)
+    {
+        $this->collVotersPartial = $v;
+    }
+
+    /**
+     * Initializes the collVoters collection.
+     *
+     * By default this just sets the collVoters collection to an empty array (like clearcollVoters());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initVoters($overrideExisting = true)
+    {
+        if (null !== $this->collVoters && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = VoterTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collVoters = new $collectionClassName;
+        $this->collVoters->setModel('\MESBallotBox\Propel\Voter');
+    }
+
+    /**
+     * Gets an array of ChildVoter objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildVoter[] List of ChildVoter objects
+     * @throws PropelException
+     */
+    public function getVoters(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collVotersPartial && !$this->isNew();
+        if (null === $this->collVoters || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collVoters) {
+                // return empty collection
+                $this->initVoters();
+            } else {
+                $collVoters = ChildVoterQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collVotersPartial && count($collVoters)) {
+                        $this->initVoters(false);
+
+                        foreach ($collVoters as $obj) {
+                            if (false == $this->collVoters->contains($obj)) {
+                                $this->collVoters->append($obj);
+                            }
+                        }
+
+                        $this->collVotersPartial = true;
+                    }
+
+                    return $collVoters;
+                }
+
+                if ($partial && $this->collVoters) {
+                    foreach ($this->collVoters as $obj) {
+                        if ($obj->isNew()) {
+                            $collVoters[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collVoters = $collVoters;
+                $this->collVotersPartial = false;
+            }
+        }
+
+        return $this->collVoters;
+    }
+
+    /**
+     * Sets a collection of ChildVoter objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $voters A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setVoters(Collection $voters, ConnectionInterface $con = null)
+    {
+        /** @var ChildVoter[] $votersToDelete */
+        $votersToDelete = $this->getVoters(new Criteria(), $con)->diff($voters);
+
+
+        $this->votersScheduledForDeletion = $votersToDelete;
+
+        foreach ($votersToDelete as $voterRemoved) {
+            $voterRemoved->setUser(null);
+        }
+
+        $this->collVoters = null;
+        foreach ($voters as $voter) {
+            $this->addVoter($voter);
+        }
+
+        $this->collVoters = $voters;
+        $this->collVotersPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Voter objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Voter objects.
+     * @throws PropelException
+     */
+    public function countVoters(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collVotersPartial && !$this->isNew();
+        if (null === $this->collVoters || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collVoters) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getVoters());
+            }
+
+            $query = ChildVoterQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collVoters);
+    }
+
+    /**
+     * Method called to associate a ChildVoter object to this object
+     * through the ChildVoter foreign key attribute.
+     *
+     * @param  ChildVoter $l ChildVoter
+     * @return $this|\MESBallotBox\Propel\User The current object (for fluent API support)
+     */
+    public function addVoter(ChildVoter $l)
+    {
+        if ($this->collVoters === null) {
+            $this->initVoters();
+            $this->collVotersPartial = true;
+        }
+
+        if (!$this->collVoters->contains($l)) {
+            $this->doAddVoter($l);
+
+            if ($this->votersScheduledForDeletion and $this->votersScheduledForDeletion->contains($l)) {
+                $this->votersScheduledForDeletion->remove($this->votersScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildVoter $voter The ChildVoter object to add.
+     */
+    protected function doAddVoter(ChildVoter $voter)
+    {
+        $this->collVoters[]= $voter;
+        $voter->setUser($this);
+    }
+
+    /**
+     * @param  ChildVoter $voter The ChildVoter object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeVoter(ChildVoter $voter)
+    {
+        if ($this->getVoters()->contains($voter)) {
+            $pos = $this->collVoters->search($voter);
+            $this->collVoters->remove($pos);
+            if (null === $this->votersScheduledForDeletion) {
+                $this->votersScheduledForDeletion = clone $this->collVoters;
+                $this->votersScheduledForDeletion->clear();
+            }
+            $this->votersScheduledForDeletion[]= $voter;
+            $voter->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Voters from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildVoter[] List of ChildVoter objects
+     */
+    public function getVotersJoinAffiliate(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildVoterQuery::create(null, $criteria);
+        $query->joinWith('Affiliate', $joinBehavior);
+
+        return $this->getVoters($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Voters from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildVoter[] List of ChildVoter objects
+     */
+    public function getVotersJoinBallot(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildVoterQuery::create(null, $criteria);
+        $query->joinWith('Ballot', $joinBehavior);
+
+        return $this->getVoters($query, $con);
     }
 
     /**
@@ -1886,6 +2220,11 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collVoters) {
+                foreach ($this->collVoters as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collCandidates) {
                 foreach ($this->collCandidates as $o) {
                     $o->clearAllReferences($deep);
@@ -1898,6 +2237,7 @@ abstract class User implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collVoters = null;
         $this->collCandidates = null;
         $this->collVotes = null;
     }

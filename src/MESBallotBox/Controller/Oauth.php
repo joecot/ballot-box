@@ -83,8 +83,19 @@ class Oauth{
             }
         }
     }
+    static private function checkToken(){
+        $provider = self::getProvider();
+        if ($_SESSION['accessToken']->hasExpired()) {
+            $newAccessToken = $provider->getAccessToken('refresh_token', [
+                'refresh_token' => $_SESSION['accessToken']->getRefreshToken()
+            ]);
+            if($newAccessToken) $_SESSION['accessToken'] = $newAccessToken;
+            // Purge old access token and store new access token to your data store.
+        }
+    }
     static public function LookupByMembershipNumber($membershipNumber){
         $provider = self::getProvider();
+        self::checkToken();
         $url = 'https://portal.mindseyesociety.org/api/users/'.$membershipNumber.'/membershipnumber';
         $request = $provider->getAuthenticatedRequest($provider::METHOD_GET, $url, $_SESSION['accessToken']);
         return $provider->getResponse($request);

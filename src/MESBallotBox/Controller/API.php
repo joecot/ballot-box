@@ -24,5 +24,15 @@ class API{
         $slim->group('ballots', function(){
             \MESBallotBox\Controller\Ballot::route($this);
         });
+        $slim->get('affiliate', function($request, $response){
+            $q = new \MESBallotBox\Propel\AffiliateQuery();
+            $affiliates = $q->orderById()->find();
+            $results = Array();
+            foreach($affiliates as $affiliate){
+                $results[] = $affiliate->toArray();
+            }
+            
+            return $response->write(json_encode($results)); 
+        });
     }
 }

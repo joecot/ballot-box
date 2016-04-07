@@ -5,6 +5,7 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
     $scope.user = User.query({},
         function successCallback(response) {
                 $scope.ballots = Ballot.query();
+                $scope.availableBallots = Ballot.available();
             },
             function errorCallback(response){
                 if(response.status == 401){
@@ -105,10 +106,86 @@ ballotboxControllers.controller('ballotEditController', ['$scope', '$http', '$lo
     };
 }]);
 
-ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', function($scope, $http, $location, $routeParams, User, Ballot, Question) {
+ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', 'Voter', 'Affiliate', function($scope, $http, $location, $routeParams, User, Ballot, Question, Voter, Affiliate) {
     $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
             $scope.questions = Question.query({'ballotId': $routeParams.ballotId});
+            $scope.voters = Voter.query({'ballotId': $routeParams.ballotId});
+            $scope.affiliates = Affiliate.query();
+            $scope.newvoter = new Voter();
+            $scope.newvoter.ballotId = $scope.ballot.id;
+            $scope.newvoter.affiliateId = 0;
+            $scope.formerror = false;
+        },
+        function errorCallback(response){
+            if(response.status == 401){
+                window.location = '/index.php/login?jspath='+$location.path();
+            }
+            console.log(response.data);
+        }
+    );
+    $scope.addVoterForm = false;
+    $scope.showAddVoterForm = function(){
+        $scope.addVoterForm=true;
+    }
+    $scope.addVoter = function (newvoter){
+        $scope.formerror = false;
+        newvoter.$save(
+            function successCallback(response) {
+                    console.log('saved question');
+                    console.log(response);
+                    console.log(newvoter);
+                    $scope.newvoter = new Voter();
+                    $scope.newvoter.ballotId = $scope.ballot.id;
+                    $scope.newvoter.affiliateId = 0;
+                    $scope.voters = Voter.query({'ballotId': $routeParams.ballotId});
+                    $scope.formerror = false;
+            },
+            function errorCallback(response){
+                if(response.status == 401){
+                    window.location = '/index.php/login?jspath='+$location.path();
+                }
+                console.log(response.data);
+                $scope.formerror = response.data;
+            }
+        );
+    }
+}]);
+
+ballotboxControllers.controller('ballotVoteController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', 'Voter', 'Candidate', function($scope, $http, $location, $routeParams, User, Ballot, Question, Voter, Candidate) {
+    $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
+        function successCallback(response) {
+            $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questions.forEach(function(question,i,questions){
+                        if(question.type=='office'){
+                            questions[i].candidates = Candidate.query(
+                                {'ballotId': question.ballotId, 'questionId': question.id},
+                                function(params,data){
+                                    console.log($scope.questions);
+                                    console.log('params');
+                                    console.log(params);
+                                    console.log('data');
+                                    console.log(data);
+                                    /*$scope.questions[i].count = $scope.questions[i].candidates.length;
+                                    for(var j = 0; j < $scope.questions[i].candidates.length; j++){
+                                        $scope.questions[i].candidates[j].vote = 0;
+                                    }
+                                    $scope.question[i].votes = [];
+                                    for(var k = 1; k <= $scope.questions[i].count+1; k++){
+                                        $scope.question[i].votes.push(k);
+                                    }*/
+                                }  
+                            );
+                            
+                            
+                        }
+                        else{
+                            $scope.questions[i].vote=0;
+                        }
+                    });
+                }
+            );
         },
         function errorCallback(response){
             if(response.status == 401){

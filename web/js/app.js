@@ -29,6 +29,10 @@ ballotboxApp.config(['$routeProvider',
         templateUrl: '/templates/ballotView.html',
         controller: 'ballotViewController'
       }).
+      when('/ballot/:ballotId/vote', {
+        templateUrl: '/templates/ballotVote.html',
+        controller: 'ballotVoteController'
+      }).
       when('/ballot/:ballotId/question/create', {
         templateUrl: '/templates/questionCreate.html',
         controller: 'questionCreateController'

@@ -7,14 +7,20 @@ use \Exception;
 use \PDO;
 use MESBallotBox\Propel\Candidate as ChildCandidate;
 use MESBallotBox\Propel\CandidateQuery as ChildCandidateQuery;
+use MESBallotBox\Propel\CandidateVersion as ChildCandidateVersion;
+use MESBallotBox\Propel\CandidateVersionQuery as ChildCandidateVersionQuery;
 use MESBallotBox\Propel\Question as ChildQuestion;
 use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
+use MESBallotBox\Propel\QuestionVersionQuery as ChildQuestionVersionQuery;
 use MESBallotBox\Propel\User as ChildUser;
 use MESBallotBox\Propel\UserQuery as ChildUserQuery;
 use MESBallotBox\Propel\VoteItem as ChildVoteItem;
 use MESBallotBox\Propel\VoteItemQuery as ChildVoteItemQuery;
+use MESBallotBox\Propel\VoteItemVersionQuery as ChildVoteItemVersionQuery;
 use MESBallotBox\Propel\Map\CandidateTableMap;
+use MESBallotBox\Propel\Map\CandidateVersionTableMap;
 use MESBallotBox\Propel\Map\VoteItemTableMap;
+use MESBallotBox\Propel\Map\VoteItemVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -123,6 +129,28 @@ abstract class Candidate implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * The value for the version field.
+     *
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $version;
+
+    /**
+     * The value for the version_created_at field.
+     *
+     * @var        DateTime
+     */
+    protected $version_created_at;
+
+    /**
+     * The value for the version_created_by field.
+     *
+     * @var        string
+     */
+    protected $version_created_by;
+
+    /**
      * @var        ChildQuestion
      */
     protected $aQuestion;
@@ -139,12 +167,26 @@ abstract class Candidate implements ActiveRecordInterface
     protected $collVoteItemsPartial;
 
     /**
+     * @var        ObjectCollection|ChildCandidateVersion[] Collection to store aggregation of ChildCandidateVersion objects.
+     */
+    protected $collCandidateVersions;
+    protected $collCandidateVersionsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    // versionable behavior
+
+
+    /**
+     * @var bool
+     */
+    protected $enforceVersion = false;
 
     // validate behavior
 
@@ -170,10 +212,29 @@ abstract class Candidate implements ActiveRecordInterface
     protected $voteItemsScheduledForDeletion = null;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildCandidateVersion[]
+     */
+    protected $candidateVersionsScheduledForDeletion = null;
+
+    /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->version = 0;
+    }
+
+    /**
      * Initializes internal state of MESBallotBox\Propel\Base\Candidate object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -475,6 +536,46 @@ abstract class Candidate implements ActiveRecordInterface
     }
 
     /**
+     * Get the [version] column value.
+     *
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [version_created_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getVersionCreatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->version_created_at;
+        } else {
+            return $this->version_created_at instanceof \DateTimeInterface ? $this->version_created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [version_created_by] column value.
+     *
+     * @return string
+     */
+    public function getVersionCreatedBy()
+    {
+        return $this->version_created_by;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -603,6 +704,66 @@ abstract class Candidate implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
+     * Set the value of [version] column.
+     *
+     * @param int $v new value
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setVersion($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->version !== $v) {
+            $this->version = $v;
+            $this->modifiedColumns[CandidateTableMap::COL_VERSION] = true;
+        }
+
+        return $this;
+    } // setVersion()
+
+    /**
+     * Sets the value of [version_created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setVersionCreatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->version_created_at !== null || $dt !== null) {
+            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->version_created_at->format("Y-m-d H:i:s")) {
+                $this->version_created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[CandidateTableMap::COL_VERSION_CREATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setVersionCreatedAt()
+
+    /**
+     * Set the value of [version_created_by] column.
+     *
+     * @param string $v new value
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setVersionCreatedBy($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->version_created_by !== $v) {
+            $this->version_created_by = $v;
+            $this->modifiedColumns[CandidateTableMap::COL_VERSION_CREATED_BY] = true;
+        }
+
+        return $this;
+    } // setVersionCreatedBy()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -612,6 +773,10 @@ abstract class Candidate implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->version !== 0) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -661,6 +826,18 @@ abstract class Candidate implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : CandidateTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->version = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -669,7 +846,7 @@ abstract class Candidate implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Candidate'), 0, $e);
@@ -740,6 +917,8 @@ abstract class Candidate implements ActiveRecordInterface
             $this->aUser = null;
             $this->collVoteItems = null;
 
+            $this->collCandidateVersions = null;
+
         } // if (deep)
     }
 
@@ -800,6 +979,14 @@ abstract class Candidate implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $ret = $this->preSave($con);
             $isInsert = $this->isNew();
+            // versionable behavior
+            if ($this->isVersioningNecessary()) {
+                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
+                if (!$this->isColumnModified(CandidateTableMap::COL_VERSION_CREATED_AT)) {
+                    $this->setVersionCreatedAt(time());
+                }
+                $createVersion = true; // for postSave hook
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
@@ -825,6 +1012,10 @@ abstract class Candidate implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
+                // versionable behavior
+                if (isset($createVersion)) {
+                    $this->addVersion($con);
+                }
                 CandidateTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
@@ -899,6 +1090,23 @@ abstract class Candidate implements ActiveRecordInterface
                 }
             }
 
+            if ($this->candidateVersionsScheduledForDeletion !== null) {
+                if (!$this->candidateVersionsScheduledForDeletion->isEmpty()) {
+                    \MESBallotBox\Propel\CandidateVersionQuery::create()
+                        ->filterByPrimaryKeys($this->candidateVersionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->candidateVersionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collCandidateVersions !== null) {
+                foreach ($this->collCandidateVersions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -943,6 +1151,15 @@ abstract class Candidate implements ActiveRecordInterface
         if ($this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION)) {
+            $modifiedColumns[':p' . $index++]  = 'version';
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION_CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'version_created_at';
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION_CREATED_BY)) {
+            $modifiedColumns[':p' . $index++]  = 'version_created_by';
+        }
 
         $sql = sprintf(
             'INSERT INTO Candidate (%s) VALUES (%s)',
@@ -971,6 +1188,15 @@ abstract class Candidate implements ActiveRecordInterface
                         break;
                     case 'updated_at':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'version':
+                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
+                        break;
+                    case 'version_created_at':
+                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'version_created_by':
+                        $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1052,6 +1278,15 @@ abstract class Candidate implements ActiveRecordInterface
             case 5:
                 return $this->getUpdatedAt();
                 break;
+            case 6:
+                return $this->getVersion();
+                break;
+            case 7:
+                return $this->getVersionCreatedAt();
+                break;
+            case 8:
+                return $this->getVersionCreatedBy();
+                break;
             default:
                 return null;
                 break;
@@ -1088,6 +1323,9 @@ abstract class Candidate implements ActiveRecordInterface
             $keys[3] => $this->getapplication(),
             $keys[4] => $this->getCreatedAt(),
             $keys[5] => $this->getUpdatedAt(),
+            $keys[6] => $this->getVersion(),
+            $keys[7] => $this->getVersionCreatedAt(),
+            $keys[8] => $this->getVersionCreatedBy(),
         );
         if ($result[$keys[4]] instanceof \DateTime) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
@@ -1095,6 +1333,10 @@ abstract class Candidate implements ActiveRecordInterface
 
         if ($result[$keys[5]] instanceof \DateTime) {
             $result[$keys[5]] = $result[$keys[5]]->format('c');
+        }
+
+        if ($result[$keys[7]] instanceof \DateTime) {
+            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1148,6 +1390,21 @@ abstract class Candidate implements ActiveRecordInterface
 
                 $result[$key] = $this->collVoteItems->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collCandidateVersions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'candidateVersions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Candidate_versions';
+                        break;
+                    default:
+                        $key = 'CandidateVersions';
+                }
+
+                $result[$key] = $this->collCandidateVersions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
         }
 
         return $result;
@@ -1200,6 +1457,15 @@ abstract class Candidate implements ActiveRecordInterface
             case 5:
                 $this->setUpdatedAt($value);
                 break;
+            case 6:
+                $this->setVersion($value);
+                break;
+            case 7:
+                $this->setVersionCreatedAt($value);
+                break;
+            case 8:
+                $this->setVersionCreatedBy($value);
+                break;
         } // switch()
 
         return $this;
@@ -1243,6 +1509,15 @@ abstract class Candidate implements ActiveRecordInterface
         }
         if (array_key_exists($keys[5], $arr)) {
             $this->setUpdatedAt($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setVersion($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setVersionCreatedAt($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setVersionCreatedBy($arr[$keys[8]]);
         }
     }
 
@@ -1302,6 +1577,15 @@ abstract class Candidate implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CandidateTableMap::COL_UPDATED_AT)) {
             $criteria->add(CandidateTableMap::COL_UPDATED_AT, $this->updated_at);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION)) {
+            $criteria->add(CandidateTableMap::COL_VERSION, $this->version);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION_CREATED_AT)) {
+            $criteria->add(CandidateTableMap::COL_VERSION_CREATED_AT, $this->version_created_at);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_VERSION_CREATED_BY)) {
+            $criteria->add(CandidateTableMap::COL_VERSION_CREATED_BY, $this->version_created_by);
         }
 
         return $criteria;
@@ -1394,6 +1678,9 @@ abstract class Candidate implements ActiveRecordInterface
         $copyObj->setapplication($this->getapplication());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setVersion($this->getVersion());
+        $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
+        $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1403,6 +1690,12 @@ abstract class Candidate implements ActiveRecordInterface
             foreach ($this->getVoteItems() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addVoteItem($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getCandidateVersions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addCandidateVersion($relObj->copy($deepCopy));
                 }
             }
 
@@ -1551,6 +1844,9 @@ abstract class Candidate implements ActiveRecordInterface
     {
         if ('VoteItem' == $relationName) {
             return $this->initVoteItems();
+        }
+        if ('CandidateVersion' == $relationName) {
+            return $this->initCandidateVersions();
         }
     }
 
@@ -1830,6 +2126,234 @@ abstract class Candidate implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collCandidateVersions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addCandidateVersions()
+     */
+    public function clearCandidateVersions()
+    {
+        $this->collCandidateVersions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collCandidateVersions collection loaded partially.
+     */
+    public function resetPartialCandidateVersions($v = true)
+    {
+        $this->collCandidateVersionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collCandidateVersions collection.
+     *
+     * By default this just sets the collCandidateVersions collection to an empty array (like clearcollCandidateVersions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initCandidateVersions($overrideExisting = true)
+    {
+        if (null !== $this->collCandidateVersions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = CandidateVersionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collCandidateVersions = new $collectionClassName;
+        $this->collCandidateVersions->setModel('\MESBallotBox\Propel\CandidateVersion');
+    }
+
+    /**
+     * Gets an array of ChildCandidateVersion objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildCandidate is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildCandidateVersion[] List of ChildCandidateVersion objects
+     * @throws PropelException
+     */
+    public function getCandidateVersions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCandidateVersionsPartial && !$this->isNew();
+        if (null === $this->collCandidateVersions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collCandidateVersions) {
+                // return empty collection
+                $this->initCandidateVersions();
+            } else {
+                $collCandidateVersions = ChildCandidateVersionQuery::create(null, $criteria)
+                    ->filterByCandidate($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collCandidateVersionsPartial && count($collCandidateVersions)) {
+                        $this->initCandidateVersions(false);
+
+                        foreach ($collCandidateVersions as $obj) {
+                            if (false == $this->collCandidateVersions->contains($obj)) {
+                                $this->collCandidateVersions->append($obj);
+                            }
+                        }
+
+                        $this->collCandidateVersionsPartial = true;
+                    }
+
+                    return $collCandidateVersions;
+                }
+
+                if ($partial && $this->collCandidateVersions) {
+                    foreach ($this->collCandidateVersions as $obj) {
+                        if ($obj->isNew()) {
+                            $collCandidateVersions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collCandidateVersions = $collCandidateVersions;
+                $this->collCandidateVersionsPartial = false;
+            }
+        }
+
+        return $this->collCandidateVersions;
+    }
+
+    /**
+     * Sets a collection of ChildCandidateVersion objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $candidateVersions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function setCandidateVersions(Collection $candidateVersions, ConnectionInterface $con = null)
+    {
+        /** @var ChildCandidateVersion[] $candidateVersionsToDelete */
+        $candidateVersionsToDelete = $this->getCandidateVersions(new Criteria(), $con)->diff($candidateVersions);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->candidateVersionsScheduledForDeletion = clone $candidateVersionsToDelete;
+
+        foreach ($candidateVersionsToDelete as $candidateVersionRemoved) {
+            $candidateVersionRemoved->setCandidate(null);
+        }
+
+        $this->collCandidateVersions = null;
+        foreach ($candidateVersions as $candidateVersion) {
+            $this->addCandidateVersion($candidateVersion);
+        }
+
+        $this->collCandidateVersions = $candidateVersions;
+        $this->collCandidateVersionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related CandidateVersion objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related CandidateVersion objects.
+     * @throws PropelException
+     */
+    public function countCandidateVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collCandidateVersionsPartial && !$this->isNew();
+        if (null === $this->collCandidateVersions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collCandidateVersions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getCandidateVersions());
+            }
+
+            $query = ChildCandidateVersionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByCandidate($this)
+                ->count($con);
+        }
+
+        return count($this->collCandidateVersions);
+    }
+
+    /**
+     * Method called to associate a ChildCandidateVersion object to this object
+     * through the ChildCandidateVersion foreign key attribute.
+     *
+     * @param  ChildCandidateVersion $l ChildCandidateVersion
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function addCandidateVersion(ChildCandidateVersion $l)
+    {
+        if ($this->collCandidateVersions === null) {
+            $this->initCandidateVersions();
+            $this->collCandidateVersionsPartial = true;
+        }
+
+        if (!$this->collCandidateVersions->contains($l)) {
+            $this->doAddCandidateVersion($l);
+
+            if ($this->candidateVersionsScheduledForDeletion and $this->candidateVersionsScheduledForDeletion->contains($l)) {
+                $this->candidateVersionsScheduledForDeletion->remove($this->candidateVersionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildCandidateVersion $candidateVersion The ChildCandidateVersion object to add.
+     */
+    protected function doAddCandidateVersion(ChildCandidateVersion $candidateVersion)
+    {
+        $this->collCandidateVersions[]= $candidateVersion;
+        $candidateVersion->setCandidate($this);
+    }
+
+    /**
+     * @param  ChildCandidateVersion $candidateVersion The ChildCandidateVersion object to remove.
+     * @return $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function removeCandidateVersion(ChildCandidateVersion $candidateVersion)
+    {
+        if ($this->getCandidateVersions()->contains($candidateVersion)) {
+            $pos = $this->collCandidateVersions->search($candidateVersion);
+            $this->collCandidateVersions->remove($pos);
+            if (null === $this->candidateVersionsScheduledForDeletion) {
+                $this->candidateVersionsScheduledForDeletion = clone $this->collCandidateVersions;
+                $this->candidateVersionsScheduledForDeletion->clear();
+            }
+            $this->candidateVersionsScheduledForDeletion[]= clone $candidateVersion;
+            $candidateVersion->setCandidate(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1848,8 +2372,12 @@ abstract class Candidate implements ActiveRecordInterface
         $this->application = null;
         $this->created_at = null;
         $this->updated_at = null;
+        $this->version = null;
+        $this->version_created_at = null;
+        $this->version_created_by = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1871,9 +2399,15 @@ abstract class Candidate implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collCandidateVersions) {
+                foreach ($this->collCandidateVersions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collVoteItems = null;
+        $this->collCandidateVersions = null;
         $this->aQuestion = null;
         $this->aUser = null;
     }
@@ -1902,6 +2436,348 @@ abstract class Candidate implements ActiveRecordInterface
         return $this;
     }
 
+    // versionable behavior
+
+    /**
+     * Enforce a new Version of this object upon next save.
+     *
+     * @return $this|\MESBallotBox\Propel\Candidate
+     */
+    public function enforceVersioning()
+    {
+        $this->enforceVersion = true;
+
+        return $this;
+    }
+
+    /**
+     * Checks whether the current state must be recorded as a version
+     *
+     * @return  boolean
+     */
+    public function isVersioningNecessary($con = null)
+    {
+        if ($this->alreadyInSave) {
+            return false;
+        }
+
+        if ($this->enforceVersion) {
+            return true;
+        }
+
+        if (ChildCandidateQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
+            return true;
+        }
+        if (null !== ($object = $this->getQuestion($con)) && $object->isVersioningNecessary($con)) {
+            return true;
+        }
+
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getVoteItems(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
+
+        return false;
+    }
+
+    /**
+     * Creates a version of the current object and saves it.
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ChildCandidateVersion A version object
+     */
+    public function addVersion($con = null)
+    {
+        $this->enforceVersion = false;
+
+        $version = new ChildCandidateVersion();
+        $version->setid($this->getid());
+        $version->setquestionId($this->getquestionId());
+        $version->setuserId($this->getuserId());
+        $version->setapplication($this->getapplication());
+        $version->setCreatedAt($this->getCreatedAt());
+        $version->setUpdatedAt($this->getUpdatedAt());
+        $version->setVersion($this->getVersion());
+        $version->setVersionCreatedAt($this->getVersionCreatedAt());
+        $version->setVersionCreatedBy($this->getVersionCreatedBy());
+        $version->setCandidate($this);
+        if (($related = $this->getQuestion(null, $con)) && $related->getVersion()) {
+            $version->setQuestionIdVersion($related->getVersion());
+        }
+        if ($relateds = $this->getVoteItems(null, $con)->toKeyValue('id', 'Version')) {
+            $version->setVoteItemIds(array_keys($relateds));
+            $version->setVoteItemVersions(array_values($relateds));
+        }
+        $version->save($con);
+
+        return $version;
+    }
+
+    /**
+     * Sets the properties of the current object to the value they had at a specific version
+     *
+     * @param   integer $versionNumber The version number to read
+     * @param   ConnectionInterface $con The connection to use
+     *
+     * @return  $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function toVersion($versionNumber, $con = null)
+    {
+        $version = $this->getOneVersion($versionNumber, $con);
+        if (!$version) {
+            throw new PropelException(sprintf('No ChildCandidate object found with version %d', $version));
+        }
+        $this->populateFromVersion($version, $con);
+
+        return $this;
+    }
+
+    /**
+     * Sets the properties of the current object to the value they had at a specific version
+     *
+     * @param ChildCandidateVersion $version The version object to use
+     * @param ConnectionInterface   $con the connection to use
+     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
+     *
+     * @return $this|ChildCandidate The current object (for fluent API support)
+     */
+    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
+    {
+        $loadedObjects['ChildCandidate'][$version->getid()][$version->getVersion()] = $this;
+        $this->setid($version->getid());
+        $this->setquestionId($version->getquestionId());
+        $this->setuserId($version->getuserId());
+        $this->setapplication($version->getapplication());
+        $this->setCreatedAt($version->getCreatedAt());
+        $this->setUpdatedAt($version->getUpdatedAt());
+        $this->setVersion($version->getVersion());
+        $this->setVersionCreatedAt($version->getVersionCreatedAt());
+        $this->setVersionCreatedBy($version->getVersionCreatedBy());
+        if ($fkValue = $version->getquestionId()) {
+            if (isset($loadedObjects['ChildQuestion']) && isset($loadedObjects['ChildQuestion'][$fkValue]) && isset($loadedObjects['ChildQuestion'][$fkValue][$version->getQuestionIdVersion()])) {
+                $related = $loadedObjects['ChildQuestion'][$fkValue][$version->getQuestionIdVersion()];
+            } else {
+                $related = new ChildQuestion();
+                $relatedVersion = ChildQuestionVersionQuery::create()
+                    ->filterByid($fkValue)
+                    ->filterByVersion($version->getQuestionIdVersion())
+                    ->findOne($con);
+                $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                $related->setNew(false);
+            }
+            $this->setQuestion($related);
+        }
+        if ($fkValues = $version->getVoteItemIds()) {
+            $this->clearVoteItems();
+            $fkVersions = $version->getVoteItemVersions();
+            $query = ChildVoteItemVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(VoteItemVersionTableMap::COL_ID, $value);
+                $c2 = $query->getNewCriterion(VoteItemVersionTableMap::COL_VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildVoteItem']) && isset($loadedObjects['ChildVoteItem'][$relatedVersion->getid()]) && isset($loadedObjects['ChildVoteItem'][$relatedVersion->getid()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildVoteItem'][$relatedVersion->getid()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildVoteItem();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addVoteItem($related);
+                $this->collVoteItemsPartial = false;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the latest persisted version number for the current object
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  integer
+     */
+    public function getLastVersionNumber($con = null)
+    {
+        $v = ChildCandidateVersionQuery::create()
+            ->filterByCandidate($this)
+            ->orderByVersion('desc')
+            ->findOne($con);
+        if (!$v) {
+            return 0;
+        }
+
+        return $v->getVersion();
+    }
+
+    /**
+     * Checks whether the current object is the latest one
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  Boolean
+     */
+    public function isLastVersion($con = null)
+    {
+        return $this->getLastVersionNumber($con) == $this->getVersion();
+    }
+
+    /**
+     * Retrieves a version object for this entity and a version number
+     *
+     * @param   integer $versionNumber The version number to read
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ChildCandidateVersion A version object
+     */
+    public function getOneVersion($versionNumber, $con = null)
+    {
+        return ChildCandidateVersionQuery::create()
+            ->filterByCandidate($this)
+            ->filterByVersion($versionNumber)
+            ->findOne($con);
+    }
+
+    /**
+     * Gets all the versions of this object, in incremental order
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ObjectCollection|ChildCandidateVersion[] A list of ChildCandidateVersion objects
+     */
+    public function getAllVersions($con = null)
+    {
+        $criteria = new Criteria();
+        $criteria->addAscendingOrderByColumn(CandidateVersionTableMap::COL_VERSION);
+
+        return $this->getCandidateVersions($criteria, $con);
+    }
+
+    /**
+     * Compares the current object with another of its version.
+     * <code>
+     * print_r($book->compareVersion(1));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   integer             $versionNumber
+     * @param   string              $keys Main key used for the result diff (versions|columns)
+     * @param   ConnectionInterface $con the connection to use
+     * @param   array               $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    {
+        $fromVersion = $this->toArray();
+        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
+
+        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
+    }
+
+    /**
+     * Compares two versions of the current object.
+     * <code>
+     * print_r($book->compareVersions(1, 2));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   integer             $fromVersionNumber
+     * @param   integer             $toVersionNumber
+     * @param   string              $keys Main key used for the result diff (versions|columns)
+     * @param   ConnectionInterface $con the connection to use
+     * @param   array               $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    {
+        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
+        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
+
+        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
+    }
+
+    /**
+     * Computes the diff between two versions.
+     * <code>
+     * print_r($book->computeDiff(1, 2));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   array     $fromVersion     An array representing the original version.
+     * @param   array     $toVersion       An array representing the destination version.
+     * @param   string    $keys            Main key used for the result diff (versions|columns).
+     * @param   array     $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
+    {
+        $fromVersionNumber = $fromVersion['Version'];
+        $toVersionNumber = $toVersion['Version'];
+        $ignoredColumns = array_merge(array(
+            'Version',
+            'VersionCreatedAt',
+            'VersionCreatedBy',
+        ), $ignoredColumns);
+        $diff = array();
+        foreach ($fromVersion as $key => $value) {
+            if (in_array($key, $ignoredColumns)) {
+                continue;
+            }
+            if ($toVersion[$key] != $value) {
+                switch ($keys) {
+                    case 'versions':
+                        $diff[$fromVersionNumber][$key] = $value;
+                        $diff[$toVersionNumber][$key] = $toVersion[$key];
+                        break;
+                    default:
+                        $diff[$key] = array(
+                            $fromVersionNumber => $value,
+                            $toVersionNumber => $toVersion[$key],
+                        );
+                        break;
+                }
+            }
+        }
+
+        return $diff;
+    }
+    /**
+     * retrieve the last $number versions.
+     *
+     * @param Integer $number the number of record to return.
+     * @return PropelCollection|\MESBallotBox\Propel\CandidateVersion[] List of \MESBallotBox\Propel\CandidateVersion objects
+     */
+    public function getLastVersions($number = 10, $criteria = null, $con = null)
+    {
+        $criteria = ChildCandidateVersionQuery::create(null, $criteria);
+        $criteria->addDescendingOrderByColumn(CandidateVersionTableMap::COL_VERSION);
+        $criteria->limit($number);
+
+        return $this->getCandidateVersions($criteria, $con);
+    }
     // validate behavior
 
     /**
@@ -1963,6 +2839,15 @@ abstract class Candidate implements ActiveRecordInterface
 
             if (null !== $this->collVoteItems) {
                 foreach ($this->collVoteItems as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collCandidateVersions) {
+                foreach ($this->collCandidateVersions as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

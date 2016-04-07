@@ -7,15 +7,23 @@ use \Exception;
 use \PDO;
 use MESBallotBox\Propel\Ballot as ChildBallot;
 use MESBallotBox\Propel\BallotQuery as ChildBallotQuery;
+use MESBallotBox\Propel\BallotVersionQuery as ChildBallotVersionQuery;
 use MESBallotBox\Propel\Candidate as ChildCandidate;
 use MESBallotBox\Propel\CandidateQuery as ChildCandidateQuery;
+use MESBallotBox\Propel\CandidateVersionQuery as ChildCandidateVersionQuery;
 use MESBallotBox\Propel\Question as ChildQuestion;
 use MESBallotBox\Propel\QuestionQuery as ChildQuestionQuery;
+use MESBallotBox\Propel\QuestionVersion as ChildQuestionVersion;
+use MESBallotBox\Propel\QuestionVersionQuery as ChildQuestionVersionQuery;
 use MESBallotBox\Propel\VoteItem as ChildVoteItem;
 use MESBallotBox\Propel\VoteItemQuery as ChildVoteItemQuery;
+use MESBallotBox\Propel\VoteItemVersionQuery as ChildVoteItemVersionQuery;
 use MESBallotBox\Propel\Map\CandidateTableMap;
+use MESBallotBox\Propel\Map\CandidateVersionTableMap;
 use MESBallotBox\Propel\Map\QuestionTableMap;
+use MESBallotBox\Propel\Map\QuestionVersionTableMap;
 use MESBallotBox\Propel\Map\VoteItemTableMap;
+use MESBallotBox\Propel\Map\VoteItemVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -153,6 +161,28 @@ abstract class Question implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * The value for the version field.
+     *
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $version;
+
+    /**
+     * The value for the version_created_at field.
+     *
+     * @var        DateTime
+     */
+    protected $version_created_at;
+
+    /**
+     * The value for the version_created_by field.
+     *
+     * @var        string
+     */
+    protected $version_created_by;
+
+    /**
      * @var        ChildBallot
      */
     protected $aBallot;
@@ -170,12 +200,26 @@ abstract class Question implements ActiveRecordInterface
     protected $collVoteItemsPartial;
 
     /**
+     * @var        ObjectCollection|ChildQuestionVersion[] Collection to store aggregation of ChildQuestionVersion objects.
+     */
+    protected $collQuestionVersions;
+    protected $collQuestionVersionsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    // versionable behavior
+
+
+    /**
+     * @var bool
+     */
+    protected $enforceVersion = false;
 
     // validate behavior
 
@@ -207,10 +251,29 @@ abstract class Question implements ActiveRecordInterface
     protected $voteItemsScheduledForDeletion = null;
 
     /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildQuestionVersion[]
+     */
+    protected $questionVersionsScheduledForDeletion = null;
+
+    /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->version = 0;
+    }
+
+    /**
      * Initializes internal state of MESBallotBox\Propel\Base\Question object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -561,6 +624,46 @@ abstract class Question implements ActiveRecordInterface
     }
 
     /**
+     * Get the [version] column value.
+     *
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [version_created_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getVersionCreatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->version_created_at;
+        } else {
+            return $this->version_created_at instanceof \DateTimeInterface ? $this->version_created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [version_created_by] column value.
+     *
+     * @return string
+     */
+    public function getVersionCreatedBy()
+    {
+        return $this->version_created_by;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -770,6 +873,66 @@ abstract class Question implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
+     * Set the value of [version] column.
+     *
+     * @param int $v new value
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function setVersion($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->version !== $v) {
+            $this->version = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_VERSION] = true;
+        }
+
+        return $this;
+    } // setVersion()
+
+    /**
+     * Sets the value of [version_created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function setVersionCreatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->version_created_at !== null || $dt !== null) {
+            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->version_created_at->format("Y-m-d H:i:s")) {
+                $this->version_created_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[QuestionTableMap::COL_VERSION_CREATED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setVersionCreatedAt()
+
+    /**
+     * Set the value of [version_created_by] column.
+     *
+     * @param string $v new value
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function setVersionCreatedBy($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->version_created_by !== $v) {
+            $this->version_created_by = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_VERSION_CREATED_BY] = true;
+        }
+
+        return $this;
+    } // setVersionCreatedBy()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -779,6 +942,10 @@ abstract class Question implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->version !== 0) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -840,6 +1007,18 @@ abstract class Question implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : QuestionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->version = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -848,7 +1027,7 @@ abstract class Question implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 10; // 10 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 13; // 13 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Question'), 0, $e);
@@ -917,6 +1096,8 @@ abstract class Question implements ActiveRecordInterface
 
             $this->collVoteItems = null;
 
+            $this->collQuestionVersions = null;
+
         } // if (deep)
     }
 
@@ -977,6 +1158,14 @@ abstract class Question implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $ret = $this->preSave($con);
             $isInsert = $this->isNew();
+            // versionable behavior
+            if ($this->isVersioningNecessary()) {
+                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
+                if (!$this->isColumnModified(QuestionTableMap::COL_VERSION_CREATED_AT)) {
+                    $this->setVersionCreatedAt(time());
+                }
+                $createVersion = true; // for postSave hook
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
@@ -1002,6 +1191,10 @@ abstract class Question implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
+                // versionable behavior
+                if (isset($createVersion)) {
+                    $this->addVersion($con);
+                }
                 QuestionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
@@ -1085,6 +1278,23 @@ abstract class Question implements ActiveRecordInterface
                 }
             }
 
+            if ($this->questionVersionsScheduledForDeletion !== null) {
+                if (!$this->questionVersionsScheduledForDeletion->isEmpty()) {
+                    \MESBallotBox\Propel\QuestionVersionQuery::create()
+                        ->filterByPrimaryKeys($this->questionVersionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->questionVersionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collQuestionVersions !== null) {
+                foreach ($this->collQuestionVersions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -1141,6 +1351,15 @@ abstract class Question implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionTableMap::COL_UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION)) {
+            $modifiedColumns[':p' . $index++]  = 'version';
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION_CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'version_created_at';
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION_CREATED_BY)) {
+            $modifiedColumns[':p' . $index++]  = 'version_created_by';
+        }
 
         $sql = sprintf(
             'INSERT INTO Question (%s) VALUES (%s)',
@@ -1181,6 +1400,15 @@ abstract class Question implements ActiveRecordInterface
                         break;
                     case 'updated_at':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'version':
+                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
+                        break;
+                    case 'version_created_at':
+                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'version_created_by':
+                        $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1274,6 +1502,15 @@ abstract class Question implements ActiveRecordInterface
             case 9:
                 return $this->getUpdatedAt();
                 break;
+            case 10:
+                return $this->getVersion();
+                break;
+            case 11:
+                return $this->getVersionCreatedAt();
+                break;
+            case 12:
+                return $this->getVersionCreatedBy();
+                break;
             default:
                 return null;
                 break;
@@ -1314,6 +1551,9 @@ abstract class Question implements ActiveRecordInterface
             $keys[7] => $this->getdiscussion(),
             $keys[8] => $this->getCreatedAt(),
             $keys[9] => $this->getUpdatedAt(),
+            $keys[10] => $this->getVersion(),
+            $keys[11] => $this->getVersionCreatedAt(),
+            $keys[12] => $this->getVersionCreatedBy(),
         );
         if ($result[$keys[8]] instanceof \DateTime) {
             $result[$keys[8]] = $result[$keys[8]]->format('c');
@@ -1321,6 +1561,10 @@ abstract class Question implements ActiveRecordInterface
 
         if ($result[$keys[9]] instanceof \DateTime) {
             $result[$keys[9]] = $result[$keys[9]]->format('c');
+        }
+
+        if ($result[$keys[11]] instanceof \DateTime) {
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1373,6 +1617,21 @@ abstract class Question implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collVoteItems->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collQuestionVersions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'questionVersions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Question_versions';
+                        break;
+                    default:
+                        $key = 'QuestionVersions';
+                }
+
+                $result[$key] = $this->collQuestionVersions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1442,6 +1701,15 @@ abstract class Question implements ActiveRecordInterface
             case 9:
                 $this->setUpdatedAt($value);
                 break;
+            case 10:
+                $this->setVersion($value);
+                break;
+            case 11:
+                $this->setVersionCreatedAt($value);
+                break;
+            case 12:
+                $this->setVersionCreatedBy($value);
+                break;
         } // switch()
 
         return $this;
@@ -1497,6 +1765,15 @@ abstract class Question implements ActiveRecordInterface
         }
         if (array_key_exists($keys[9], $arr)) {
             $this->setUpdatedAt($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setVersion($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setVersionCreatedAt($arr[$keys[11]]);
+        }
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setVersionCreatedBy($arr[$keys[12]]);
         }
     }
 
@@ -1568,6 +1845,15 @@ abstract class Question implements ActiveRecordInterface
         }
         if ($this->isColumnModified(QuestionTableMap::COL_UPDATED_AT)) {
             $criteria->add(QuestionTableMap::COL_UPDATED_AT, $this->updated_at);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION)) {
+            $criteria->add(QuestionTableMap::COL_VERSION, $this->version);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION_CREATED_AT)) {
+            $criteria->add(QuestionTableMap::COL_VERSION_CREATED_AT, $this->version_created_at);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_VERSION_CREATED_BY)) {
+            $criteria->add(QuestionTableMap::COL_VERSION_CREATED_BY, $this->version_created_by);
         }
 
         return $criteria;
@@ -1664,6 +1950,9 @@ abstract class Question implements ActiveRecordInterface
         $copyObj->setdiscussion($this->getdiscussion());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setVersion($this->getVersion());
+        $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
+        $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1679,6 +1968,12 @@ abstract class Question implements ActiveRecordInterface
             foreach ($this->getVoteItems() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addVoteItem($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getQuestionVersions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addQuestionVersion($relObj->copy($deepCopy));
                 }
             }
 
@@ -1779,6 +2074,9 @@ abstract class Question implements ActiveRecordInterface
         }
         if ('VoteItem' == $relationName) {
             return $this->initVoteItems();
+        }
+        if ('QuestionVersion' == $relationName) {
+            return $this->initQuestionVersions();
         }
     }
 
@@ -2308,6 +2606,234 @@ abstract class Question implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collQuestionVersions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addQuestionVersions()
+     */
+    public function clearQuestionVersions()
+    {
+        $this->collQuestionVersions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collQuestionVersions collection loaded partially.
+     */
+    public function resetPartialQuestionVersions($v = true)
+    {
+        $this->collQuestionVersionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collQuestionVersions collection.
+     *
+     * By default this just sets the collQuestionVersions collection to an empty array (like clearcollQuestionVersions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initQuestionVersions($overrideExisting = true)
+    {
+        if (null !== $this->collQuestionVersions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = QuestionVersionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collQuestionVersions = new $collectionClassName;
+        $this->collQuestionVersions->setModel('\MESBallotBox\Propel\QuestionVersion');
+    }
+
+    /**
+     * Gets an array of ChildQuestionVersion objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildQuestion is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildQuestionVersion[] List of ChildQuestionVersion objects
+     * @throws PropelException
+     */
+    public function getQuestionVersions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collQuestionVersionsPartial && !$this->isNew();
+        if (null === $this->collQuestionVersions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collQuestionVersions) {
+                // return empty collection
+                $this->initQuestionVersions();
+            } else {
+                $collQuestionVersions = ChildQuestionVersionQuery::create(null, $criteria)
+                    ->filterByQuestion($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collQuestionVersionsPartial && count($collQuestionVersions)) {
+                        $this->initQuestionVersions(false);
+
+                        foreach ($collQuestionVersions as $obj) {
+                            if (false == $this->collQuestionVersions->contains($obj)) {
+                                $this->collQuestionVersions->append($obj);
+                            }
+                        }
+
+                        $this->collQuestionVersionsPartial = true;
+                    }
+
+                    return $collQuestionVersions;
+                }
+
+                if ($partial && $this->collQuestionVersions) {
+                    foreach ($this->collQuestionVersions as $obj) {
+                        if ($obj->isNew()) {
+                            $collQuestionVersions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collQuestionVersions = $collQuestionVersions;
+                $this->collQuestionVersionsPartial = false;
+            }
+        }
+
+        return $this->collQuestionVersions;
+    }
+
+    /**
+     * Sets a collection of ChildQuestionVersion objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $questionVersions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function setQuestionVersions(Collection $questionVersions, ConnectionInterface $con = null)
+    {
+        /** @var ChildQuestionVersion[] $questionVersionsToDelete */
+        $questionVersionsToDelete = $this->getQuestionVersions(new Criteria(), $con)->diff($questionVersions);
+
+
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->questionVersionsScheduledForDeletion = clone $questionVersionsToDelete;
+
+        foreach ($questionVersionsToDelete as $questionVersionRemoved) {
+            $questionVersionRemoved->setQuestion(null);
+        }
+
+        $this->collQuestionVersions = null;
+        foreach ($questionVersions as $questionVersion) {
+            $this->addQuestionVersion($questionVersion);
+        }
+
+        $this->collQuestionVersions = $questionVersions;
+        $this->collQuestionVersionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related QuestionVersion objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related QuestionVersion objects.
+     * @throws PropelException
+     */
+    public function countQuestionVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collQuestionVersionsPartial && !$this->isNew();
+        if (null === $this->collQuestionVersions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collQuestionVersions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getQuestionVersions());
+            }
+
+            $query = ChildQuestionVersionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByQuestion($this)
+                ->count($con);
+        }
+
+        return count($this->collQuestionVersions);
+    }
+
+    /**
+     * Method called to associate a ChildQuestionVersion object to this object
+     * through the ChildQuestionVersion foreign key attribute.
+     *
+     * @param  ChildQuestionVersion $l ChildQuestionVersion
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function addQuestionVersion(ChildQuestionVersion $l)
+    {
+        if ($this->collQuestionVersions === null) {
+            $this->initQuestionVersions();
+            $this->collQuestionVersionsPartial = true;
+        }
+
+        if (!$this->collQuestionVersions->contains($l)) {
+            $this->doAddQuestionVersion($l);
+
+            if ($this->questionVersionsScheduledForDeletion and $this->questionVersionsScheduledForDeletion->contains($l)) {
+                $this->questionVersionsScheduledForDeletion->remove($this->questionVersionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildQuestionVersion $questionVersion The ChildQuestionVersion object to add.
+     */
+    protected function doAddQuestionVersion(ChildQuestionVersion $questionVersion)
+    {
+        $this->collQuestionVersions[]= $questionVersion;
+        $questionVersion->setQuestion($this);
+    }
+
+    /**
+     * @param  ChildQuestionVersion $questionVersion The ChildQuestionVersion object to remove.
+     * @return $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function removeQuestionVersion(ChildQuestionVersion $questionVersion)
+    {
+        if ($this->getQuestionVersions()->contains($questionVersion)) {
+            $pos = $this->collQuestionVersions->search($questionVersion);
+            $this->collQuestionVersions->remove($pos);
+            if (null === $this->questionVersionsScheduledForDeletion) {
+                $this->questionVersionsScheduledForDeletion = clone $this->collQuestionVersions;
+                $this->questionVersionsScheduledForDeletion->clear();
+            }
+            $this->questionVersionsScheduledForDeletion[]= clone $questionVersion;
+            $questionVersion->setQuestion(null);
+        }
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -2327,8 +2853,12 @@ abstract class Question implements ActiveRecordInterface
         $this->discussion = null;
         $this->created_at = null;
         $this->updated_at = null;
+        $this->version = null;
+        $this->version_created_at = null;
+        $this->version_created_by = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -2355,10 +2885,16 @@ abstract class Question implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collQuestionVersions) {
+                foreach ($this->collQuestionVersions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collCandidates = null;
         $this->collVoteItems = null;
+        $this->collQuestionVersions = null;
         $this->aBallot = null;
     }
 
@@ -2386,6 +2922,393 @@ abstract class Question implements ActiveRecordInterface
         return $this;
     }
 
+    // versionable behavior
+
+    /**
+     * Enforce a new Version of this object upon next save.
+     *
+     * @return $this|\MESBallotBox\Propel\Question
+     */
+    public function enforceVersioning()
+    {
+        $this->enforceVersion = true;
+
+        return $this;
+    }
+
+    /**
+     * Checks whether the current state must be recorded as a version
+     *
+     * @return  boolean
+     */
+    public function isVersioningNecessary($con = null)
+    {
+        if ($this->alreadyInSave) {
+            return false;
+        }
+
+        if ($this->enforceVersion) {
+            return true;
+        }
+
+        if (ChildQuestionQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
+            return true;
+        }
+        if (null !== ($object = $this->getBallot($con)) && $object->isVersioningNecessary($con)) {
+            return true;
+        }
+
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getCandidates(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getVoteItems(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
+
+        return false;
+    }
+
+    /**
+     * Creates a version of the current object and saves it.
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ChildQuestionVersion A version object
+     */
+    public function addVersion($con = null)
+    {
+        $this->enforceVersion = false;
+
+        $version = new ChildQuestionVersion();
+        $version->setid($this->getid());
+        $version->setballotId($this->getballotId());
+        $version->settype($this->gettype());
+        $version->setcount($this->getcount());
+        $version->setname($this->getname());
+        $version->setdescription($this->getdescription());
+        $version->setreadmore($this->getreadmore());
+        $version->setdiscussion($this->getdiscussion());
+        $version->setCreatedAt($this->getCreatedAt());
+        $version->setUpdatedAt($this->getUpdatedAt());
+        $version->setVersion($this->getVersion());
+        $version->setVersionCreatedAt($this->getVersionCreatedAt());
+        $version->setVersionCreatedBy($this->getVersionCreatedBy());
+        $version->setQuestion($this);
+        if (($related = $this->getBallot(null, $con)) && $related->getVersion()) {
+            $version->setBallotIdVersion($related->getVersion());
+        }
+        if ($relateds = $this->getCandidates(null, $con)->toKeyValue('id', 'Version')) {
+            $version->setCandidateIds(array_keys($relateds));
+            $version->setCandidateVersions(array_values($relateds));
+        }
+        if ($relateds = $this->getVoteItems(null, $con)->toKeyValue('id', 'Version')) {
+            $version->setVoteItemIds(array_keys($relateds));
+            $version->setVoteItemVersions(array_values($relateds));
+        }
+        $version->save($con);
+
+        return $version;
+    }
+
+    /**
+     * Sets the properties of the current object to the value they had at a specific version
+     *
+     * @param   integer $versionNumber The version number to read
+     * @param   ConnectionInterface $con The connection to use
+     *
+     * @return  $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function toVersion($versionNumber, $con = null)
+    {
+        $version = $this->getOneVersion($versionNumber, $con);
+        if (!$version) {
+            throw new PropelException(sprintf('No ChildQuestion object found with version %d', $version));
+        }
+        $this->populateFromVersion($version, $con);
+
+        return $this;
+    }
+
+    /**
+     * Sets the properties of the current object to the value they had at a specific version
+     *
+     * @param ChildQuestionVersion $version The version object to use
+     * @param ConnectionInterface   $con the connection to use
+     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
+     *
+     * @return $this|ChildQuestion The current object (for fluent API support)
+     */
+    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
+    {
+        $loadedObjects['ChildQuestion'][$version->getid()][$version->getVersion()] = $this;
+        $this->setid($version->getid());
+        $this->setballotId($version->getballotId());
+        $this->settype($version->gettype());
+        $this->setcount($version->getcount());
+        $this->setname($version->getname());
+        $this->setdescription($version->getdescription());
+        $this->setreadmore($version->getreadmore());
+        $this->setdiscussion($version->getdiscussion());
+        $this->setCreatedAt($version->getCreatedAt());
+        $this->setUpdatedAt($version->getUpdatedAt());
+        $this->setVersion($version->getVersion());
+        $this->setVersionCreatedAt($version->getVersionCreatedAt());
+        $this->setVersionCreatedBy($version->getVersionCreatedBy());
+        if ($fkValue = $version->getballotId()) {
+            if (isset($loadedObjects['ChildBallot']) && isset($loadedObjects['ChildBallot'][$fkValue]) && isset($loadedObjects['ChildBallot'][$fkValue][$version->getBallotIdVersion()])) {
+                $related = $loadedObjects['ChildBallot'][$fkValue][$version->getBallotIdVersion()];
+            } else {
+                $related = new ChildBallot();
+                $relatedVersion = ChildBallotVersionQuery::create()
+                    ->filterByid($fkValue)
+                    ->filterByVersion($version->getBallotIdVersion())
+                    ->findOne($con);
+                $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                $related->setNew(false);
+            }
+            $this->setBallot($related);
+        }
+        if ($fkValues = $version->getCandidateIds()) {
+            $this->clearCandidates();
+            $fkVersions = $version->getCandidateVersions();
+            $query = ChildCandidateVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(CandidateVersionTableMap::COL_ID, $value);
+                $c2 = $query->getNewCriterion(CandidateVersionTableMap::COL_VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildCandidate']) && isset($loadedObjects['ChildCandidate'][$relatedVersion->getid()]) && isset($loadedObjects['ChildCandidate'][$relatedVersion->getid()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildCandidate'][$relatedVersion->getid()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildCandidate();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addCandidate($related);
+                $this->collCandidatesPartial = false;
+            }
+        }
+        if ($fkValues = $version->getVoteItemIds()) {
+            $this->clearVoteItem();
+            $fkVersions = $version->getVoteItemVersions();
+            $query = ChildVoteItemVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(VoteItemVersionTableMap::COL_ID, $value);
+                $c2 = $query->getNewCriterion(VoteItemVersionTableMap::COL_VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildVoteItem']) && isset($loadedObjects['ChildVoteItem'][$relatedVersion->getid()]) && isset($loadedObjects['ChildVoteItem'][$relatedVersion->getid()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildVoteItem'][$relatedVersion->getid()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildVoteItem();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addVoteItem($related);
+                $this->collVoteItemPartial = false;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the latest persisted version number for the current object
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  integer
+     */
+    public function getLastVersionNumber($con = null)
+    {
+        $v = ChildQuestionVersionQuery::create()
+            ->filterByQuestion($this)
+            ->orderByVersion('desc')
+            ->findOne($con);
+        if (!$v) {
+            return 0;
+        }
+
+        return $v->getVersion();
+    }
+
+    /**
+     * Checks whether the current object is the latest one
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  Boolean
+     */
+    public function isLastVersion($con = null)
+    {
+        return $this->getLastVersionNumber($con) == $this->getVersion();
+    }
+
+    /**
+     * Retrieves a version object for this entity and a version number
+     *
+     * @param   integer $versionNumber The version number to read
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ChildQuestionVersion A version object
+     */
+    public function getOneVersion($versionNumber, $con = null)
+    {
+        return ChildQuestionVersionQuery::create()
+            ->filterByQuestion($this)
+            ->filterByVersion($versionNumber)
+            ->findOne($con);
+    }
+
+    /**
+     * Gets all the versions of this object, in incremental order
+     *
+     * @param   ConnectionInterface $con the connection to use
+     *
+     * @return  ObjectCollection|ChildQuestionVersion[] A list of ChildQuestionVersion objects
+     */
+    public function getAllVersions($con = null)
+    {
+        $criteria = new Criteria();
+        $criteria->addAscendingOrderByColumn(QuestionVersionTableMap::COL_VERSION);
+
+        return $this->getQuestionVersions($criteria, $con);
+    }
+
+    /**
+     * Compares the current object with another of its version.
+     * <code>
+     * print_r($book->compareVersion(1));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   integer             $versionNumber
+     * @param   string              $keys Main key used for the result diff (versions|columns)
+     * @param   ConnectionInterface $con the connection to use
+     * @param   array               $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    {
+        $fromVersion = $this->toArray();
+        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
+
+        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
+    }
+
+    /**
+     * Compares two versions of the current object.
+     * <code>
+     * print_r($book->compareVersions(1, 2));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   integer             $fromVersionNumber
+     * @param   integer             $toVersionNumber
+     * @param   string              $keys Main key used for the result diff (versions|columns)
+     * @param   ConnectionInterface $con the connection to use
+     * @param   array               $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    {
+        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
+        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
+
+        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
+    }
+
+    /**
+     * Computes the diff between two versions.
+     * <code>
+     * print_r($book->computeDiff(1, 2));
+     * => array(
+     *   '1' => array('Title' => 'Book title at version 1'),
+     *   '2' => array('Title' => 'Book title at version 2')
+     * );
+     * </code>
+     *
+     * @param   array     $fromVersion     An array representing the original version.
+     * @param   array     $toVersion       An array representing the destination version.
+     * @param   string    $keys            Main key used for the result diff (versions|columns).
+     * @param   array     $ignoredColumns  The columns to exclude from the diff.
+     *
+     * @return  array A list of differences
+     */
+    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
+    {
+        $fromVersionNumber = $fromVersion['Version'];
+        $toVersionNumber = $toVersion['Version'];
+        $ignoredColumns = array_merge(array(
+            'Version',
+            'VersionCreatedAt',
+            'VersionCreatedBy',
+        ), $ignoredColumns);
+        $diff = array();
+        foreach ($fromVersion as $key => $value) {
+            if (in_array($key, $ignoredColumns)) {
+                continue;
+            }
+            if ($toVersion[$key] != $value) {
+                switch ($keys) {
+                    case 'versions':
+                        $diff[$fromVersionNumber][$key] = $value;
+                        $diff[$toVersionNumber][$key] = $toVersion[$key];
+                        break;
+                    default:
+                        $diff[$key] = array(
+                            $fromVersionNumber => $value,
+                            $toVersionNumber => $toVersion[$key],
+                        );
+                        break;
+                }
+            }
+        }
+
+        return $diff;
+    }
+    /**
+     * retrieve the last $number versions.
+     *
+     * @param Integer $number the number of record to return.
+     * @return PropelCollection|\MESBallotBox\Propel\QuestionVersion[] List of \MESBallotBox\Propel\QuestionVersion objects
+     */
+    public function getLastVersions($number = 10, $criteria = null, $con = null)
+    {
+        $criteria = ChildQuestionVersionQuery::create(null, $criteria);
+        $criteria->addDescendingOrderByColumn(QuestionVersionTableMap::COL_VERSION);
+        $criteria->limit($number);
+
+        return $this->getQuestionVersions($criteria, $con);
+    }
     // validate behavior
 
     /**
@@ -2451,6 +3374,15 @@ abstract class Question implements ActiveRecordInterface
             }
             if (null !== $this->collVoteItems) {
                 foreach ($this->collVoteItems as $referrerFK) {
+                    if (method_exists($referrerFK, 'validate')) {
+                        if (!$referrerFK->validate($validator)) {
+                            $failureMap->addAll($referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+            }
+            if (null !== $this->collQuestionVersions) {
+                foreach ($this->collQuestionVersions as $referrerFK) {
                     if (method_exists($referrerFK, 'validate')) {
                         if (!$referrerFK->validate($validator)) {
                             $failureMap->addAll($referrerFK->getValidationFailures());

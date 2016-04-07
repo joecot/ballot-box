@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="MESBallotBox\Propel">
+  <table name="Affiliate" idMethod="native" phpName="Affiliate">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="name" type="VARCHAR" size="128" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="User" idMethod="native" phpName="User">
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="membership_number" phpName="membershipNumber" type="VARCHAR" size="20" required="true"/>
@@ -21,6 +28,7 @@
     <column name="start_time" phpName='startTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="end_time" phpName='endTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="timezone" phpName='timezone' type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="true"/>
+    <column name="version_created_by" phpName='versionCreatedBy' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
     <index name="user_id">
       <index-column name="user_id"/>
     </index>
@@ -31,11 +39,44 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
     <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Ballot name cannot be blank'}}" />
       <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Ballot name too short', maxMessage: 'Ballot name too long'}}" />
       <parameter name="rule3" value="{column: start_time, validator: NotNull}" />
       <parameter name="rule4" value="{column: end_time, validator: NotNull}" />
+    </behavior>
+  </table>
+  <table name="Voter" idMethod="native" phpName="Voter">
+    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
+    <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
+    <column name="affiliate_id" phpName='affiliateId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
+    <index name="ballot_id">
+      <index-column name="ballot_id"/>
+    </index>
+    <foreign-key foreignTable="User">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Affiliate">
+      <reference local="affiliate_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="Ballot">
+      <reference local="ballot_id" foreign="id"/>
+    </foreign-key>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
+    <behavior name="validate">
+      <parameter name="rule1" value="{column: ballot_id, validator: NotNull, options: {message: 'Ballot cannot be blank'}}" />
     </behavior>
   </table>
   <table name="Question" idMethod="native" phpName="Question">
@@ -54,6 +95,10 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
     <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Question name cannot be blank'}}" />
       <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
@@ -74,6 +119,10 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
     <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
     <behavior name="validate">
       <parameter name="rule1" value="{column: user_id, validator: NotNull, options: {message: 'Candidate not available'}}" />
     </behavior>
@@ -89,6 +138,10 @@
       <reference local="user_id" foreign="id"/>
     </foreign-key>
     <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
@@ -112,6 +165,10 @@
       <reference local="candidate_id" foreign="id"/>
     </foreign-key>
     <behavior name="timestampable" />
+    <behavior name="versionable">
+      <parameter name="log_created_at" value="true" />
+      <parameter name="log_created_by" value="true" />
+    </behavior>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>

@@ -26,6 +26,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidateQuery orderByapplication($order = Criteria::ASC) Order by the application column
  * @method     ChildCandidateQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildCandidateQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildCandidateQuery orderByVersion($order = Criteria::ASC) Order by the version column
+ * @method     ChildCandidateQuery orderByVersionCreatedAt($order = Criteria::ASC) Order by the version_created_at column
+ * @method     ChildCandidateQuery orderByVersionCreatedBy($order = Criteria::ASC) Order by the version_created_by column
  *
  * @method     ChildCandidateQuery groupByid() Group by the id column
  * @method     ChildCandidateQuery groupByquestionId() Group by the question_id column
@@ -33,6 +36,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidateQuery groupByapplication() Group by the application column
  * @method     ChildCandidateQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildCandidateQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildCandidateQuery groupByVersion() Group by the version column
+ * @method     ChildCandidateQuery groupByVersionCreatedAt() Group by the version_created_at column
+ * @method     ChildCandidateQuery groupByVersionCreatedBy() Group by the version_created_by column
  *
  * @method     ChildCandidateQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildCandidateQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -72,7 +78,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidateQuery rightJoinWithVoteItem() Adds a RIGHT JOIN clause and with to the query using the VoteItem relation
  * @method     ChildCandidateQuery innerJoinWithVoteItem() Adds a INNER JOIN clause and with to the query using the VoteItem relation
  *
- * @method     \MESBallotBox\Propel\QuestionQuery|\MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\VoteItemQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildCandidateQuery leftJoinCandidateVersion($relationAlias = null) Adds a LEFT JOIN clause to the query using the CandidateVersion relation
+ * @method     ChildCandidateQuery rightJoinCandidateVersion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CandidateVersion relation
+ * @method     ChildCandidateQuery innerJoinCandidateVersion($relationAlias = null) Adds a INNER JOIN clause to the query using the CandidateVersion relation
+ *
+ * @method     ChildCandidateQuery joinWithCandidateVersion($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CandidateVersion relation
+ *
+ * @method     ChildCandidateQuery leftJoinWithCandidateVersion() Adds a LEFT JOIN clause and with to the query using the CandidateVersion relation
+ * @method     ChildCandidateQuery rightJoinWithCandidateVersion() Adds a RIGHT JOIN clause and with to the query using the CandidateVersion relation
+ * @method     ChildCandidateQuery innerJoinWithCandidateVersion() Adds a INNER JOIN clause and with to the query using the CandidateVersion relation
+ *
+ * @method     \MESBallotBox\Propel\QuestionQuery|\MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\VoteItemQuery|\MESBallotBox\Propel\CandidateVersionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildCandidate findOne(ConnectionInterface $con = null) Return the first ChildCandidate matching the query
  * @method     ChildCandidate findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCandidate matching the query, or a new ChildCandidate object populated from the query conditions when no match is found
@@ -82,7 +98,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidate findOneByuserId(int $user_id) Return the first ChildCandidate filtered by the user_id column
  * @method     ChildCandidate findOneByapplication(string $application) Return the first ChildCandidate filtered by the application column
  * @method     ChildCandidate findOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column
- * @method     ChildCandidate findOneByUpdatedAt(string $updated_at) Return the first ChildCandidate filtered by the updated_at column *
+ * @method     ChildCandidate findOneByUpdatedAt(string $updated_at) Return the first ChildCandidate filtered by the updated_at column
+ * @method     ChildCandidate findOneByVersion(int $version) Return the first ChildCandidate filtered by the version column
+ * @method     ChildCandidate findOneByVersionCreatedAt(string $version_created_at) Return the first ChildCandidate filtered by the version_created_at column
+ * @method     ChildCandidate findOneByVersionCreatedBy(string $version_created_by) Return the first ChildCandidate filtered by the version_created_by column *
 
  * @method     ChildCandidate requirePk($key, ConnectionInterface $con = null) Return the ChildCandidate by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOne(ConnectionInterface $con = null) Return the first ChildCandidate matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -93,6 +112,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidate requireOneByapplication(string $application) Return the first ChildCandidate filtered by the application column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByUpdatedAt(string $updated_at) Return the first ChildCandidate filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCandidate requireOneByVersion(int $version) Return the first ChildCandidate filtered by the version column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCandidate requireOneByVersionCreatedAt(string $version_created_at) Return the first ChildCandidate filtered by the version_created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCandidate requireOneByVersionCreatedBy(string $version_created_by) Return the first ChildCandidate filtered by the version_created_by column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildCandidate[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCandidate objects based on current ModelCriteria
  * @method     ChildCandidate[]|ObjectCollection findByid(int $id) Return ChildCandidate objects filtered by the id column
@@ -101,12 +123,22 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidate[]|ObjectCollection findByapplication(string $application) Return ChildCandidate objects filtered by the application column
  * @method     ChildCandidate[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildCandidate objects filtered by the created_at column
  * @method     ChildCandidate[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildCandidate objects filtered by the updated_at column
+ * @method     ChildCandidate[]|ObjectCollection findByVersion(int $version) Return ChildCandidate objects filtered by the version column
+ * @method     ChildCandidate[]|ObjectCollection findByVersionCreatedAt(string $version_created_at) Return ChildCandidate objects filtered by the version_created_at column
+ * @method     ChildCandidate[]|ObjectCollection findByVersionCreatedBy(string $version_created_by) Return ChildCandidate objects filtered by the version_created_by column
  * @method     ChildCandidate[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class CandidateQuery extends ModelCriteria
 {
-    protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
+
+    // versionable behavior
+
+    /**
+     * Whether the versioning is enabled
+     */
+    static $isVersioningEnabled = true;
+protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
      * Initializes internal state of \MESBallotBox\Propel\Base\CandidateQuery object.
@@ -199,7 +231,7 @@ abstract class CandidateQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, question_id, user_id, application, created_at, updated_at FROM Candidate WHERE id = :p0';
+        $sql = 'SELECT id, question_id, user_id, application, created_at, updated_at, version, version_created_at, version_created_by FROM Candidate WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -532,6 +564,119 @@ abstract class CandidateQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the version column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVersion(1234); // WHERE version = 1234
+     * $query->filterByVersion(array(12, 34)); // WHERE version IN (12, 34)
+     * $query->filterByVersion(array('min' => 12)); // WHERE version > 12
+     * </code>
+     *
+     * @param     mixed $version The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     */
+    public function filterByVersion($version = null, $comparison = null)
+    {
+        if (is_array($version)) {
+            $useMinMax = false;
+            if (isset($version['min'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_VERSION, $version['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($version['max'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_VERSION, $version['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CandidateTableMap::COL_VERSION, $version, $comparison);
+    }
+
+    /**
+     * Filter the query on the version_created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVersionCreatedAt('2011-03-14'); // WHERE version_created_at = '2011-03-14'
+     * $query->filterByVersionCreatedAt('now'); // WHERE version_created_at = '2011-03-14'
+     * $query->filterByVersionCreatedAt(array('max' => 'yesterday')); // WHERE version_created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $versionCreatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     */
+    public function filterByVersionCreatedAt($versionCreatedAt = null, $comparison = null)
+    {
+        if (is_array($versionCreatedAt)) {
+            $useMinMax = false;
+            if (isset($versionCreatedAt['min'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_VERSION_CREATED_AT, $versionCreatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($versionCreatedAt['max'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_VERSION_CREATED_AT, $versionCreatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CandidateTableMap::COL_VERSION_CREATED_AT, $versionCreatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the version_created_by column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVersionCreatedBy('fooValue');   // WHERE version_created_by = 'fooValue'
+     * $query->filterByVersionCreatedBy('%fooValue%'); // WHERE version_created_by LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $versionCreatedBy The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     */
+    public function filterByVersionCreatedBy($versionCreatedBy = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($versionCreatedBy)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $versionCreatedBy)) {
+                $versionCreatedBy = str_replace('*', '%', $versionCreatedBy);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(CandidateTableMap::COL_VERSION_CREATED_BY, $versionCreatedBy, $comparison);
+    }
+
+    /**
      * Filter the query by a related \MESBallotBox\Propel\Question object
      *
      * @param \MESBallotBox\Propel\Question|ObjectCollection $question The related object(s) to use as filter
@@ -759,6 +904,79 @@ abstract class CandidateQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \MESBallotBox\Propel\CandidateVersion object
+     *
+     * @param \MESBallotBox\Propel\CandidateVersion|ObjectCollection $candidateVersion the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildCandidateQuery The current query, for fluid interface
+     */
+    public function filterByCandidateVersion($candidateVersion, $comparison = null)
+    {
+        if ($candidateVersion instanceof \MESBallotBox\Propel\CandidateVersion) {
+            return $this
+                ->addUsingAlias(CandidateTableMap::COL_ID, $candidateVersion->getid(), $comparison);
+        } elseif ($candidateVersion instanceof ObjectCollection) {
+            return $this
+                ->useCandidateVersionQuery()
+                ->filterByPrimaryKeys($candidateVersion->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByCandidateVersion() only accepts arguments of type \MESBallotBox\Propel\CandidateVersion or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CandidateVersion relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     */
+    public function joinCandidateVersion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CandidateVersion');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CandidateVersion');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the CandidateVersion relation CandidateVersion object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \MESBallotBox\Propel\CandidateVersionQuery A secondary query class using the current class as primary query
+     */
+    public function useCandidateVersionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinCandidateVersion($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CandidateVersion', '\MESBallotBox\Propel\CandidateVersionQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildCandidate $candidate Object to remove from the list of results
@@ -899,6 +1117,34 @@ abstract class CandidateQuery extends ModelCriteria
     public function firstCreatedFirst()
     {
         return $this->addAscendingOrderByColumn(CandidateTableMap::COL_CREATED_AT);
+    }
+
+    // versionable behavior
+
+    /**
+     * Checks whether versioning is enabled
+     *
+     * @return boolean
+     */
+    static public function isVersioningEnabled()
+    {
+        return self::$isVersioningEnabled;
+    }
+
+    /**
+     * Enables versioning
+     */
+    static public function enableVersioning()
+    {
+        self::$isVersioningEnabled = true;
+    }
+
+    /**
+     * Disables versioning
+     */
+    static public function disableVersioning()
+    {
+        self::$isVersioningEnabled = false;
     }
 
 } // CandidateQuery

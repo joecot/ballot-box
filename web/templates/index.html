@@ -1,8 +1,18 @@
-<div class="main-content" ng-controller="indexController">
+<div class="main-content" ng-hide="user.id">Loading ...</div>
+<div class="main-content" ng-show="user.id" ng-controller="indexController">
 Hello, {{user.firstName}} {{user.lastName}}!
 
+<div ng-show="ballots">
+    <label>Your Ballots:</label><br/>
+    <ul>
+        <li  ng-repeat="(ballotid, ballot) in ballots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}">{{ ballot.name }}</a></li>
+    </ul>
+</div>
 <a class="linkbutton" href="#/ballot/create">Create new ballot</a>
-<ul>
-<li  ng-repeat="(ballotid, ballot) in ballots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}">{{ ballot.name }}</a></li>
-</ul>
+<div ng-show="ballots">
+    <label>Ballots Open for your Vote:</label><br/>
+    <ul>
+        <li  ng-repeat="(ballotid, ballot) in availableBallots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/vote">{{ ballot.name }}</a></li>
+    </ul>
+</div>
 </div>

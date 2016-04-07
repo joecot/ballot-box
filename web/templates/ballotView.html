@@ -1,10 +1,39 @@
-<div class="main-content" ng-controller="ballotViewController">
-<a href="#/">Home</a> > {{ballot.name}}| <a class="linkbutton" href="#/ballot/{{ballot.id}}/edit">Edit</a><br/>
+<div class="main-content" ng-hide="ballot.id">Loading ...</div>
+<div class="main-content" ng-show="ballot.id" ng-controller="ballotViewController">
+<a href="#/">Home</a> > Ballot: {{ballot.name}} | <a class="linkbutton" href="#/ballot/{{ballot.id}}/edit">Edit</a><br/>
 <label>Ballot Name:</label> {{ballot.name}}<br/>
 <label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
 <label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
-<a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a>
+<div ng-show="questions">
+<label>Ballot Questions:</label>
+
 <ul>
 <li  ng-repeat="(questionid, question) in questions"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a></li>
 </ul>
+</div>
+<a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a><br/><br/>
+<div ng-show="voters">
+<label>Eligible Voters:</label><br/>
+
+<ul>
+<li  ng-repeat="(voterid, voter) in voters">
+    <a ng-if="voter.userId" class="linkbutton" href="#/ballot/{{ ballot.id }}/voter/{{ voter.id }}">{{ voter.firstName }} {{ voter.lastName}} ({{ voter.membershipNumber }})</a>
+    <a ng-if="voter.affiliateId" class="linkbutton" href="#/ballot/{{ ballot.id }}/voter/{{ voter.id }}">All members of affiliate: {{ voter.name }}</a>
+</li>
+</ul>
+</div>
+<a ng-show="!addVoterForm" ng-click="showAddVoterForm()">Add Voter</a>
+<form ng-show="addVoterForm" novalidate ng-submit="addVoter(newvoter)" class="ballot-form">
+     <label>
+        Membership Number:
+    <input type="text" ng-model="newvoter.membershipNumber">
+  </label><br/>OR<br/>
+  <label>
+    Entire Affiliate: <select ng-options="affiliate.id as affiliate.name for affiliate in affiliates track by affiliate.id" ng-model="newvoter.affiliateId">
+        <option value="">None</option>
+    </select>
+  </label><br/>
+  <input type="submit" value="Add Candidate" />
+  <span ng-show="formerror">{{formerror}}</span>
+</form>
 </div>

@@ -1,5 +1,6 @@
-<div class="main-content" ng-controller="questionViewController">
-<a href="#/">Home</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}">{{ballot.name}}</a> > {{question.name}} | <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}/edit">Edit</a><br/>
+<div class="main-content" ng-hide="question.id">Loading ...</div>
+<div class="main-content" ng-show="question.id" ng-controller="questionViewController">
+<a href="#/">Home</a> > Ballot: <a class="linkbutton" href="#/ballot/{{ballot.id}}">{{ballot.name}}</a> > Question: {{question.name}} | <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}/edit">Edit</a><br/>
 <label>Name:</label> {{question.name}}<br/>
 <label>Type:</label> {{question.type}}<br/>
 <label>Description:</label> {{question.description}}<br/>
@@ -20,7 +21,6 @@
         Application URL:
     <input type="text" ng-model="newcandidate.application">
   </label><br/>
-  ballotid {{newcandidate.ballotId}}
   <input type="submit" value="Add Candidate" />
 </form>
 </div>

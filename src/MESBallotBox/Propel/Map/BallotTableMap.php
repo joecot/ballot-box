@@ -59,7 +59,7 @@ class BallotTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 11;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class BallotTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 11;
 
     /**
      * the column name for the id field
@@ -102,6 +102,11 @@ class BallotTableMap extends TableMap
     const COL_TIMEZONE = 'Ballot.timezone';
 
     /**
+     * the column name for the version_created_by field
+     */
+    const COL_VERSION_CREATED_BY = 'Ballot.version_created_by';
+
+    /**
      * the column name for the created_at field
      */
     const COL_CREATED_AT = 'Ballot.created_at';
@@ -110,6 +115,16 @@ class BallotTableMap extends TableMap
      * the column name for the updated_at field
      */
     const COL_UPDATED_AT = 'Ballot.updated_at';
+
+    /**
+     * the column name for the version field
+     */
+    const COL_VERSION = 'Ballot.version';
+
+    /**
+     * the column name for the version_created_at field
+     */
+    const COL_VERSION_CREATED_AT = 'Ballot.version_created_at';
 
     /**
      * The default string format for model objects of the related table
@@ -123,11 +138,11 @@ class BallotTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'userId', 'name', 'startTime', 'endTime', 'timezone', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'name', 'startTime', 'endTime', 'timezone', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(BallotTableMap::COL_ID, BallotTableMap::COL_USER_ID, BallotTableMap::COL_NAME, BallotTableMap::COL_START_TIME, BallotTableMap::COL_END_TIME, BallotTableMap::COL_TIMEZONE, BallotTableMap::COL_CREATED_AT, BallotTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'name', 'start_time', 'end_time', 'timezone', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id', 'userId', 'name', 'startTime', 'endTime', 'timezone', 'versionCreatedBy', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'name', 'startTime', 'endTime', 'timezone', 'versionCreatedBy', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', ),
+        self::TYPE_COLNAME       => array(BallotTableMap::COL_ID, BallotTableMap::COL_USER_ID, BallotTableMap::COL_NAME, BallotTableMap::COL_START_TIME, BallotTableMap::COL_END_TIME, BallotTableMap::COL_TIMEZONE, BallotTableMap::COL_VERSION_CREATED_BY, BallotTableMap::COL_CREATED_AT, BallotTableMap::COL_UPDATED_AT, BallotTableMap::COL_VERSION, BallotTableMap::COL_VERSION_CREATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'name', 'start_time', 'end_time', 'timezone', 'version_created_by', 'created_at', 'updated_at', 'version', 'version_created_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -137,11 +152,11 @@ class BallotTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'userId' => 1, 'name' => 2, 'startTime' => 3, 'endTime' => 4, 'timezone' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'name' => 2, 'startTime' => 3, 'endTime' => 4, 'timezone' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(BallotTableMap::COL_ID => 0, BallotTableMap::COL_USER_ID => 1, BallotTableMap::COL_NAME => 2, BallotTableMap::COL_START_TIME => 3, BallotTableMap::COL_END_TIME => 4, BallotTableMap::COL_TIMEZONE => 5, BallotTableMap::COL_CREATED_AT => 6, BallotTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'name' => 2, 'start_time' => 3, 'end_time' => 4, 'timezone' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'userId' => 1, 'name' => 2, 'startTime' => 3, 'endTime' => 4, 'timezone' => 5, 'versionCreatedBy' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, 'Version' => 9, 'VersionCreatedAt' => 10, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'name' => 2, 'startTime' => 3, 'endTime' => 4, 'timezone' => 5, 'versionCreatedBy' => 6, 'createdAt' => 7, 'updatedAt' => 8, 'version' => 9, 'versionCreatedAt' => 10, ),
+        self::TYPE_COLNAME       => array(BallotTableMap::COL_ID => 0, BallotTableMap::COL_USER_ID => 1, BallotTableMap::COL_NAME => 2, BallotTableMap::COL_START_TIME => 3, BallotTableMap::COL_END_TIME => 4, BallotTableMap::COL_TIMEZONE => 5, BallotTableMap::COL_VERSION_CREATED_BY => 6, BallotTableMap::COL_CREATED_AT => 7, BallotTableMap::COL_UPDATED_AT => 8, BallotTableMap::COL_VERSION => 9, BallotTableMap::COL_VERSION_CREATED_AT => 10, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'name' => 2, 'start_time' => 3, 'end_time' => 4, 'timezone' => 5, 'version_created_by' => 6, 'created_at' => 7, 'updated_at' => 8, 'version' => 9, 'version_created_at' => 10, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -167,8 +182,11 @@ class BallotTableMap extends TableMap
         $this->addColumn('start_time', 'startTime', 'INTEGER', true, 10, null);
         $this->addColumn('end_time', 'endTime', 'INTEGER', true, 10, null);
         $this->addColumn('timezone', 'timezone', 'INTEGER', true, 10, null);
+        $this->addColumn('version_created_by', 'versionCreatedBy', 'INTEGER', false, 10, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('version', 'Version', 'INTEGER', false, null, 0);
+        $this->addColumn('version_created_at', 'VersionCreatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -176,6 +194,13 @@ class BallotTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Voter', '\\MESBallotBox\\Propel\\Voter', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':ballot_id',
+    1 => ':id',
+  ),
+), null, null, 'Voters', false);
         $this->addRelation('Question', '\\MESBallotBox\\Propel\\Question', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -190,6 +215,13 @@ class BallotTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Votes', false);
+        $this->addRelation('BallotVersion', '\\MESBallotBox\\Propel\\BallotVersion', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'BallotVersions', false);
     } // buildRelations()
 
     /**
@@ -202,9 +234,19 @@ class BallotTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+            'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', 'indices' => 'false', ),
             'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Ballot name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Ballot name too short','maxMessage' => 'Ballot name too long',),), 'rule3' => array ('column' => 'start_time','validator' => 'NotNull',), 'rule4' => array ('column' => 'end_time','validator' => 'NotNull',), ),
         );
     } // getBehaviors()
+    /**
+     * Method to invalidate the instance pool of all tables related to Ballot     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        BallotVersionTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -353,8 +395,11 @@ class BallotTableMap extends TableMap
             $criteria->addSelectColumn(BallotTableMap::COL_START_TIME);
             $criteria->addSelectColumn(BallotTableMap::COL_END_TIME);
             $criteria->addSelectColumn(BallotTableMap::COL_TIMEZONE);
+            $criteria->addSelectColumn(BallotTableMap::COL_VERSION_CREATED_BY);
             $criteria->addSelectColumn(BallotTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(BallotTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(BallotTableMap::COL_VERSION);
+            $criteria->addSelectColumn(BallotTableMap::COL_VERSION_CREATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
@@ -362,8 +407,11 @@ class BallotTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.start_time');
             $criteria->addSelectColumn($alias . '.end_time');
             $criteria->addSelectColumn($alias . '.timezone');
+            $criteria->addSelectColumn($alias . '.version_created_by');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.version');
+            $criteria->addSelectColumn($alias . '.version_created_at');
         }
     }
 
