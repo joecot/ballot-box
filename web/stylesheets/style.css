@@ -441,7 +441,7 @@ th {
 /* Welcome to Compass. Use this file to define print styles.
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
-/* line 5, ../sass/style.scss */
+/* line 6, ../sass/style.scss */
 html, body {
   background-color: #1e1e1e;
   color: #333;
@@ -449,22 +449,27 @@ html, body {
   font-size: 18px;
 }
 
-/* line 12, ../sass/style.scss */
+/* line 13, ../sass/style.scss */
 h1 {
   font-size: 2rem;
 }
 
-/* line 16, ../sass/style.scss */
+/* line 17, ../sass/style.scss */
 a {
   color: #90a4af;
 }
 
-/* line 21, ../sass/style.scss */
+/* line 22, ../sass/style.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 25, ../sass/style.scss */
+/* line 26, ../sass/style.scss */
+select, input {
+  color: #1e1e1e;
+}
+
+/* line 30, ../sass/style.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -473,7 +478,7 @@ a:hover {
   margin-top: 50px;
 }
 
-/* line 33, ../sass/style.scss */
+/* line 38, ../sass/style.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
