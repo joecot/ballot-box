@@ -433,15 +433,7 @@ th {
   padding: 0;
 }
 
-/* Welcome to Compass. Use this file to write IE specific override styles.
- * Import this file using the following HTML or equivalent:
- * <!--[if IE]>
- *   <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
- * <![endif]--> */
-/* Welcome to Compass. Use this file to define print styles.
- * Import this file using the following HTML or equivalent:
- * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
-/* line 6, ../sass/style.scss */
+/* line 1, ../sass/_base.scss */
 html, body {
   background-color: #1e1e1e;
   color: #333;
@@ -449,27 +441,27 @@ html, body {
   font-size: 18px;
 }
 
-/* line 13, ../sass/style.scss */
+/* line 8, ../sass/_base.scss */
 h1 {
   font-size: 2rem;
 }
 
-/* line 17, ../sass/style.scss */
+/* line 12, ../sass/_base.scss */
 a {
   color: #90a4af;
 }
 
-/* line 22, ../sass/style.scss */
+/* line 16, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 26, ../sass/style.scss */
-select, input {
+/* line 20, ../sass/_base.scss */
+select, input, textarea {
   color: #1e1e1e;
 }
 
-/* line 30, ../sass/style.scss */
+/* line 24, ../sass/_base.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -478,10 +470,19 @@ select, input {
   margin-top: 50px;
 }
 
-/* line 38, ../sass/style.scss */
+/* line 32, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
   color: #eef7f5;
 }
+
+/* Welcome to Compass. Use this file to write IE specific override styles.
+ * Import this file using the following HTML or equivalent:
+ * <!--[if IE]>
+ *   <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+ * <![endif]--> */
+/* Welcome to Compass. Use this file to define print styles.
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */

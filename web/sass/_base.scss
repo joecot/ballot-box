@@ -1,0 +1,39 @@
+html, body {
+    background-color: $background-color;
+    color: $basic-text-color;
+    font-family: 'Cardo', 'Georgia', serif;
+    font-size: 18px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+a {
+    color: $link-color;
+}
+
+a:hover {
+    color: $link-hover-color;
+}
+
+select, input, textarea {
+    color: $background-color;
+}
+
+.mes-header {
+    background-image: url('/images/MES-Banner.png');
+    background-position: top center;
+    background-repeat: no-repeat;
+    height: 170px;
+    margin-top: 50px;
+}
+
+.main-content {
+    margin: 0 auto;
+    width: 94%;
+    max-width: 1000px;
+    color: $main-content-color; 
+    // background-color: rgba(30, 30, 30, 1);
+    // background-image: url('/images/download.png');
+}
