@@ -1,32 +1,36 @@
-<div class="main-content" ng-hide="ballot.id">Loading ...</div>
+<div class="main-content" ng-show="!ballot.id && !error">Loading ...</div>
+<div class="main-content" ng-hide="!error">{{error}} Back to <a href="#/">Home</a> </div>
 <div class="main-content" ng-show="ballot.id" ng-controller="ballotVoteController">
 <a href="#/">Home</a> > Ballot: {{ballot.name}}<br/>
 <h2>{{ballot.name}}</h2>
-<form ng-submit="vote(questions)">
-<div  ng-repeat="(questionid, question) in questions">
+<form ng-submit="submitVote(vote)">
+<div  ng-repeat="(q, question) in ballot.questions">
 <label>Ballot Measure: {{ question.name }}</label><br/>
 <p ng-show="question.description">{{question.description}}</p>
 <div ng-show="question.type=='proposition'">
     <label>
-    <input type="radio" ng-model="question.vote" value="2">
+    <input type="radio" ng-model="vote.voteItem[q].answer" value="2">
     Yes
   </label><br/>
   <label>
-    <input type="radio" ng-model="question.vote" value="1">
+    <input type="radio" ng-model="vote.voteItem[q].answer" value="1">
     No
   </label><br/>
   <label>
-  <input type="radio" ng-model="question.vote" value="1">
+  <input type="radio" ng-model="vote.voteItem[q].answer" value="0">
     Abstain from voting
   </label>
 </div>
 <div ng-show="question.type=='office'">
     Officers:
     <ul>
-        <li ng-repeat="candidate in question.candidates">{{candidate.membershipNumber}} 
-        <select ng-options = "voteOption in question.votes"></select>
+        <li ng-repeat="(c,candidate) in question.candidates"><select ng-model="vote.voteItem[q].candidates[c].answer" ng-options = "answer disable when takenAnswer(vote.voteItem[q].candidates,c,answer) for answer in vote.voteItem[q].availableAnswers"><option value="">-</option></select>
+         {{candidate.firstName}} {{candidate.lastName}} <span ng-show="candidate.membershipNumber">({{candidate.membershipNumber}})</span> 
+         
         </li>
     </ul>
 </div>
+</div>
+<input type="submit" value="Submit Vote"/>
 </form>
 </div>

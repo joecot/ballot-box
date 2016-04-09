@@ -77,6 +77,41 @@ class Ballot{
             $result['timezoneNice'] = $ballot->getTimezoneNice();
             return $response->write(json_encode($result));
         });
+        $slim->get('/{ballotId}/voteinfo', function($request, $response, $args){
+            $ballot = \MESBallotBox\Controller\Ballot::getVoterBallot($args['ballotId']);
+            if(!$ballot){
+                return $response->withStatus(400)->write('Ballot not available for voting.');
+            }
+            $result = Array();
+            $result['id'] = $ballot->getId();
+            $result['name'] = $ballot->getName();
+            $result['start'] = $ballot->getStartDate();
+            $result['startArray'] = $ballot->getStartArray();
+            $result['end'] = $ballot->getEndDate();
+            $result['endArray'] = $ballot->getEndArray();
+            $result['timezone'] = $ballot->getTimezone();
+            $result['timezoneNice'] = $ballot->getTimezoneNice();
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $questions = $q->filterByBallotId($args['ballotId'])->find();
+            $c = new \MESBallotBox\Propel\CandidateQuery();
+            if($questions){
+                $questionsresult = Array();
+                foreach($questions as $question){
+                    $questionresult = $question->toArray();
+                    if($questionresult['type'] == 'office'){
+                        $candidateresults = Array();
+                        $candidates = $c->filterByQuestionId($question->getId())->find();
+                        foreach($candidates as $candidate){
+                            $candidateresults[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
+                        }
+                        $questionresult['candidates'] = $candidateresults;
+                    }
+                    $questionsresult[] = $questionresult;
+                }
+                $result['questions'] = $questionsresult;
+            }
+            return $response->write(json_encode($result));
+        });
         $slim->post('/{ballotId}', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\BallotQuery();
             $ballot = $q->findPK($args['ballotId']);
@@ -222,6 +257,36 @@ class Ballot{
             }
             return $response->write(json_encode($results));
         });
+        $slim->post('/{ballotId}/vote', function($request, $response){
+            $vars = $request->getParsedBody();
+            $ballot = \MESBallotBox\Controller\Ballot::getVoterBallot($args['ballotId']);
+            if(!$ballot){
+                return $response->withStatus(400)->write('Ballot not available for voting.');
+            }
+            $vote = new \MESBallotBox\Propel\Vote();
+            $vote->setBallotId($ballot->getId());
+            $vote->setUserId($_SESSION['user']['id']);
+            $vote->setVersionCreatedBy($_SESSION['user']['id']);
+            if(!$vote->validate()){
+                return $response->withStatus(400)->write($vote->getValidationFailures()->__toString());
+            }
+            
+            if(!$vars['voteItem']){
+                return $response->withStatus(400)->write('Vote answers required');
+            }
+            foreach($vars['voteItem'] as $vars_voteItem){
+                if(!$vars_voteItem['questionId']) return $response->withStatus(400)->write('Vote question required');
+                //$question = 
+            }
+            
+            
+            try{
+                $question->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write($question->toJSON());
+        });
     }
     function getUser($membershipNumber){
         $q = new \MESBallotBox\Propel\UserQuery();
@@ -236,5 +301,19 @@ class Ballot{
             $user->save();
         }
         return $user;
+    }
+    function getVoterBallot($ballotId){
+        $q = new \MESBallotBox\Propel\BallotQuery();
+        $time=time();
+        $ballot = $q::create()
+            ->join('Ballot.Voter')
+            ->condition('byUser', 'Voter.userId = ?', $_SESSION['user']['id'])
+            ->condition('byAffiliate', 'Voter.affiliateId = ?', $_SESSION['user']['affiliateId'])
+            ->where(Array('byUser', 'byAffiliate'), 'or')
+            ->where('Ballot.startTime < ?', $time)
+            ->where('Ballot.endTime > ?', $time)
+            ->where('Ballot.id = ?',$ballotId)
+            ->findOne();
+        return $ballot;
     }
 }
