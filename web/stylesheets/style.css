@@ -437,31 +437,37 @@ th {
 html, body {
   background-color: #1e1e1e;
   color: #333;
-  font-family: 'Cardo', 'Georgia', serif;
-  font-size: 18px;
+  font-family: "Crimson", "Garamond", serif;
+  font-size: 20px;
 }
 
 /* line 8, ../sass/_base.scss */
-h1 {
-  font-size: 2rem;
+h1, h2 {
+  font-family: "Crimson", "Garamond", serif;
+  font-style: italic;
 }
 
-/* line 12, ../sass/_base.scss */
+/* line 13, ../sass/_base.scss */
+h1 {
+  font-size: 2.5rem;
+}
+
+/* line 17, ../sass/_base.scss */
 a {
   color: #90a4af;
 }
 
-/* line 16, ../sass/_base.scss */
+/* line 21, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 20, ../sass/_base.scss */
+/* line 25, ../sass/_base.scss */
 select, input, textarea {
   color: #1e1e1e;
 }
 
-/* line 24, ../sass/_base.scss */
+/* line 29, ../sass/_base.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -470,7 +476,7 @@ select, input, textarea {
   margin-top: 50px;
 }
 
-/* line 32, ../sass/_base.scss */
+/* line 37, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;

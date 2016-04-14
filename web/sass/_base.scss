@@ -1,12 +1,17 @@
 html, body {
     background-color: $background-color;
     color: $basic-text-color;
-    font-family: 'Cardo', 'Georgia', serif;
-    font-size: 18px;
+    font-family: $main-font;
+    font-size: $default-font-size;
+}
+
+h1, h2 {
+    font-family: $header-font;
+    font-style: italic;
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 a {
