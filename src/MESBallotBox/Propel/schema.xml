@@ -161,7 +161,7 @@
     <foreign-key foreignTable="Question">
       <reference local="question_id" foreign="id"/>
     </foreign-key>
-    <foreign-key foreignTable="Candidate">
+    <foreign-key foreignTable="Candidate" skipSql="true">
       <reference local="candidate_id" foreign="id"/>
     </foreign-key>
     <behavior name="timestampable" />
