@@ -38,7 +38,7 @@ ballotboxServices.factory('Voter', ['$resource',
 
 ballotboxServices.factory('Vote', ['$resource',
   function($resource){
-    return $resource('index.php/API/ballots/:ballotId/vote/:voteId', { ballotId: '@ballotId', voteid: '@id' }, {
+    return $resource('index.php/API/ballots/:ballotId/vote/:voteId', { ballotId: '@ballotId', voteId: '@id' }, {
       
     });
   }]);

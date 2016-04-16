@@ -1,0 +1,8 @@
+<div class="main-content" ng-show="!ballot.id && !error">Loading ...</div>
+<div class="main-content" ng-hide="!error">{{error}} Back to <a href="#/">Home</a> </div>
+<div class="main-content" ng-show="ballot.id" ng-controller="voteCreateController">
+<h2>{{ballot.name}}</h2>
+<form ng-submit="submitVote(vote)">
+<div ng-include="'templates/voteForm.html'"/>
+</form>
+</div>

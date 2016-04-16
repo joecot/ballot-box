@@ -100,7 +100,7 @@ class Ballot{
                     $questionresult = $question->toArray();
                     if($questionresult['type'] == 'office'){
                         $candidateresults = Array();
-                        $candidates = $c->filterByQuestionId($question->getId())->orderById(\Propel\Runtime\ActiveQuery\Criteria::DESC)->find();
+                        $candidates = $c->filterByQuestionId($question->getId())->orderById()->find();
                         foreach($candidates as $candidate){
                             $candidateresults[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
                         }
@@ -110,6 +110,9 @@ class Ballot{
                 }
                 $result['questions'] = $questionsresult;
             }
+            
+            $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($ballot->getId())->filterbyUserId($_SESSION['user']['id'])->findOne();
+            if($vote) $result['voteId'] = $vote->getId();
             return $response->write(json_encode($result));
         });
         $slim->post('/{ballotId}', function($request, $response, $args){
@@ -365,7 +368,8 @@ class Ballot{
                     return $response->withStatus(500)->write($e->getMessage());
                 }
             }
-            return $response->withStatus(500)->write('got this far');
+            $result = \MESBallotBox\Controller\Ballot::getVoteResult($ballot,$vote);
+            return $response->write(json_encode($result));
         });
         $slim->get('/{ballotId}/vote/{voteId}', function($request, $response,$args){
             $ballot = \MESBallotBox\Controller\Ballot::getVoterBallot($args['ballotId']);
@@ -381,16 +385,146 @@ class Ballot{
                     return $response->withStatus(400)->write('Vote not accessible.');
                 }
             }
-            $result = $vote->toArray();
-            $result['voteItem'] = Array();
-            $questions = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($args['ballotId'])->orderById()->find();
-            if(count($questions))foreach($questions as $question){
-                $voteItem = Array();
-                if($question->getType() == 'proposition'){
-                    
+            $result = \MESBallotBox\Controller\Ballot::getVoteResult($ballot,$vote);
+            return $response->write(json_encode($result));
+        });
+        $slim->post('/{ballotId}/vote/{voteId}', function($request, $response,$args){
+            $vars = $request->getParsedBody();
+            $ballot = \MESBallotBox\Controller\Ballot::getVoterBallot($args['ballotId']);
+            if(!$ballot){
+                return $response->withStatus(400)->write('Ballot not available for voting.');
+            }
+            $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($args['ballotId'])->filterById($args['voteId'])->findOne();
+            if(!$vote){
+                return $response->withStatus(400)->write('Vote not found.');
+            }
+            if($vote->getUserId() != $_SESSION['user']['id']){
+                if($ballot->getUserId() != $_SESSION['user']['id']){
+                    return $response->withStatus(400)->write('Vote not accessible.');
                 }
             }
+            
+            $vote->setVersionCreatedBy($_SESSION['user']['id']);
+            $vote->setUpdatedAt(time());
+            if(!$vars['voteItem']){
+                return $response->withStatus(400)->write('Vote answers required');
+            }
+            $voteItems = Array();
+            foreach($vars['voteItem'] as $vars_voteItem){
+                if(!$vars_voteItem['questionId']) return $response->withStatus(400)->write('Vote question required');
+                $question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($ballot->getId())->filterById($vars_voteItem['questionId'])->findOne();
+                if(!$question) return $response->withStatus(400)->write('Question invalid');
+                
+                if($question->getType() == 'proposition'){
+                    $voteItem = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->findOne(); 
+                    if(!$voteItem){
+                        $voteItem = new \MESBallotBox\Propel\VoteItem();
+                        $voteItem->setQuestionId($question->getId());
+                    }
+                    if(in_array($vars_voteItem['answer'],Array(0,1,2))){
+                        $voteItem->setAnswer($vars_voteItem['answer']);
+                    }
+                    else{
+                        return $response->withStatus(400)->write('Question answer required');
+                    }
+                    if(!$voteItem->validate()){
+                        return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
+                    }
+                    $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                    $voteItems[] = $voteItem;
+                }
+                elseif($question->getType() == 'office'){
+                    if(!$vars_voteItem['candidates']){
+                        return $response->withStatus(400)->write('Question candidates required');
+                    }
+                    $ranking = Array();
+                    $noranking = Array();
+                    foreach($vars_voteItem['candidates'] as $var_candidate){
+                        if(!empty($var_candidate['candidateId'])){
+                            $candidate = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($question->getId())->filterById($var_candidate['candidateId'])->findOne();
+                            if(!$candidate) return $response->withStatus(400)->write('Question candidates required');
+                        }else $var_candidate['candidateId'] = 0;
+                        
+                        if(!$var_candidate['answer']){
+                            $noranking[] = $var_candidate['candidateId'];
+                        }
+                        elseif(isset($ranking[$var_candidate['answer']])){
+                            return $response->withStatus(400)->write('Duplicate candidate ranking');
+                        }
+                        else $ranking[$var_candidate['answer']] = $var_candidate['candidateId'];
+                    }
+                    ksort($ranking);
+                    $i = 0;
+                    foreach($ranking as $rankItem){
+                        $i++;
+                        $voteItem = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->filterByCandidateId($rankItem)->findOne();
+                        if(!$voteItem){
+                            $voteItem = new \MESBallotBox\Propel\VoteItem();
+                            $voteItem->setQuestionId($question->getId());
+                            $voteItem->setCandidateId($rankItem);
+                        }
+                        $voteItem->setAnswer($i);
+                        $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                        if(!$voteItem->validate()){
+                            return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
+                        }
+                        $voteItems[] = $voteItem;
+                    }
+                    if($noranking){
+                        $none_rank = array_search(0,$noranking);
+                        if($none_rank!==false){
+                            unset($noranking[$none_rank]);
+                            $i++;
+                            $voteItem = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->filterByCandidateId(0)->findOne();
+                            if(!$voteItem){
+                                $voteItem = new \MESBallotBox\Propel\VoteItem();
+                                $voteItem->setQuestionId($question->getId());
+                                $voteItem->setCandidateId(0);
+                            }
+                            $voteItem->setAnswer($i);
+                            $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                            $voteItem = new \MESBallotBox\Propel\VoteItem();
+                            if(!$voteItem->validate()){
+                                return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
+                            }
+                            $voteItems[] = $voteItem;
+                        }
+                        if($noranking) foreach($noranking as $rankItem){
+                            $i++;
+                            $voteItem = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->filterByCandidateId($rankItem)->findOne();
+                            if(!$voteItem){
+                                $voteItem = new \MESBallotBox\Propel\VoteItem();
+                                $voteItem->setQuestionId($question->getId());
+                                $voteItem->setCandidateId($rankItem);
+                            }
+                            $voteItem->setAnswer($i);
+                            $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                            $voteItem = new \MESBallotBox\Propel\VoteItem();
+                            if(!$voteItem->validate()){
+                                return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
+                            }
+                            $voteItems[] = $voteItem;
+                        }
+                    }
+                }
+            }
+            try{
+                $vote->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            foreach($voteItems as $voteItem){
+                $voteItem->setVoteId($vote->getId());
+                try{
+                    $voteItem->save();
+                }catch(Exception $e){
+                    return $response->withStatus(500)->write($e->getMessage());
+                }
+            }
+            $result = \MESBallotBox\Controller\Ballot::getVoteResult($ballot,$vote);
+            return $response->write(json_encode($result));
         });
+
     }
     function getUser($membershipNumber){
         $q = new \MESBallotBox\Propel\UserQuery();
@@ -420,5 +554,49 @@ class Ballot{
             ->where('Ballot.id = ?',$ballotId)
             ->findOne();
         return $ballot;
+    }
+    function getVoteResult($ballot,$vote){
+        $result = $vote->toArray();
+        $result['voteItem'] = Array();
+        $questions = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($ballot->getId())->orderById()->find();
+        if(count($questions))foreach($questions as $question){
+            
+            if($question->getType() == 'proposition'){
+                $answer = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->findOne();
+                if($answer){
+                    $voteItemResult = $answer->toArray();
+                }
+                else{
+                    $voteItemResult = Array('questionId' => $question->getId(), 'voteId' => $vote->getId(), 'answer' => 0);
+                }
+            }
+            else{
+                $voteItemResult = Array('questionId' => $question->getId());
+                $voteItemResult['candidates'] = Array();
+                $candidates = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($question->getId())->orderById()->find();
+                foreach($candidates as $candidate){
+                    $candidateResult = Array();
+                    $answer = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->filterByCandidateId($candidate->getId())->findOne();
+                    if($answer){
+                        $candidateResult = $answer->toArray();
+                    }
+                    else{
+                        $candidateResult = Array('questionId' => $question->getId(), 'voteId' => $vote->getId(), 'candidateId' => $candidate->getId(), 'answer' => 0);
+                    }
+                    $voteItemResult['candidates'][] = $candidateResult;
+                }
+                $candidateResult = Array();
+                $answer = \MESBallotBox\Propel\VoteItemQuery::create()->filterByVoteId($vote->getId())->filterByQuestionId($question->getId())->filterByCandidateId(0)->findOne();
+                if($answer){
+                    $candidateResult = $answer->toArray();
+                }
+                else{
+                    $candidateResult = Array('questionId' => $question->getId(), 'voteId' => $vote->getId(), 'candidateId' => 0, 'answer' => 0);
+                }
+                $voteItemResult['candidates'][] = $candidateResult;
+            }
+            $result['voteItem'][] = $voteItemResult;
+        }
+        return $result;
     }
 }

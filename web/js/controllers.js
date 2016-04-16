@@ -152,25 +152,41 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
     }
 }]);
 
-ballotboxControllers.controller('ballotVoteController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Voter', 'Vote', function($scope, $http, $location, $routeParams, User, Ballot, Voter, Vote) {
+ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Voter', 'Vote', function($scope, $http, $location, $routeParams, User, Ballot, Voter, Vote) {
     $scope.ballot = Ballot.voteinfo({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
-            $scope.vote = new Vote();
-            $scope.vote.ballotId = $scope.ballot.id;
-            $scope.vote.voteItem = [];
-            for(var q = 0; q < $scope.ballot.questions.length; q++){
-                $scope.vote.voteItem[q] = {questionId: $scope.ballot.questions[q].id};
-                if($scope.ballot.questions[q].type=='office'){
-                    $scope.vote.voteItem[q].availableAnswers = [];
-                    $scope.vote.voteItem[q].candidates = [];
-                    $scope.ballot.questions[q].candidates.push({id:0, questionId: $scope.ballot.questions[q].id, firstName: 'None of', lastName: 'the Above'});
-                    for(var c = 0; c < $scope.ballot.questions[q].candidates.length; c++){
-                        $scope.vote.voteItem[q].candidates[c] = {candidateId: $scope.ballot.questions[q].candidates[c].id, answer: false};
-                        $scope.vote.voteItem[q].availableAnswers.push(c+1);
+            if($scope.ballot.voteId){
+                $scope.vote = Vote.get({'ballotId': $routeParams.ballotId, 'voteId': $scope.ballot.voteId},
+                    function successCallback(response){
+                        for(var q = 0; q < $scope.ballot.questions.length; q++){
+                            if($scope.ballot.questions[q].type=='office'){
+                                $scope.vote.voteItem[q].availableAnswers = [];
+                                $scope.ballot.questions[q].candidates.push({id:0, questionId: $scope.ballot.questions[q].id, firstName: 'None of', lastName: 'the Above'});
+                                for(var c = 0; c < $scope.ballot.questions[q].candidates.length; c++){
+                                    $scope.vote.voteItem[q].availableAnswers.push(c+1);
+                                }
+                            }
+                        }
                     }
-                }
-                else{
-                    $scope.vote.voteItem[q].answer = 0;
+                );
+            }else{
+                $scope.vote = new Vote();
+                $scope.vote.ballotId = $scope.ballot.id;
+                $scope.vote.voteItem = [];
+                for(var q = 0; q < $scope.ballot.questions.length; q++){
+                    $scope.vote.voteItem[q] = {questionId: $scope.ballot.questions[q].id};
+                    if($scope.ballot.questions[q].type=='office'){
+                        $scope.vote.voteItem[q].availableAnswers = [];
+                        $scope.vote.voteItem[q].candidates = [];
+                        $scope.ballot.questions[q].candidates.push({id:0, questionId: $scope.ballot.questions[q].id, firstName: 'None of', lastName: 'the Above'});
+                        for(var c = 0; c < $scope.ballot.questions[q].candidates.length; c++){
+                            $scope.vote.voteItem[q].candidates[c] = {candidateId: $scope.ballot.questions[q].candidates[c].id, answer: false};
+                            $scope.vote.voteItem[q].availableAnswers.push(c+1);
+                        }
+                    }
+                    else{
+                        $scope.vote.voteItem[q].answer = 0;
+                    }
                 }
             }
             

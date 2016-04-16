@@ -1,9 +1,3 @@
-<div class="main-content" ng-show="!ballot.id && !error">Loading ...</div>
-<div class="main-content" ng-hide="!error">{{error}} Back to <a href="#/">Home</a> </div>
-<div class="main-content" ng-show="ballot.id" ng-controller="ballotVoteController">
-<a href="#/">Home</a> > Ballot: {{ballot.name}}<br/>
-<h2>{{ballot.name}}</h2>
-<form ng-submit="submitVote(vote)">
 <div  ng-repeat="(q, question) in ballot.questions">
 <label>Ballot Measure: {{ question.name }}</label><br/>
 <p ng-show="question.description">{{question.description}}</p>
@@ -32,5 +26,3 @@
 </div>
 </div>
 <input type="submit" value="Submit Vote"/>
-</form>
-</div>
