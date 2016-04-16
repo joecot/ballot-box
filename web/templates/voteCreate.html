@@ -2,6 +2,7 @@
 <div class="main-content" ng-hide="!error">{{error}} Back to <a href="#/">Home</a> </div>
 <div class="main-content" ng-show="ballot.id" ng-controller="voteCreateController">
 <h2>{{ballot.name}}</h2>
+<p ng-show="vote.UpdatedAt">Last Updated <span ng-bind="vote.UpdatedAt | date:'MM/dd/yyyy h:mm a'"></span></p>
 <form ng-submit="submitVote(vote)">
 <div ng-include="'templates/voteForm.html'"/>
 </form>
