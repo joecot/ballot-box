@@ -113,6 +113,10 @@ class Ballot{
             
             $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($ballot->getId())->filterbyUserId($_SESSION['user']['id'])->findOne();
             if($vote) $result['voteId'] = $vote->getId();
+            else{
+                $invalid_message = \MESBallotBox\Controller\Ballot::checkInvalidVoter($ballot);
+                if($invalid_message) $result['invalid'] = $invalid_message;
+            }
             return $response->write(json_encode($result));
         });
         $slim->post('/{ballotId}', function($request, $response, $args){
@@ -265,6 +269,10 @@ class Ballot{
             $ballot = \MESBallotBox\Controller\Ballot::getVoterBallot($args['ballotId']);
             if(!$ballot){
                 return $response->withStatus(400)->write('Ballot not available for voting.');
+            }
+            $invalid_message = \MESBallotBox\Controller\Ballot::checkInvalidVoter($ballot);
+            if($invalid_message){
+                return $response->withStatus(400)->write($invalid_message);
             }
             $vote = new \MESBallotBox\Propel\Vote();
             $vote->setBallotId($ballot->getId());
@@ -598,5 +606,19 @@ class Ballot{
             $result['voteItem'][] = $voteItemResult;
         }
         return $result;
+    }
+    
+    function checkInvalidVoter($ballot){
+        $expire_time = strtotime($_SESSION['user']['membershipExpiration']);
+        if($expire_time < time()){
+            return "Cannot vote while membership is expired.";
+        }
+        if($expire_time < $ballot->getEndTime()){
+            return "You will be expired before the vote has closed, and therefore cannot vote.";
+        }
+        if($_SESSION['user']['membershipType'] != 'Full'){
+            return "You are a ".$_SESSION['user']['membershipType']." member. Only full members can vote";
+        }
+        return false;
     }
 }

@@ -25,4 +25,10 @@
     </ul>
 </div>
 </div>
-<input type="submit" value="Submit Vote"/>
+<input type="submit" ng-hide="ballot.invalid" value="Submit Vote"/>
+<div ng-show="ballot.invalid">
+<span ng-bind="ballot.invalid"/><br/>
+<span><a href="https://portal.mindseyesociety.org/membership/" target="_blank">Check Membership Status</a></span><br/>
+<span><a ng-click="refresh()">Refresh Membership Information</a></span>
+</div>
+<span ng-show="error">Error encounted: {{error}}</span>

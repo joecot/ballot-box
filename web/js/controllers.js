@@ -209,8 +209,18 @@ ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$lo
         return false;
     }
     $scope.submitVote = function(vote){
+        $scope.error = '';
         console.log(vote);
-        vote.$save();
+        vote.$save({}, 
+            function success(response){},
+            function failure(response){
+                $scope.error = response.data;
+            }
+        
+        );
+    }
+    $scope.refresh = function(){
+        window.location = '/index.php/login?jspath='+$location.path();
     }
 }]);
 
