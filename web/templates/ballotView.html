@@ -1,4 +1,4 @@
-<div class="main-content" ng-hide="ballot.id">Loading ...</div>
+<div class="main-content" ng-hide="ballot.id">Loading...</div>
 <div class="main-content" ng-show="ballot.id" ng-controller="ballotViewController">
 <a href="#/">Home</a> > Ballot: {{ballot.name}} | <a class="linkbutton" href="#/ballot/{{ballot.id}}/edit">Edit</a><br/>
 <label>Ballot Name:</label> {{ballot.name}}<br/>
@@ -34,6 +34,6 @@
     </select>
   </label><br/>
   <input type="submit" value="Add Candidate" />
-  <span ng-show="formerror">{{formerror}}</span>
+  <span ng-show="formerror" class="error">{{formerror}}</span>
 </form>
 </div>
