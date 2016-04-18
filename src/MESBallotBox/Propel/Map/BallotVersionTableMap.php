@@ -208,7 +208,7 @@ class BallotVersionTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'Ballot', 'id', true, 10, null);
         $this->addColumn('user_id', 'userId', 'INTEGER', true, 10, null);
-        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 40, null);
         $this->addColumn('start_time', 'startTime', 'INTEGER', true, 10, null);
         $this->addColumn('end_time', 'endTime', 'INTEGER', true, 10, null);
         $this->addColumn('timezone', 'timezone', 'INTEGER', true, 10, null);

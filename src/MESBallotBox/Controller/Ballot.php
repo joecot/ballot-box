@@ -93,14 +93,13 @@ class Ballot{
             $result['timezoneNice'] = $ballot->getTimezoneNice();
             $q = new \MESBallotBox\Propel\QuestionQuery();
             $questions = $q->filterByBallotId($args['ballotId'])->orderById()->find();
-            $c = new \MESBallotBox\Propel\CandidateQuery();
             if($questions){
                 $questionsresult = Array();
                 foreach($questions as $question){
                     $questionresult = $question->toArray();
                     if($questionresult['type'] == 'office'){
                         $candidateresults = Array();
-                        $candidates = $c->filterByQuestionId($question->getId())->orderById()->find();
+                        $candidates = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($question->getId())->orderById()->find();
                         foreach($candidates as $candidate){
                             $candidateresults[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
                         }

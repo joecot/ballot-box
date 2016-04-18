@@ -3320,7 +3320,7 @@ abstract class Question implements ActiveRecordInterface
     static public function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraint('name', new NotNull(array ('message' => 'Question name cannot be blank',)));
-        $metadata->addPropertyConstraint('name', new Length(array ('min' => 3,'max' => 20,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',)));
+        $metadata->addPropertyConstraint('name', new Length(array ('min' => 3,'max' => 64,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',)));
     }
 
     /**

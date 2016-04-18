@@ -1,6 +1,8 @@
 <div  ng-repeat="(q, question) in ballot.questions">
 <label>Ballot Measure: {{ question.name }}</label><br/>
 <p ng-show="question.description">{{question.description}}</p>
+<p ng-show="question.readmore"><a href="{{question.readmore}}" target="_blank">More information</a></p>
+<p ng-show="question.discussion"><a href="{{question.discussion}}" target="_blank">Discussion</a></p>
 <div ng-show="question.type=='proposition'">
     <label>
     <input type="radio" ng-model="vote.voteItem[q].answer" value="2">
@@ -24,6 +26,7 @@
         </li>
     </ul>
 </div>
+<br/>
 </div>
 <input type="submit" ng-hide="ballot.invalid" value="Submit Vote"/>
 <div ng-show="ballot.invalid">
