@@ -433,6 +433,8 @@ th {
   padding: 0;
 }
 
+/* It's never too early to talk to your child about Typography. */
+/* Color is my day-long obsession, joy and torment. */
 /* line 1, ../sass/_base.scss */
 html, body {
   background-color: #1e1e1e;
@@ -482,6 +484,11 @@ select, input, textarea {
   width: 94%;
   max-width: 1000px;
   color: #eef7f5;
+}
+
+/* line 46, ../sass/_base.scss */
+.error {
+  color: #4E0603;
 }
 
 /* Welcome to Compass. Use this file to write IE specific override styles.

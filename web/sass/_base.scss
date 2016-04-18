@@ -42,3 +42,7 @@ select, input, textarea {
     // background-color: rgba(30, 30, 30, 1);
     // background-image: url('/images/download.png');
 }
+
+.error {
+    color: $error-color;
+}
