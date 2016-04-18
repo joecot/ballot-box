@@ -2,7 +2,7 @@
 <div class="main-content" ng-show="user.id" ng-controller="indexController">
 Hello, {{user.firstName}} {{user.lastName}}!
 
-<div ng-show="ballots">
+<div ng-show="ballots" class="your-ballot-list">
     <label>Your Ballots:</label><br/>
     <ul>
         <li  ng-repeat="(ballotid, ballot) in ballots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}">{{ ballot.name }}</a></li>
