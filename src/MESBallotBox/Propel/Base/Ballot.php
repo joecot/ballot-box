@@ -3385,7 +3385,7 @@ abstract class Ballot implements ActiveRecordInterface
     static public function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraint('name', new NotNull(array ('message' => 'Ballot name cannot be blank',)));
-        $metadata->addPropertyConstraint('name', new Length(array ('min' => 3,'max' => 20,'minMessage' => 'Ballot name too short','maxMessage' => 'Ballot name too long',)));
+        $metadata->addPropertyConstraint('name', new Length(array ('min' => 3,'max' => 40,'minMessage' => 'Ballot name too short','maxMessage' => 'Ballot name too long',)));
         $metadata->addPropertyConstraint('start_time', new NotNull());
         $metadata->addPropertyConstraint('end_time', new NotNull());
     }

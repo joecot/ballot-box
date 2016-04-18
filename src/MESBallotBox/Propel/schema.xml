@@ -24,7 +24,7 @@
   <table name="Ballot" idMethod="native" phpName="Ballot">
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="name" phpName='name'  type="VARCHAR" size="20" required="true"/>
+    <column name="name" phpName='name'  type="VARCHAR" size="40" required="true"/>
     <column name="start_time" phpName='startTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="end_time" phpName='endTime' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="timezone" phpName='timezone' type="INTEGER" size="10" sqlType="tinyint(3) unsigned" required="true"/>
@@ -45,7 +45,7 @@
     </behavior>
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Ballot name cannot be blank'}}" />
-      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Ballot name too short', maxMessage: 'Ballot name too long'}}" />
+      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 40, minMessage: 'Ballot name too short', maxMessage: 'Ballot name too long'}}" />
       <parameter name="rule3" value="{column: start_time, validator: NotNull}" />
       <parameter name="rule4" value="{column: end_time, validator: NotNull}" />
     </behavior>
@@ -84,7 +84,7 @@
     <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="type" phpName='type' type="enum" valueSet="proposition, office"/>
     <column name="count" phpName='count' type="INTEGER" size="10" sqlType="int(10) unsigned"/>
-    <column name="name" phpName='name' type="VARCHAR" size="20" required="true"/>
+    <column name="name" phpName='name' type="VARCHAR" size="64" required="true"/>
     <column name="description" phpName='description'  type="LONGVARCHAR" required="false"/>
     <column name="readmore" phpName='readmore' type="varchar" size="255" required="false"/>
     <column name="discussion" phpName='discussion' type="varchar" size="255" required="false"/>
@@ -101,7 +101,7 @@
     </behavior>
     <behavior name="validate">
       <parameter name="rule1" value="{column: name, validator: NotNull, options: {message: 'Question name cannot be blank'}}" />
-      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 20, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
+      <parameter name="rule2" value="{column: name, validator: Length, options: {min: 3, max: 64, minMessage: 'Question name too short', maxMessage: 'Ballot name too long'}}" />
     </behavior>
   </table>
   <table name="Candidate" idMethod="native" phpName="Candidate">

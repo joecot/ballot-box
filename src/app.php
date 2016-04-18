@@ -3,7 +3,9 @@ $start = microtime(true);
 include('../vendor/autoload.php');
 include('../../credentials.php');
 include('propel-config.php');
-
+use Propel\Runtime\Propel;
+$con = Propel::getWriteConnection('default');
+$con->useDebug(true);
 session_start();
 $configuration = [
     'settings' => [

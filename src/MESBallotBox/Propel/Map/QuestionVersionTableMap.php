@@ -252,7 +252,7 @@ class QuestionVersionTableMap extends TableMap
   1 => 'office',
 ));
         $this->addColumn('count', 'count', 'INTEGER', false, 10, null);
-        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 64, null);
         $this->addColumn('description', 'description', 'LONGVARCHAR', false, null, null);
         $this->addColumn('readmore', 'readmore', 'VARCHAR', false, 255, null);
         $this->addColumn('discussion', 'discussion', 'VARCHAR', false, 255, null);

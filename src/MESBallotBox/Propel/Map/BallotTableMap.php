@@ -178,7 +178,7 @@ class BallotTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, 10, null);
         $this->addColumn('user_id', 'userId', 'INTEGER', true, 10, null);
-        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 40, null);
         $this->addColumn('start_time', 'startTime', 'INTEGER', true, 10, null);
         $this->addColumn('end_time', 'endTime', 'INTEGER', true, 10, null);
         $this->addColumn('timezone', 'timezone', 'INTEGER', true, 10, null);
@@ -235,7 +235,7 @@ class BallotTableMap extends TableMap
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
             'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', 'indices' => 'false', ),
-            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Ballot name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Ballot name too short','maxMessage' => 'Ballot name too long',),), 'rule3' => array ('column' => 'start_time','validator' => 'NotNull',), 'rule4' => array ('column' => 'end_time','validator' => 'NotNull',), ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Ballot name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 40,'minMessage' => 'Ballot name too short','maxMessage' => 'Ballot name too long',),), 'rule3' => array ('column' => 'start_time','validator' => 'NotNull',), 'rule4' => array ('column' => 'end_time','validator' => 'NotNull',), ),
         );
     } // getBehaviors()
     /**

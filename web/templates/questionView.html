@@ -4,8 +4,8 @@
 <label>Name:</label> {{question.name}}<br/>
 <label>Type:</label> {{question.type}}<br/>
 <label>Description:</label> {{question.description}}<br/>
-<label>Read More link:</label> {{question.readmore}}<br/>
-<label>Discussion link:</label> {{question.discussion}}<br/>
+<label>Read More link:</label> <span ng-show="question.readmore"><a href="{{question.readmore}}" target="_blank">{{question.readmore}}</a></span><br/>
+<label>Discussion link:</label> <span ng-show="question.discussion"><a href="{{question.discussion}}" target="_blank">{{question.discussion}}</a></span><br/>
 <div ng-show="question.type=='office' && candidates">
 <label>Candidates</label><br/>
 <ul>

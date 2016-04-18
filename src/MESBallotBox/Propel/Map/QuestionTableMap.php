@@ -227,7 +227,7 @@ class QuestionTableMap extends TableMap
   1 => 'office',
 ));
         $this->addColumn('count', 'count', 'INTEGER', false, 10, null);
-        $this->addColumn('name', 'name', 'VARCHAR', true, 20, null);
+        $this->addColumn('name', 'name', 'VARCHAR', true, 64, null);
         $this->addColumn('description', 'description', 'LONGVARCHAR', false, null, null);
         $this->addColumn('readmore', 'readmore', 'VARCHAR', false, 255, null);
         $this->addColumn('discussion', 'discussion', 'VARCHAR', false, 255, null);
@@ -284,7 +284,7 @@ class QuestionTableMap extends TableMap
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
             'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', 'indices' => 'false', ),
-            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Question name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 20,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',),), ),
+            'validate' => array('rule1' => array ('column' => 'name','validator' => 'NotNull','options' => array ('message' => 'Question name cannot be blank',),), 'rule2' => array ('column' => 'name','validator' => 'Length','options' => array ('min' => 3,'max' => 64,'minMessage' => 'Question name too short','maxMessage' => 'Ballot name too long',),), ),
         );
     } // getBehaviors()
     /**
