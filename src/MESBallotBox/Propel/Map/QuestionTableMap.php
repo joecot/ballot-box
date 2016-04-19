@@ -59,7 +59,7 @@ class QuestionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 15;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class QuestionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 15;
 
     /**
      * the column name for the id field
@@ -80,6 +80,16 @@ class QuestionTableMap extends TableMap
      * the column name for the ballot_id field
      */
     const COL_BALLOT_ID = 'Question.ballot_id';
+
+    /**
+     * the column name for the order_id field
+     */
+    const COL_ORDER_ID = 'Question.order_id';
+
+    /**
+     * the column name for the is_deleted field
+     */
+    const COL_IS_DELETED = 'Question.is_deleted';
 
     /**
      * the column name for the type field
@@ -152,11 +162,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BALLOT_ID, QuestionTableMap::COL_TYPE, QuestionTableMap::COL_COUNT, QuestionTableMap::COL_NAME, QuestionTableMap::COL_DESCRIPTION, QuestionTableMap::COL_READMORE, QuestionTableMap::COL_DISCUSSION, QuestionTableMap::COL_CREATED_AT, QuestionTableMap::COL_UPDATED_AT, QuestionTableMap::COL_VERSION, QuestionTableMap::COL_VERSION_CREATED_AT, QuestionTableMap::COL_VERSION_CREATED_BY, ),
-        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('id', 'ballotId', 'orderId', 'isDeleted', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
+        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'orderId', 'isDeleted', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID, QuestionTableMap::COL_BALLOT_ID, QuestionTableMap::COL_ORDER_ID, QuestionTableMap::COL_IS_DELETED, QuestionTableMap::COL_TYPE, QuestionTableMap::COL_COUNT, QuestionTableMap::COL_NAME, QuestionTableMap::COL_DESCRIPTION, QuestionTableMap::COL_READMORE, QuestionTableMap::COL_DISCUSSION, QuestionTableMap::COL_CREATED_AT, QuestionTableMap::COL_UPDATED_AT, QuestionTableMap::COL_VERSION, QuestionTableMap::COL_VERSION_CREATED_AT, QuestionTableMap::COL_VERSION_CREATED_BY, ),
+        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'order_id', 'is_deleted', 'type', 'count', 'name', 'description', 'readmore', 'discussion', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
     );
 
     /**
@@ -166,11 +176,11 @@ class QuestionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, 'Version' => 10, 'VersionCreatedAt' => 11, 'VersionCreatedBy' => 12, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'createdAt' => 8, 'updatedAt' => 9, 'version' => 10, 'versionCreatedAt' => 11, 'versionCreatedBy' => 12, ),
-        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BALLOT_ID => 1, QuestionTableMap::COL_TYPE => 2, QuestionTableMap::COL_COUNT => 3, QuestionTableMap::COL_NAME => 4, QuestionTableMap::COL_DESCRIPTION => 5, QuestionTableMap::COL_READMORE => 6, QuestionTableMap::COL_DISCUSSION => 7, QuestionTableMap::COL_CREATED_AT => 8, QuestionTableMap::COL_UPDATED_AT => 9, QuestionTableMap::COL_VERSION => 10, QuestionTableMap::COL_VERSION_CREATED_AT => 11, QuestionTableMap::COL_VERSION_CREATED_BY => 12, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'type' => 2, 'count' => 3, 'name' => 4, 'description' => 5, 'readmore' => 6, 'discussion' => 7, 'created_at' => 8, 'updated_at' => 9, 'version' => 10, 'version_created_at' => 11, 'version_created_by' => 12, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'orderId' => 2, 'isDeleted' => 3, 'type' => 4, 'count' => 5, 'name' => 6, 'description' => 7, 'readmore' => 8, 'discussion' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, 'Version' => 12, 'VersionCreatedAt' => 13, 'VersionCreatedBy' => 14, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'orderId' => 2, 'isDeleted' => 3, 'type' => 4, 'count' => 5, 'name' => 6, 'description' => 7, 'readmore' => 8, 'discussion' => 9, 'createdAt' => 10, 'updatedAt' => 11, 'version' => 12, 'versionCreatedAt' => 13, 'versionCreatedBy' => 14, ),
+        self::TYPE_COLNAME       => array(QuestionTableMap::COL_ID => 0, QuestionTableMap::COL_BALLOT_ID => 1, QuestionTableMap::COL_ORDER_ID => 2, QuestionTableMap::COL_IS_DELETED => 3, QuestionTableMap::COL_TYPE => 4, QuestionTableMap::COL_COUNT => 5, QuestionTableMap::COL_NAME => 6, QuestionTableMap::COL_DESCRIPTION => 7, QuestionTableMap::COL_READMORE => 8, QuestionTableMap::COL_DISCUSSION => 9, QuestionTableMap::COL_CREATED_AT => 10, QuestionTableMap::COL_UPDATED_AT => 11, QuestionTableMap::COL_VERSION => 12, QuestionTableMap::COL_VERSION_CREATED_AT => 13, QuestionTableMap::COL_VERSION_CREATED_BY => 14, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'order_id' => 2, 'is_deleted' => 3, 'type' => 4, 'count' => 5, 'name' => 6, 'description' => 7, 'readmore' => 8, 'discussion' => 9, 'created_at' => 10, 'updated_at' => 11, 'version' => 12, 'version_created_at' => 13, 'version_created_by' => 14, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
     );
 
     /** The enumerated values for this table */
@@ -221,6 +231,8 @@ class QuestionTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, 10, null);
         $this->addForeignKey('ballot_id', 'ballotId', 'INTEGER', 'Ballot', 'id', true, 10, null);
+        $this->addColumn('order_id', 'orderId', 'INTEGER', true, 10, null);
+        $this->addColumn('is_deleted', 'isDeleted', 'INTEGER', false, 10, null);
         $this->addColumn('type', 'type', 'ENUM', false, null, null);
         $this->getColumn('type')->setValueSet(array (
   0 => 'proposition',
@@ -440,6 +452,8 @@ class QuestionTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(QuestionTableMap::COL_ID);
             $criteria->addSelectColumn(QuestionTableMap::COL_BALLOT_ID);
+            $criteria->addSelectColumn(QuestionTableMap::COL_ORDER_ID);
+            $criteria->addSelectColumn(QuestionTableMap::COL_IS_DELETED);
             $criteria->addSelectColumn(QuestionTableMap::COL_TYPE);
             $criteria->addSelectColumn(QuestionTableMap::COL_COUNT);
             $criteria->addSelectColumn(QuestionTableMap::COL_NAME);
@@ -454,6 +468,8 @@ class QuestionTableMap extends TableMap
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.ballot_id');
+            $criteria->addSelectColumn($alias . '.order_id');
+            $criteria->addSelectColumn($alias . '.is_deleted');
             $criteria->addSelectColumn($alias . '.type');
             $criteria->addSelectColumn($alias . '.count');
             $criteria->addSelectColumn($alias . '.name');

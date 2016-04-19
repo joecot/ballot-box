@@ -101,6 +101,13 @@ abstract class Candidate implements ActiveRecordInterface
     protected $question_id;
 
     /**
+     * The value for the is_deleted field.
+     *
+     * @var        int
+     */
+    protected $is_deleted;
+
+    /**
      * The value for the user_id field.
      *
      * @var        int
@@ -476,6 +483,16 @@ abstract class Candidate implements ActiveRecordInterface
     }
 
     /**
+     * Get the [is_deleted] column value.
+     *
+     * @return int
+     */
+    public function getisDeleted()
+    {
+        return $this->is_deleted;
+    }
+
+    /**
      * Get the [user_id] column value.
      *
      * @return int
@@ -618,6 +635,26 @@ abstract class Candidate implements ActiveRecordInterface
 
         return $this;
     } // setquestionId()
+
+    /**
+     * Set the value of [is_deleted] column.
+     *
+     * @param int $v new value
+     * @return $this|\MESBallotBox\Propel\Candidate The current object (for fluent API support)
+     */
+    public function setisDeleted($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->is_deleted !== $v) {
+            $this->is_deleted = $v;
+            $this->modifiedColumns[CandidateTableMap::COL_IS_DELETED] = true;
+        }
+
+        return $this;
+    } // setisDeleted()
 
     /**
      * Set the value of [user_id] column.
@@ -809,34 +846,37 @@ abstract class Candidate implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CandidateTableMap::translateFieldName('questionId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->question_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CandidateTableMap::translateFieldName('userId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CandidateTableMap::translateFieldName('isDeleted', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_deleted = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CandidateTableMap::translateFieldName('userId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CandidateTableMap::translateFieldName('application', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CandidateTableMap::translateFieldName('application', TableMap::TYPE_PHPNAME, $indexType)];
             $this->application = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CandidateTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CandidateTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : CandidateTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : CandidateTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : CandidateTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : CandidateTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : CandidateTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -846,7 +886,7 @@ abstract class Candidate implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = CandidateTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Candidate'), 0, $e);
@@ -1139,6 +1179,9 @@ abstract class Candidate implements ActiveRecordInterface
         if ($this->isColumnModified(CandidateTableMap::COL_QUESTION_ID)) {
             $modifiedColumns[':p' . $index++]  = 'question_id';
         }
+        if ($this->isColumnModified(CandidateTableMap::COL_IS_DELETED)) {
+            $modifiedColumns[':p' . $index++]  = 'is_deleted';
+        }
         if ($this->isColumnModified(CandidateTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
@@ -1176,6 +1219,9 @@ abstract class Candidate implements ActiveRecordInterface
                         break;
                     case 'question_id':
                         $stmt->bindValue($identifier, $this->question_id, PDO::PARAM_INT);
+                        break;
+                    case 'is_deleted':
+                        $stmt->bindValue($identifier, $this->is_deleted, PDO::PARAM_INT);
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
@@ -1267,24 +1313,27 @@ abstract class Candidate implements ActiveRecordInterface
                 return $this->getquestionId();
                 break;
             case 2:
-                return $this->getuserId();
+                return $this->getisDeleted();
                 break;
             case 3:
-                return $this->getapplication();
+                return $this->getuserId();
                 break;
             case 4:
-                return $this->getCreatedAt();
+                return $this->getapplication();
                 break;
             case 5:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 6:
-                return $this->getVersion();
+                return $this->getUpdatedAt();
                 break;
             case 7:
-                return $this->getVersionCreatedAt();
+                return $this->getVersion();
                 break;
             case 8:
+                return $this->getVersionCreatedAt();
+                break;
+            case 9:
                 return $this->getVersionCreatedBy();
                 break;
             default:
@@ -1319,24 +1368,25 @@ abstract class Candidate implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getid(),
             $keys[1] => $this->getquestionId(),
-            $keys[2] => $this->getuserId(),
-            $keys[3] => $this->getapplication(),
-            $keys[4] => $this->getCreatedAt(),
-            $keys[5] => $this->getUpdatedAt(),
-            $keys[6] => $this->getVersion(),
-            $keys[7] => $this->getVersionCreatedAt(),
-            $keys[8] => $this->getVersionCreatedBy(),
+            $keys[2] => $this->getisDeleted(),
+            $keys[3] => $this->getuserId(),
+            $keys[4] => $this->getapplication(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
+            $keys[7] => $this->getVersion(),
+            $keys[8] => $this->getVersionCreatedAt(),
+            $keys[9] => $this->getVersionCreatedBy(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
-        }
-
         if ($result[$keys[5]] instanceof \DateTime) {
             $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
+        if ($result[$keys[6]] instanceof \DateTime) {
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        }
+
+        if ($result[$keys[8]] instanceof \DateTime) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1446,24 +1496,27 @@ abstract class Candidate implements ActiveRecordInterface
                 $this->setquestionId($value);
                 break;
             case 2:
-                $this->setuserId($value);
+                $this->setisDeleted($value);
                 break;
             case 3:
-                $this->setapplication($value);
+                $this->setuserId($value);
                 break;
             case 4:
-                $this->setCreatedAt($value);
+                $this->setapplication($value);
                 break;
             case 5:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 6:
-                $this->setVersion($value);
+                $this->setUpdatedAt($value);
                 break;
             case 7:
-                $this->setVersionCreatedAt($value);
+                $this->setVersion($value);
                 break;
             case 8:
+                $this->setVersionCreatedAt($value);
+                break;
+            case 9:
                 $this->setVersionCreatedBy($value);
                 break;
         } // switch()
@@ -1499,25 +1552,28 @@ abstract class Candidate implements ActiveRecordInterface
             $this->setquestionId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setuserId($arr[$keys[2]]);
+            $this->setisDeleted($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setapplication($arr[$keys[3]]);
+            $this->setuserId($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setCreatedAt($arr[$keys[4]]);
+            $this->setapplication($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setUpdatedAt($arr[$keys[5]]);
+            $this->setCreatedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setVersion($arr[$keys[6]]);
+            $this->setUpdatedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setVersionCreatedAt($arr[$keys[7]]);
+            $this->setVersion($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setVersionCreatedBy($arr[$keys[8]]);
+            $this->setVersionCreatedAt($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setVersionCreatedBy($arr[$keys[9]]);
         }
     }
 
@@ -1565,6 +1621,9 @@ abstract class Candidate implements ActiveRecordInterface
         }
         if ($this->isColumnModified(CandidateTableMap::COL_QUESTION_ID)) {
             $criteria->add(CandidateTableMap::COL_QUESTION_ID, $this->question_id);
+        }
+        if ($this->isColumnModified(CandidateTableMap::COL_IS_DELETED)) {
+            $criteria->add(CandidateTableMap::COL_IS_DELETED, $this->is_deleted);
         }
         if ($this->isColumnModified(CandidateTableMap::COL_USER_ID)) {
             $criteria->add(CandidateTableMap::COL_USER_ID, $this->user_id);
@@ -1674,6 +1733,7 @@ abstract class Candidate implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setquestionId($this->getquestionId());
+        $copyObj->setisDeleted($this->getisDeleted());
         $copyObj->setuserId($this->getuserId());
         $copyObj->setapplication($this->getapplication());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -2368,6 +2428,7 @@ abstract class Candidate implements ActiveRecordInterface
         }
         $this->id = null;
         $this->question_id = null;
+        $this->is_deleted = null;
         $this->user_id = null;
         $this->application = null;
         $this->created_at = null;
@@ -2501,6 +2562,7 @@ abstract class Candidate implements ActiveRecordInterface
         $version = new ChildCandidateVersion();
         $version->setid($this->getid());
         $version->setquestionId($this->getquestionId());
+        $version->setisDeleted($this->getisDeleted());
         $version->setuserId($this->getuserId());
         $version->setapplication($this->getapplication());
         $version->setCreatedAt($this->getCreatedAt());
@@ -2554,6 +2616,7 @@ abstract class Candidate implements ActiveRecordInterface
         $loadedObjects['ChildCandidate'][$version->getid()][$version->getVersion()] = $this;
         $this->setid($version->getid());
         $this->setquestionId($version->getquestionId());
+        $this->setisDeleted($version->getisDeleted());
         $this->setuserId($version->getuserId());
         $this->setapplication($version->getapplication());
         $this->setCreatedAt($version->getCreatedAt());

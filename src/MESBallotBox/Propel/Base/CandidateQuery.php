@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCandidateQuery orderByid($order = Criteria::ASC) Order by the id column
  * @method     ChildCandidateQuery orderByquestionId($order = Criteria::ASC) Order by the question_id column
+ * @method     ChildCandidateQuery orderByisDeleted($order = Criteria::ASC) Order by the is_deleted column
  * @method     ChildCandidateQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildCandidateQuery orderByapplication($order = Criteria::ASC) Order by the application column
  * @method     ChildCandidateQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -32,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCandidateQuery groupByid() Group by the id column
  * @method     ChildCandidateQuery groupByquestionId() Group by the question_id column
+ * @method     ChildCandidateQuery groupByisDeleted() Group by the is_deleted column
  * @method     ChildCandidateQuery groupByuserId() Group by the user_id column
  * @method     ChildCandidateQuery groupByapplication() Group by the application column
  * @method     ChildCandidateQuery groupByCreatedAt() Group by the created_at column
@@ -95,6 +97,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCandidate findOneByid(int $id) Return the first ChildCandidate filtered by the id column
  * @method     ChildCandidate findOneByquestionId(int $question_id) Return the first ChildCandidate filtered by the question_id column
+ * @method     ChildCandidate findOneByisDeleted(int $is_deleted) Return the first ChildCandidate filtered by the is_deleted column
  * @method     ChildCandidate findOneByuserId(int $user_id) Return the first ChildCandidate filtered by the user_id column
  * @method     ChildCandidate findOneByapplication(string $application) Return the first ChildCandidate filtered by the application column
  * @method     ChildCandidate findOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column
@@ -108,6 +111,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCandidate requireOneByid(int $id) Return the first ChildCandidate filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByquestionId(int $question_id) Return the first ChildCandidate filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCandidate requireOneByisDeleted(int $is_deleted) Return the first ChildCandidate filtered by the is_deleted column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByuserId(int $user_id) Return the first ChildCandidate filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByapplication(string $application) Return the first ChildCandidate filtered by the application column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCandidate requireOneByCreatedAt(string $created_at) Return the first ChildCandidate filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -119,6 +123,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCandidate[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCandidate objects based on current ModelCriteria
  * @method     ChildCandidate[]|ObjectCollection findByid(int $id) Return ChildCandidate objects filtered by the id column
  * @method     ChildCandidate[]|ObjectCollection findByquestionId(int $question_id) Return ChildCandidate objects filtered by the question_id column
+ * @method     ChildCandidate[]|ObjectCollection findByisDeleted(int $is_deleted) Return ChildCandidate objects filtered by the is_deleted column
  * @method     ChildCandidate[]|ObjectCollection findByuserId(int $user_id) Return ChildCandidate objects filtered by the user_id column
  * @method     ChildCandidate[]|ObjectCollection findByapplication(string $application) Return ChildCandidate objects filtered by the application column
  * @method     ChildCandidate[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildCandidate objects filtered by the created_at column
@@ -231,7 +236,7 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, question_id, user_id, application, created_at, updated_at, version, version_created_at, version_created_by FROM Candidate WHERE id = :p0';
+        $sql = 'SELECT id, question_id, is_deleted, user_id, application, created_at, updated_at, version, version_created_at, version_created_by FROM Candidate WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -403,6 +408,47 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         }
 
         return $this->addUsingAlias(CandidateTableMap::COL_QUESTION_ID, $questionId, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_deleted column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByisDeleted(1234); // WHERE is_deleted = 1234
+     * $query->filterByisDeleted(array(12, 34)); // WHERE is_deleted IN (12, 34)
+     * $query->filterByisDeleted(array('min' => 12)); // WHERE is_deleted > 12
+     * </code>
+     *
+     * @param     mixed $isDeleted The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCandidateQuery The current query, for fluid interface
+     */
+    public function filterByisDeleted($isDeleted = null, $comparison = null)
+    {
+        if (is_array($isDeleted)) {
+            $useMinMax = false;
+            if (isset($isDeleted['min'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_IS_DELETED, $isDeleted['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($isDeleted['max'])) {
+                $this->addUsingAlias(CandidateTableMap::COL_IS_DELETED, $isDeleted['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CandidateTableMap::COL_IS_DELETED, $isDeleted, $comparison);
     }
 
     /**

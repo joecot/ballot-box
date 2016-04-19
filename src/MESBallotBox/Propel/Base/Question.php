@@ -105,6 +105,20 @@ abstract class Question implements ActiveRecordInterface
     protected $ballot_id;
 
     /**
+     * The value for the order_id field.
+     *
+     * @var        int
+     */
+    protected $order_id;
+
+    /**
+     * The value for the is_deleted field.
+     *
+     * @var        int
+     */
+    protected $is_deleted;
+
+    /**
      * The value for the type field.
      *
      * @var        int
@@ -515,6 +529,26 @@ abstract class Question implements ActiveRecordInterface
     }
 
     /**
+     * Get the [order_id] column value.
+     *
+     * @return int
+     */
+    public function getorderId()
+    {
+        return $this->order_id;
+    }
+
+    /**
+     * Get the [is_deleted] column value.
+     *
+     * @return int
+     */
+    public function getisDeleted()
+    {
+        return $this->is_deleted;
+    }
+
+    /**
      * Get the [type] column value.
      *
      * @return string
@@ -706,6 +740,46 @@ abstract class Question implements ActiveRecordInterface
 
         return $this;
     } // setballotId()
+
+    /**
+     * Set the value of [order_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function setorderId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->order_id !== $v) {
+            $this->order_id = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_ORDER_ID] = true;
+        }
+
+        return $this;
+    } // setorderId()
+
+    /**
+     * Set the value of [is_deleted] column.
+     *
+     * @param int $v new value
+     * @return $this|\MESBallotBox\Propel\Question The current object (for fluent API support)
+     */
+    public function setisDeleted($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->is_deleted !== $v) {
+            $this->is_deleted = $v;
+            $this->modifiedColumns[QuestionTableMap::COL_IS_DELETED] = true;
+        }
+
+        return $this;
+    } // setisDeleted()
 
     /**
      * Set the value of [type] column.
@@ -978,46 +1052,52 @@ abstract class Question implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : QuestionTableMap::translateFieldName('ballotId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->ballot_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionTableMap::translateFieldName('type', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionTableMap::translateFieldName('orderId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->order_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionTableMap::translateFieldName('isDeleted', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_deleted = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionTableMap::translateFieldName('type', TableMap::TYPE_PHPNAME, $indexType)];
             $this->type = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionTableMap::translateFieldName('count', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionTableMap::translateFieldName('count', TableMap::TYPE_PHPNAME, $indexType)];
             $this->count = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionTableMap::translateFieldName('name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionTableMap::translateFieldName('name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionTableMap::translateFieldName('description', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : QuestionTableMap::translateFieldName('description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionTableMap::translateFieldName('readmore', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : QuestionTableMap::translateFieldName('readmore', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readmore = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : QuestionTableMap::translateFieldName('discussion', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : QuestionTableMap::translateFieldName('discussion', TableMap::TYPE_PHPNAME, $indexType)];
             $this->discussion = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : QuestionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : QuestionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : QuestionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : QuestionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : QuestionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : QuestionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 14 + $startcol : QuestionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -1027,7 +1107,7 @@ abstract class Question implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 15; // 15 = QuestionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\Question'), 0, $e);
@@ -1327,6 +1407,12 @@ abstract class Question implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionTableMap::COL_BALLOT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'ballot_id';
         }
+        if ($this->isColumnModified(QuestionTableMap::COL_ORDER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'order_id';
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_IS_DELETED)) {
+            $modifiedColumns[':p' . $index++]  = 'is_deleted';
+        }
         if ($this->isColumnModified(QuestionTableMap::COL_TYPE)) {
             $modifiedColumns[':p' . $index++]  = 'type';
         }
@@ -1376,6 +1462,12 @@ abstract class Question implements ActiveRecordInterface
                         break;
                     case 'ballot_id':
                         $stmt->bindValue($identifier, $this->ballot_id, PDO::PARAM_INT);
+                        break;
+                    case 'order_id':
+                        $stmt->bindValue($identifier, $this->order_id, PDO::PARAM_INT);
+                        break;
+                    case 'is_deleted':
+                        $stmt->bindValue($identifier, $this->is_deleted, PDO::PARAM_INT);
                         break;
                     case 'type':
                         $stmt->bindValue($identifier, $this->type, PDO::PARAM_INT);
@@ -1479,36 +1571,42 @@ abstract class Question implements ActiveRecordInterface
                 return $this->getballotId();
                 break;
             case 2:
-                return $this->gettype();
+                return $this->getorderId();
                 break;
             case 3:
-                return $this->getcount();
+                return $this->getisDeleted();
                 break;
             case 4:
-                return $this->getname();
+                return $this->gettype();
                 break;
             case 5:
-                return $this->getdescription();
+                return $this->getcount();
                 break;
             case 6:
-                return $this->getreadmore();
+                return $this->getname();
                 break;
             case 7:
-                return $this->getdiscussion();
+                return $this->getdescription();
                 break;
             case 8:
-                return $this->getCreatedAt();
+                return $this->getreadmore();
                 break;
             case 9:
-                return $this->getUpdatedAt();
+                return $this->getdiscussion();
                 break;
             case 10:
-                return $this->getVersion();
+                return $this->getCreatedAt();
                 break;
             case 11:
-                return $this->getVersionCreatedAt();
+                return $this->getUpdatedAt();
                 break;
             case 12:
+                return $this->getVersion();
+                break;
+            case 13:
+                return $this->getVersionCreatedAt();
+                break;
+            case 14:
                 return $this->getVersionCreatedBy();
                 break;
             default:
@@ -1543,28 +1641,30 @@ abstract class Question implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getid(),
             $keys[1] => $this->getballotId(),
-            $keys[2] => $this->gettype(),
-            $keys[3] => $this->getcount(),
-            $keys[4] => $this->getname(),
-            $keys[5] => $this->getdescription(),
-            $keys[6] => $this->getreadmore(),
-            $keys[7] => $this->getdiscussion(),
-            $keys[8] => $this->getCreatedAt(),
-            $keys[9] => $this->getUpdatedAt(),
-            $keys[10] => $this->getVersion(),
-            $keys[11] => $this->getVersionCreatedAt(),
-            $keys[12] => $this->getVersionCreatedBy(),
+            $keys[2] => $this->getorderId(),
+            $keys[3] => $this->getisDeleted(),
+            $keys[4] => $this->gettype(),
+            $keys[5] => $this->getcount(),
+            $keys[6] => $this->getname(),
+            $keys[7] => $this->getdescription(),
+            $keys[8] => $this->getreadmore(),
+            $keys[9] => $this->getdiscussion(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getVersion(),
+            $keys[13] => $this->getVersionCreatedAt(),
+            $keys[14] => $this->getVersionCreatedBy(),
         );
-        if ($result[$keys[8]] instanceof \DateTime) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
-        }
-
-        if ($result[$keys[9]] instanceof \DateTime) {
-            $result[$keys[9]] = $result[$keys[9]]->format('c');
+        if ($result[$keys[10]] instanceof \DateTime) {
+            $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
 
         if ($result[$keys[11]] instanceof \DateTime) {
             $result[$keys[11]] = $result[$keys[11]]->format('c');
+        }
+
+        if ($result[$keys[13]] instanceof \DateTime) {
+            $result[$keys[13]] = $result[$keys[13]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1674,40 +1774,46 @@ abstract class Question implements ActiveRecordInterface
                 $this->setballotId($value);
                 break;
             case 2:
+                $this->setorderId($value);
+                break;
+            case 3:
+                $this->setisDeleted($value);
+                break;
+            case 4:
                 $valueSet = QuestionTableMap::getValueSet(QuestionTableMap::COL_TYPE);
                 if (isset($valueSet[$value])) {
                     $value = $valueSet[$value];
                 }
                 $this->settype($value);
                 break;
-            case 3:
+            case 5:
                 $this->setcount($value);
                 break;
-            case 4:
+            case 6:
                 $this->setname($value);
                 break;
-            case 5:
+            case 7:
                 $this->setdescription($value);
                 break;
-            case 6:
+            case 8:
                 $this->setreadmore($value);
                 break;
-            case 7:
+            case 9:
                 $this->setdiscussion($value);
                 break;
-            case 8:
+            case 10:
                 $this->setCreatedAt($value);
                 break;
-            case 9:
+            case 11:
                 $this->setUpdatedAt($value);
                 break;
-            case 10:
+            case 12:
                 $this->setVersion($value);
                 break;
-            case 11:
+            case 13:
                 $this->setVersionCreatedAt($value);
                 break;
-            case 12:
+            case 14:
                 $this->setVersionCreatedBy($value);
                 break;
         } // switch()
@@ -1743,37 +1849,43 @@ abstract class Question implements ActiveRecordInterface
             $this->setballotId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->settype($arr[$keys[2]]);
+            $this->setorderId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setcount($arr[$keys[3]]);
+            $this->setisDeleted($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setname($arr[$keys[4]]);
+            $this->settype($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setdescription($arr[$keys[5]]);
+            $this->setcount($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setreadmore($arr[$keys[6]]);
+            $this->setname($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setdiscussion($arr[$keys[7]]);
+            $this->setdescription($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setCreatedAt($arr[$keys[8]]);
+            $this->setreadmore($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setUpdatedAt($arr[$keys[9]]);
+            $this->setdiscussion($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setVersion($arr[$keys[10]]);
+            $this->setCreatedAt($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setVersionCreatedAt($arr[$keys[11]]);
+            $this->setUpdatedAt($arr[$keys[11]]);
         }
         if (array_key_exists($keys[12], $arr)) {
-            $this->setVersionCreatedBy($arr[$keys[12]]);
+            $this->setVersion($arr[$keys[12]]);
+        }
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setVersionCreatedAt($arr[$keys[13]]);
+        }
+        if (array_key_exists($keys[14], $arr)) {
+            $this->setVersionCreatedBy($arr[$keys[14]]);
         }
     }
 
@@ -1821,6 +1933,12 @@ abstract class Question implements ActiveRecordInterface
         }
         if ($this->isColumnModified(QuestionTableMap::COL_BALLOT_ID)) {
             $criteria->add(QuestionTableMap::COL_BALLOT_ID, $this->ballot_id);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_ORDER_ID)) {
+            $criteria->add(QuestionTableMap::COL_ORDER_ID, $this->order_id);
+        }
+        if ($this->isColumnModified(QuestionTableMap::COL_IS_DELETED)) {
+            $criteria->add(QuestionTableMap::COL_IS_DELETED, $this->is_deleted);
         }
         if ($this->isColumnModified(QuestionTableMap::COL_TYPE)) {
             $criteria->add(QuestionTableMap::COL_TYPE, $this->type);
@@ -1942,6 +2060,8 @@ abstract class Question implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setballotId($this->getballotId());
+        $copyObj->setorderId($this->getorderId());
+        $copyObj->setisDeleted($this->getisDeleted());
         $copyObj->settype($this->gettype());
         $copyObj->setcount($this->getcount());
         $copyObj->setname($this->getname());
@@ -2845,6 +2965,8 @@ abstract class Question implements ActiveRecordInterface
         }
         $this->id = null;
         $this->ballot_id = null;
+        $this->order_id = null;
+        $this->is_deleted = null;
         $this->type = null;
         $this->count = null;
         $this->name = null;
@@ -2998,6 +3120,8 @@ abstract class Question implements ActiveRecordInterface
         $version = new ChildQuestionVersion();
         $version->setid($this->getid());
         $version->setballotId($this->getballotId());
+        $version->setorderId($this->getorderId());
+        $version->setisDeleted($this->getisDeleted());
         $version->settype($this->gettype());
         $version->setcount($this->getcount());
         $version->setname($this->getname());
@@ -3059,6 +3183,8 @@ abstract class Question implements ActiveRecordInterface
         $loadedObjects['ChildQuestion'][$version->getid()][$version->getVersion()] = $this;
         $this->setid($version->getid());
         $this->setballotId($version->getballotId());
+        $this->setorderId($version->getorderId());
+        $this->setisDeleted($version->getisDeleted());
         $this->settype($version->gettype());
         $this->setcount($version->getcount());
         $this->setname($version->getname());

@@ -22,6 +22,8 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestionQuery orderByid($order = Criteria::ASC) Order by the id column
  * @method     ChildQuestionQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
+ * @method     ChildQuestionQuery orderByorderId($order = Criteria::ASC) Order by the order_id column
+ * @method     ChildQuestionQuery orderByisDeleted($order = Criteria::ASC) Order by the is_deleted column
  * @method     ChildQuestionQuery orderBytype($order = Criteria::ASC) Order by the type column
  * @method     ChildQuestionQuery orderBycount($order = Criteria::ASC) Order by the count column
  * @method     ChildQuestionQuery orderByname($order = Criteria::ASC) Order by the name column
@@ -36,6 +38,8 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestionQuery groupByid() Group by the id column
  * @method     ChildQuestionQuery groupByballotId() Group by the ballot_id column
+ * @method     ChildQuestionQuery groupByorderId() Group by the order_id column
+ * @method     ChildQuestionQuery groupByisDeleted() Group by the is_deleted column
  * @method     ChildQuestionQuery groupBytype() Group by the type column
  * @method     ChildQuestionQuery groupBycount() Group by the count column
  * @method     ChildQuestionQuery groupByname() Group by the name column
@@ -103,6 +107,8 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestion findOneByid(int $id) Return the first ChildQuestion filtered by the id column
  * @method     ChildQuestion findOneByballotId(int $ballot_id) Return the first ChildQuestion filtered by the ballot_id column
+ * @method     ChildQuestion findOneByorderId(int $order_id) Return the first ChildQuestion filtered by the order_id column
+ * @method     ChildQuestion findOneByisDeleted(int $is_deleted) Return the first ChildQuestion filtered by the is_deleted column
  * @method     ChildQuestion findOneBytype(int $type) Return the first ChildQuestion filtered by the type column
  * @method     ChildQuestion findOneBycount(int $count) Return the first ChildQuestion filtered by the count column
  * @method     ChildQuestion findOneByname(string $name) Return the first ChildQuestion filtered by the name column
@@ -120,6 +126,8 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestion requireOneByid(int $id) Return the first ChildQuestion filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneByballotId(int $ballot_id) Return the first ChildQuestion filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByorderId(int $order_id) Return the first ChildQuestion filtered by the order_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestion requireOneByisDeleted(int $is_deleted) Return the first ChildQuestion filtered by the is_deleted column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneBytype(int $type) Return the first ChildQuestion filtered by the type column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneBycount(int $count) Return the first ChildQuestion filtered by the count column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestion requireOneByname(string $name) Return the first ChildQuestion filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -135,6 +143,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestion[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestion objects based on current ModelCriteria
  * @method     ChildQuestion[]|ObjectCollection findByid(int $id) Return ChildQuestion objects filtered by the id column
  * @method     ChildQuestion[]|ObjectCollection findByballotId(int $ballot_id) Return ChildQuestion objects filtered by the ballot_id column
+ * @method     ChildQuestion[]|ObjectCollection findByorderId(int $order_id) Return ChildQuestion objects filtered by the order_id column
+ * @method     ChildQuestion[]|ObjectCollection findByisDeleted(int $is_deleted) Return ChildQuestion objects filtered by the is_deleted column
  * @method     ChildQuestion[]|ObjectCollection findBytype(int $type) Return ChildQuestion objects filtered by the type column
  * @method     ChildQuestion[]|ObjectCollection findBycount(int $count) Return ChildQuestion objects filtered by the count column
  * @method     ChildQuestion[]|ObjectCollection findByname(string $name) Return ChildQuestion objects filtered by the name column
@@ -251,7 +261,7 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ballot_id, type, count, name, description, readmore, discussion, created_at, updated_at, version, version_created_at, version_created_by FROM Question WHERE id = :p0';
+        $sql = 'SELECT id, ballot_id, order_id, is_deleted, type, count, name, description, readmore, discussion, created_at, updated_at, version, version_created_at, version_created_by FROM Question WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -423,6 +433,88 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         }
 
         return $this->addUsingAlias(QuestionTableMap::COL_BALLOT_ID, $ballotId, $comparison);
+    }
+
+    /**
+     * Filter the query on the order_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByorderId(1234); // WHERE order_id = 1234
+     * $query->filterByorderId(array(12, 34)); // WHERE order_id IN (12, 34)
+     * $query->filterByorderId(array('min' => 12)); // WHERE order_id > 12
+     * </code>
+     *
+     * @param     mixed $orderId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByorderId($orderId = null, $comparison = null)
+    {
+        if (is_array($orderId)) {
+            $useMinMax = false;
+            if (isset($orderId['min'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_ORDER_ID, $orderId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($orderId['max'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_ORDER_ID, $orderId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_ORDER_ID, $orderId, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_deleted column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByisDeleted(1234); // WHERE is_deleted = 1234
+     * $query->filterByisDeleted(array(12, 34)); // WHERE is_deleted IN (12, 34)
+     * $query->filterByisDeleted(array('min' => 12)); // WHERE is_deleted > 12
+     * </code>
+     *
+     * @param     mixed $isDeleted The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionQuery The current query, for fluid interface
+     */
+    public function filterByisDeleted($isDeleted = null, $comparison = null)
+    {
+        if (is_array($isDeleted)) {
+            $useMinMax = false;
+            if (isset($isDeleted['min'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_IS_DELETED, $isDeleted['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($isDeleted['max'])) {
+                $this->addUsingAlias(QuestionTableMap::COL_IS_DELETED, $isDeleted['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionTableMap::COL_IS_DELETED, $isDeleted, $comparison);
     }
 
     /**

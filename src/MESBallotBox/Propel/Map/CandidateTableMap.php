@@ -59,7 +59,7 @@ class CandidateTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CandidateTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -80,6 +80,11 @@ class CandidateTableMap extends TableMap
      * the column name for the question_id field
      */
     const COL_QUESTION_ID = 'Candidate.question_id';
+
+    /**
+     * the column name for the is_deleted field
+     */
+    const COL_IS_DELETED = 'Candidate.is_deleted';
 
     /**
      * the column name for the user_id field
@@ -128,11 +133,11 @@ class CandidateTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'questionId', 'userId', 'application', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_CAMELNAME     => array('id', 'questionId', 'userId', 'application', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID, CandidateTableMap::COL_QUESTION_ID, CandidateTableMap::COL_USER_ID, CandidateTableMap::COL_APPLICATION, CandidateTableMap::COL_CREATED_AT, CandidateTableMap::COL_UPDATED_AT, CandidateTableMap::COL_VERSION, CandidateTableMap::COL_VERSION_CREATED_AT, CandidateTableMap::COL_VERSION_CREATED_BY, ),
-        self::TYPE_FIELDNAME     => array('id', 'question_id', 'user_id', 'application', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('id', 'questionId', 'isDeleted', 'userId', 'application', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
+        self::TYPE_CAMELNAME     => array('id', 'questionId', 'isDeleted', 'userId', 'application', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
+        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID, CandidateTableMap::COL_QUESTION_ID, CandidateTableMap::COL_IS_DELETED, CandidateTableMap::COL_USER_ID, CandidateTableMap::COL_APPLICATION, CandidateTableMap::COL_CREATED_AT, CandidateTableMap::COL_UPDATED_AT, CandidateTableMap::COL_VERSION, CandidateTableMap::COL_VERSION_CREATED_AT, CandidateTableMap::COL_VERSION_CREATED_BY, ),
+        self::TYPE_FIELDNAME     => array('id', 'question_id', 'is_deleted', 'user_id', 'application', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -142,11 +147,11 @@ class CandidateTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'questionId' => 1, 'userId' => 2, 'application' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, 'Version' => 6, 'VersionCreatedAt' => 7, 'VersionCreatedBy' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'questionId' => 1, 'userId' => 2, 'application' => 3, 'createdAt' => 4, 'updatedAt' => 5, 'version' => 6, 'versionCreatedAt' => 7, 'versionCreatedBy' => 8, ),
-        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID => 0, CandidateTableMap::COL_QUESTION_ID => 1, CandidateTableMap::COL_USER_ID => 2, CandidateTableMap::COL_APPLICATION => 3, CandidateTableMap::COL_CREATED_AT => 4, CandidateTableMap::COL_UPDATED_AT => 5, CandidateTableMap::COL_VERSION => 6, CandidateTableMap::COL_VERSION_CREATED_AT => 7, CandidateTableMap::COL_VERSION_CREATED_BY => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'question_id' => 1, 'user_id' => 2, 'application' => 3, 'created_at' => 4, 'updated_at' => 5, 'version' => 6, 'version_created_at' => 7, 'version_created_by' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'questionId' => 1, 'isDeleted' => 2, 'userId' => 3, 'application' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, 'Version' => 7, 'VersionCreatedAt' => 8, 'VersionCreatedBy' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'questionId' => 1, 'isDeleted' => 2, 'userId' => 3, 'application' => 4, 'createdAt' => 5, 'updatedAt' => 6, 'version' => 7, 'versionCreatedAt' => 8, 'versionCreatedBy' => 9, ),
+        self::TYPE_COLNAME       => array(CandidateTableMap::COL_ID => 0, CandidateTableMap::COL_QUESTION_ID => 1, CandidateTableMap::COL_IS_DELETED => 2, CandidateTableMap::COL_USER_ID => 3, CandidateTableMap::COL_APPLICATION => 4, CandidateTableMap::COL_CREATED_AT => 5, CandidateTableMap::COL_UPDATED_AT => 6, CandidateTableMap::COL_VERSION => 7, CandidateTableMap::COL_VERSION_CREATED_AT => 8, CandidateTableMap::COL_VERSION_CREATED_BY => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'question_id' => 1, 'is_deleted' => 2, 'user_id' => 3, 'application' => 4, 'created_at' => 5, 'updated_at' => 6, 'version' => 7, 'version_created_at' => 8, 'version_created_by' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -168,6 +173,7 @@ class CandidateTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'id', 'INTEGER', true, 10, null);
         $this->addForeignKey('question_id', 'questionId', 'INTEGER', 'Question', 'id', true, 10, null);
+        $this->addColumn('is_deleted', 'isDeleted', 'INTEGER', false, 10, null);
         $this->addForeignKey('user_id', 'userId', 'INTEGER', 'User', 'id', true, 10, null);
         $this->addColumn('application', 'application', 'VARCHAR', false, 255, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -379,6 +385,7 @@ class CandidateTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CandidateTableMap::COL_ID);
             $criteria->addSelectColumn(CandidateTableMap::COL_QUESTION_ID);
+            $criteria->addSelectColumn(CandidateTableMap::COL_IS_DELETED);
             $criteria->addSelectColumn(CandidateTableMap::COL_USER_ID);
             $criteria->addSelectColumn(CandidateTableMap::COL_APPLICATION);
             $criteria->addSelectColumn(CandidateTableMap::COL_CREATED_AT);
@@ -389,6 +396,7 @@ class CandidateTableMap extends TableMap
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.question_id');
+            $criteria->addSelectColumn($alias . '.is_deleted');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.application');
             $criteria->addSelectColumn($alias . '.created_at');

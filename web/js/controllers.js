@@ -109,7 +109,11 @@ ballotboxControllers.controller('ballotEditController', ['$scope', '$http', '$lo
 ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', 'Voter', 'Affiliate', function($scope, $http, $location, $routeParams, User, Ballot, Question, Voter, Affiliate) {
     $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
-            $scope.questions = Question.query({'ballotId': $routeParams.ballotId});
+            $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questionOrderValues();
+                }
+            );
             $scope.voters = Voter.query({'ballotId': $routeParams.ballotId});
             $scope.affiliates = Affiliate.query();
             $scope.newvoter = new Voter();
@@ -124,10 +128,36 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
             console.log(response.data);
         }
     );
+    $scope.questionOrderValues = function(){
+        $scope.availableOrders = [];
+        for(var q = 1; q < $scope.questions.length +1; q++){
+            $scope.availableOrders.push(q);
+        }
+    };
+    $scope.takenOrder = function(questions, q, orderId){
+        for(var i =0; i < questions.length; i++){
+            if(i == q) continue;
+            if(questions[i].orderId == orderId) return true;
+        }
+        return false;
+    };
+    $scope.reorder = function (questions){
+        $scope.questions = Question.reorder({'ballotId': $scope.ballot.id, 'questions': questions},
+            function success(){
+                $scope.reorderForm = false;
+            }
+        );
+        /*$http.post('index.php/API/ballots/'+$scope.ballot.id+'/question/reorder',questions).then(
+          function(){
+              alert('reorder successful!');
+          }  
+        );*/
+        
+    };
     $scope.addVoterForm = false;
     $scope.showAddVoterForm = function(){
         $scope.addVoterForm=true;
-    }
+    };
     $scope.addVoter = function (newvoter){
         $scope.formerror = false;
         newvoter.$save(
@@ -149,7 +179,7 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
                 $scope.formerror = response.data;
             }
         );
-    }
+    };
 }]);
 
 ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Voter', 'Vote', function($scope, $http, $location, $routeParams, User, Ballot, Voter, Vote) {
@@ -207,7 +237,7 @@ ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$lo
             if(candidates[i].answer == answer) return true;
         }
         return false;
-    }
+    };
     $scope.submitVote = function(vote){
         $scope.error = '';
         console.log(vote);
@@ -218,10 +248,10 @@ ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$lo
             }
         
         );
-    }
+    };
     $scope.refresh = function(){
         window.location = '/index.php/login?jspath='+$location.path();
-    }
+    };
 }]);
 
 ballotboxControllers.controller('questionCreateController', ['$scope', '$http', '$location', 'User', '$routeParams', 'Ballot', 'Question', function($scope, $http, $location, User, $routeParams, Ballot, Question) {
@@ -273,9 +303,15 @@ ballotboxControllers.controller('questionViewController', ['$scope', '$http', '$
     );
     
     $scope.addCandidateForm = false;
+    $scope.reorderForm = false;
+    
+    $scope.toggleReorderForm = function(){
+        alert('hi');
+        $scope.reorderForm = true;
+    };
     $scope.showAddCandidateForm = function(){
         $scope.addCandidateForm=true;
-    }
+    };
     $scope.addCandidate = function (newcandidate){
         newcandidate.$save(
             function successCallback(response) {
@@ -294,7 +330,7 @@ ballotboxControllers.controller('questionViewController', ['$scope', '$http', '$
                 console.log(response.data);
             }
         );
-    }
+    };
 }]);
 
 ballotboxControllers.controller('questionEditController', ['$scope', '$http', '$location', 'User', '$routeParams', 'Ballot', 'Question', function($scope, $http, $location, User, $routeParams, Ballot, Question) {

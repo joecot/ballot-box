@@ -5,11 +5,13 @@
 <label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
 <label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
 <div ng-show="questions">
-<label>Ballot Questions:</label>
-
+<form novalidate ng-submit="reorder(questions)" class="question-form">
+<label>Ballot Questions:</label> (<a ng-click="reorderForm=!reorderForm" ng-init="reorderForm=false">Reorder?</a>)
 <ul>
-<li  ng-repeat="(questionid, question) in questions"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a></li>
+<li  ng-repeat="(questionId, question) in questions"><select ng-show="reorderForm" ng-model="question.orderId" ng-options = "orderId disable when takenOrder(questions,questionId,orderId) for orderId in availableOrders"><option value="">-</option></select> <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a></li>
 </ul>
+<input ng-show="reorderForm" type="submit" value="Reorder Questions" />
+</form>
 </div>
 <a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a><br/><br/>
 <div ng-show="voters">

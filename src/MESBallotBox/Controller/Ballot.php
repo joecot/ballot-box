@@ -184,7 +184,7 @@ class Ballot{
         });
         $slim->get('/{ballotId}/question', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\QuestionQuery();
-            $questions = $q->filterByBallotId($args['ballotId'])->find();
+            $questions = $q->filterByBallotId($args['ballotId'])->orderByorderId()->find();
             $results = Array();
             foreach($questions as $question){
                 $results[] = $question->toArray();
@@ -204,6 +204,9 @@ class Ballot{
             $question = new \MESBallotBox\Propel\Question();
             $question->fromArray($vars);
             $question->setVersionCreatedBy($_SESSION['user']['id']);
+            $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->orderByorderId()->findOne();
+            if(!$max_question) $question->setOrderId(1);
+            else $question->setOrderId($max_question->getOrderId()+1);
             if(!$question->validate()){
                 return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
             }
@@ -213,6 +216,33 @@ class Ballot{
                 return $response->withStatus(500)->write($e->getMessage());
             }
             return $response->write($question->toJSON());
+        });
+        $slim->post('/{ballotId}/question/reorder', function($request, $response, $args){
+            $ballot = \MESBallotBox\Propel\BallotQuery::create()->findPK($args['ballotId']);
+            if(!$ballot){
+                return $response->withStatus(400)->write('Ballot not found.');
+            }
+            $vars = $request->getParsedBody();
+            foreach($vars['questions'] as $var_question){
+                $question = \MESBallotBox\Propel\QuestionQuery::create()->findPK($var_question['id']);
+                if(!$question || $question->getBallotId() != $ballot->getId()){
+                    return $response->withStatus(400)->write('Question not found.');
+                }
+                $question->setOrderId($var_question['orderId']);
+                $question->setVersionCreatedBy($_SESSION['user']['id']);
+                try{
+                    $question->save();
+                }catch(Exception $e){
+                    return $response->withStatus(500)->write($e->getMessage());
+                }
+            }
+            $questions = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($args['ballotId'])->orderByorderId()->find();
+            $results = Array();
+            foreach($questions as $question){
+                $results[] = $question->toArray();
+            }
+            
+            return $response->write(json_encode($results));
         });
         $slim->post('/{ballotId}/question/{questionId}', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\QuestionQuery();

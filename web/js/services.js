@@ -18,7 +18,7 @@ ballotboxServices.factory('Ballot', ['$resource',
 ballotboxServices.factory('Question', ['$resource',
   function($resource){
     return $resource('index.php/API/ballots/:ballotId/question/:questionId', { ballotId: '@ballotId', questionId: '@id' }, {
-      
+      reorder: {method:'POST', params:{ballotId:'@ballotId', questionId: 'reorder'}, isArray:true},
     });
   }]);
 
