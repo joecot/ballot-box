@@ -10,7 +10,7 @@ Hello, {{user.firstName}} {{user.lastName}}!
 </div>
 <a class="linkbutton" href="#/ballot/create">Create new ballot</a>
 <div ng-show="ballots">
-    <label>Ballots Open for your Vote:</label><br/>
+    <label>Ballots open for your Vote:</label><br/>
     <ul>
         <li  ng-repeat="(ballotid, ballot) in availableBallots"><a class="linkbutton" href="#/ballot/{{ ballot.id }}/vote">{{ ballot.name }}</a></li>
     </ul>
