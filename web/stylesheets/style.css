@@ -450,26 +450,42 @@ h1, h2 {
 }
 
 /* line 13, ../sass/_base.scss */
+h3, h4, h5 {
+  font-family: "Crimson", "Garamond", serif;
+  font-style: normal;
+}
+
+/* line 18, ../sass/_base.scss */
 h1 {
   font-size: 2.5rem;
 }
 
-/* line 17, ../sass/_base.scss */
+/* line 22, ../sass/_base.scss */
+h2 {
+  font-size: 2rem;
+}
+
+/* line 26, ../sass/_base.scss */
+h3 {
+  font-size: 1.5rem;
+}
+
+/* line 30, ../sass/_base.scss */
 a {
   color: #90a4af;
 }
 
-/* line 21, ../sass/_base.scss */
+/* line 34, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 25, ../sass/_base.scss */
+/* line 38, ../sass/_base.scss */
 select, input, textarea {
   color: #1E1E1E;
 }
 
-/* line 29, ../sass/_base.scss */
+/* line 42, ../sass/_base.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -478,7 +494,7 @@ select, input, textarea {
   margin-top: 50px;
 }
 
-/* line 37, ../sass/_base.scss */
+/* line 50, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
@@ -486,7 +502,7 @@ select, input, textarea {
   color: #eef7f5;
 }
 
-/* line 46, ../sass/_base.scss */
+/* line 59, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
