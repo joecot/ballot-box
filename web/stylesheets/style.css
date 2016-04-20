@@ -458,18 +458,18 @@ h3, h4, h5 {
 
 /* line 18, ../sass/_base.scss */
 h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 /* line 22, ../sass/_base.scss */
 h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 /* line 26, ../sass/_base.scss */
 h3 {
   font-size: 1.5rem;
-  padding-bottom: 40px;
+  padding-bottom: 2rem;
 }
 
 /* line 31, ../sass/_base.scss */
@@ -489,14 +489,13 @@ select, input, textarea {
 
 /* line 43, ../sass/_base.scss */
 .mes-header {
-  background-image: url("/images/MES-Banner.png");
-  background-position: top center;
-  background-repeat: no-repeat;
   height: 170px;
-  margin-top: 50px;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  text-align: center;
 }
 
-/* line 51, ../sass/_base.scss */
+/* line 50, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
@@ -504,7 +503,7 @@ select, input, textarea {
   color: #eef7f5;
 }
 
-/* line 60, ../sass/_base.scss */
+/* line 57, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }

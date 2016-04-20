@@ -16,11 +16,11 @@ h3, h4, h5 {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
 }
 
 h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
 }
 
 h3 {
@@ -41,11 +41,10 @@ select, input, textarea {
 }
 
 .mes-header {
-    background-image: url('/images/MES-Banner.png');
-    background-position: top center;
-    background-repeat: no-repeat;
     height: 170px;
-    margin-top: 50px;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    text-align: center;
 }
 
 .main-content {
@@ -53,8 +52,6 @@ select, input, textarea {
     width: 94%;
     max-width: 1000px;
     color: $main-content-color; 
-    // background-color: rgba(30, 30, 30, 1);
-    // background-image: url('/images/download.png');
 }
 
 .error {
