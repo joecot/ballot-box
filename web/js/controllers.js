@@ -15,7 +15,7 @@ ballotboxControllers.controller('indexController', ['$scope', '$http', '$locatio
         );
 }]);
 
-ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$location', 'User', 'Ballot', function($scope, $http, $location, User, Ballot) {
+ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$location', 'User', 'Ballot', '$filter', function($scope, $http, $location, User, Ballot, $filter) {
     $scope.ballot= new Ballot();
     $scope.ballot.start = new Date();
     $scope.ballot.start.setDate($scope.ballot.start.getDate()+1);
@@ -34,8 +34,8 @@ ballotboxControllers.controller('ballotCreateController', ['$scope', '$http', '$
         var postballot = angular.copy(ballot);
         var start = postballot.start;
         var end = postballot.end;
-        postballot.start = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate()+' '+start.getHours()+':'+start.getMinutes()+':0';
-        postballot.end = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate()+' '+end.getHours()+':'+end.getMinutes()+':59';
+        postballot.start = $filter('date')(start, 'yyyy-MM-dd HH:mm:ss');
+        postballot.end = $filter('date')(end, 'yyyy-MM-dd HH:mm:ss');
         postballot.timezone = ballot.timezone.value;
         console.log(postballot);
         postballot.$save(
@@ -128,6 +128,10 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
             console.log(response.data);
         }
     );
+    $scope.showDeletedQuestions = function(){
+        $scope.deletedQuestions = !$scope.deletedQuestions;
+        $scope.questions = Question.query({'ballotId': $routeParams.ballotId, 'show_deleted':$scope.deletedQuestions});
+    }
     $scope.questionOrderValues = function(){
         $scope.availableOrders = [];
         for(var q = 1; q < $scope.questions.length +1; q++){
@@ -142,17 +146,44 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
         return false;
     };
     $scope.reorder = function (questions){
+        $scope.reorder_error = '';
+        for(var q = 0; q < questions.length; q++){
+            if(!questions[q].orderId){
+                $scope.reorder_error = 'All questions must have an assigned order';
+                return;
+            }
+        }
         $scope.questions = Question.reorder({'ballotId': $scope.ballot.id, 'questions': questions},
             function success(){
                 $scope.reorderForm = false;
+                $scope.questionOrderValues();
+            },
+            function failure(response){
+                $scope.reorder_error = response.data;
             }
         );
-        /*$http.post('index.php/API/ballots/'+$scope.ballot.id+'/question/reorder',questions).then(
-          function(){
-              alert('reorder successful!');
-          }  
-        );*/
-        
+    };
+    $scope.deleteQuestion = function(question){
+        question.$delete({},
+            function success(){
+                $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questionOrderValues();
+                }
+            );
+            }
+        );
+    };
+    $scope.restoreQuestion = function(question){
+        question.$restore({},
+            function success(){
+                $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questionOrderValues();
+                }
+            );
+            }
+        );
     };
     $scope.addVoterForm = false;
     $scope.showAddVoterForm = function(){

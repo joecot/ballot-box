@@ -184,7 +184,10 @@ class Ballot{
         });
         $slim->get('/{ballotId}/question', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\QuestionQuery();
-            $questions = $q->filterByBallotId($args['ballotId'])->orderByorderId()->find();
+            $q->filterByBallotId($args['ballotId']);
+            $params = $request->getQueryParams();
+            if(!$params['show_deleted'] || $params['show_deleted'] == 'false') $q->filterByIsDeleted(0);
+            $questions = $q->orderByorderId()->find();
             $results = Array();
             foreach($questions as $question){
                 $results[] = $question->toArray();
@@ -260,6 +263,23 @@ class Ballot{
                 return $response->withStatus(500)->write($e->getMessage());
             }
             return $response->write($question->toJSON());
+        });
+        $slim->delete('/{ballotId}/question/{questionId}', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $question = $q->findPK($args['questionId']);
+            
+            $question->SetIsDeleted(1);
+            $question->SetOrderId(1000);
+            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            if(!$question->validate()){
+                return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
+            }
+            try{
+                $question->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write(json_encode($question->toArray()));
         });
         $slim->post('/{ballotId}/question/{questionId}/candidate', function($request, $response, $args){
             $vars = $request->getParsedBody();
