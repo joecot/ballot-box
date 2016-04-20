@@ -1,5 +1,6 @@
 /* It's never too early to talk to your child about Typography. */
 /* Color is my day-long obsession, joy and torment. */
+/* Give these people air */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 /**
  * 1. Set default font family to sans-serif.
@@ -468,24 +469,25 @@ h2 {
 /* line 26, ../sass/_base.scss */
 h3 {
   font-size: 1.5rem;
+  padding-bottom: 40px;
 }
 
-/* line 30, ../sass/_base.scss */
+/* line 31, ../sass/_base.scss */
 a {
   color: #90a4af;
 }
 
-/* line 34, ../sass/_base.scss */
+/* line 35, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 38, ../sass/_base.scss */
+/* line 39, ../sass/_base.scss */
 select, input, textarea {
   color: #1E1E1E;
 }
 
-/* line 42, ../sass/_base.scss */
+/* line 43, ../sass/_base.scss */
 .mes-header {
   background-image: url("/images/MES-Banner.png");
   background-position: top center;
@@ -494,7 +496,7 @@ select, input, textarea {
   margin-top: 50px;
 }
 
-/* line 50, ../sass/_base.scss */
+/* line 51, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
@@ -502,7 +504,7 @@ select, input, textarea {
   color: #eef7f5;
 }
 
-/* line 59, ../sass/_base.scss */
+/* line 60, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
