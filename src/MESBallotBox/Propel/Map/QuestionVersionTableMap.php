@@ -257,7 +257,7 @@ class QuestionVersionTableMap extends TableMap
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'Question', 'id', true, 10, null);
         $this->addColumn('ballot_id', 'ballotId', 'INTEGER', true, 10, null);
         $this->addColumn('order_id', 'orderId', 'INTEGER', true, 10, null);
-        $this->addColumn('is_deleted', 'isDeleted', 'INTEGER', false, 10, null);
+        $this->addColumn('is_deleted', 'isDeleted', 'INTEGER', false, 10, 0);
         $this->addColumn('type', 'type', 'ENUM', false, null, null);
         $this->getColumn('type')->setValueSet(array (
   0 => 'proposition',

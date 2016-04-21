@@ -6,7 +6,7 @@
 <label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
 <div ng-show="questions">
 <form novalidate ng-submit="reorder(questions)" class="question-form">
-<label>Ballot Questions:</label> <span ng-hide="deletedQuestions">(<a ng-click="reorderForm=!reorderForm" ng-init="reorderForm=false">Reorder?</a>)</span> (<a ng-click="showDeletedQuestions()">Show Deleted?</a>)
+<label>Ballot Questions:</label> <span ng-hide="deletedQuestions || questions.length<2">(<a ng-click="reorderForm=!reorderForm" ng-init="reorderForm=false">Reorder?</a>)</span> (<a ng-click="showDeletedQuestions()">Show Deleted?</a>)
 <ul>
 <li  ng-repeat="(questionId, question) in questions">
     <select ng-show="reorderForm" ng-model="question.orderId" ng-init="question.orderId=false" ng-options = "orderId disable when takenOrder(questions,questionId,orderId) for orderId in availableOrders">
