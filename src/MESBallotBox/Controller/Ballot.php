@@ -207,7 +207,7 @@ class Ballot{
             $question = new \MESBallotBox\Propel\Question();
             $question->fromArray($vars);
             $question->setVersionCreatedBy($_SESSION['user']['id']);
-            $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->orderByorderId()->findOne();
+            $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->orderByorderId('desc')->findOne();
             if(!$max_question) $question->setOrderId(1);
             else $question->setOrderId($max_question->getOrderId()+1);
             if(!$question->validate()){
@@ -271,6 +271,26 @@ class Ballot{
             $question->SetIsDeleted(1);
             $question->SetOrderId(1000);
             $question->setVersionCreatedBy($_SESSION['user']['id']);
+            if(!$question->validate()){
+                return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
+            }
+            try{
+                $question->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write(json_encode($question->toArray()));
+        });
+        $slim->post('/{ballotId}/question/{questionId}/restore', function($request, $response, $args){
+            $q = new \MESBallotBox\Propel\QuestionQuery();
+            $question = $q->findPK($args['questionId']);
+            
+            $question->SetIsDeleted(0);
+            $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->filterByIsDeleted(0)->orderByorderId('desc')->findOne();
+            if(!$max_question) $question->setOrderId(1);
+            else $question->setOrderId($max_question->getOrderId()+1);
+            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            
             if(!$question->validate()){
                 return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
             }

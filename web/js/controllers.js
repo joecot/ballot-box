@@ -169,6 +169,7 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
                 $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
                 function(){
                     $scope.questionOrderValues();
+                    $scope.deletedQuestions = false;
                 }
             );
             }
@@ -180,6 +181,7 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
                 $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
                 function(){
                     $scope.questionOrderValues();
+                    $scope.deletedQuestions = false;
                 }
             );
             }
