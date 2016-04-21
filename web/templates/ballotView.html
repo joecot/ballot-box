@@ -13,7 +13,7 @@
         <option value="">-</option>
     </select>
     <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a>
-    (<a ng-hide="question.isDeleted || question.confirmDelete" ng-click="question.confirmDelete=true">Delete?</a><span  ng-show="question.confirmDelete"><a ng-click="deleteQuestion(question)">Confirm Delete</a> <a ng-show="question.confirmDelete" ng-click="question.confirmDelete=false">Cancel</a></span><a ng-show="question.isDeleted" ng-click="restoreQuestion(question)">Restore?</a>)
+    (<a ng-hide="question.isDeleted || question.confirmDelete" ng-click="question.confirmDelete=true"><img width="20" height="20" alt="Delete?" title="Delete?" src="/images/close.svg"/></a><span  ng-show="question.confirmDelete"><a ng-click="deleteQuestion(question)">Confirm Delete</a> <a ng-show="question.confirmDelete" ng-click="question.confirmDelete=false">Cancel</a></span><a ng-show="question.isDeleted" ng-click="restoreQuestion(question)"><img src="/images/restore.svg" width="20" height="20" alt="Restore?" title="Restore?"/></a>)
 </li>
 </ul>
 <input ng-show="reorderForm" type="submit" value="Reorder Questions" /> <span ng-show="reorder_error">{{reorder_error}}</span>
