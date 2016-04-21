@@ -83,7 +83,7 @@
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="order_id" phpName='orderId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
-    <column name="is_deleted" phpName='isDeleted' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
+    <column name="is_deleted" phpName='isDeleted' type="INTEGER" size="10" sqlType="int(10) unsigned" defaultValue="0" required="false"/>
     <column name="type" phpName='type' type="enum" valueSet="proposition, office"/>
     <column name="count" phpName='count' type="INTEGER" size="10" sqlType="int(10) unsigned"/>
     <column name="name" phpName='name' type="VARCHAR" size="64" required="true"/>
