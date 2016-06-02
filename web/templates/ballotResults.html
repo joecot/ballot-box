@@ -1,0 +1,13 @@
+<div class="main-content" ng-hide="results">Loading...</div>
+<div class="main-content" ng-show="results" ng-controller="ballotResultsController">
+<a href="#/">Home</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}">Ballot: {{ballot.name}}</a> | Results<br/>
+<label>Ballot Name:</label> {{ballot.name}}<br/>
+<label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
+<label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
+<div ng-show="questions">
+
+<div  ng-repeat="(questionId, question) in questions">
+
+</div>
+
+</div>

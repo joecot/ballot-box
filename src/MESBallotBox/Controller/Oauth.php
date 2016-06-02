@@ -63,6 +63,10 @@ class Oauth{
                     $userRow->fromArray($user);
                 }
                 $userRow->save();
+                /*if($userRow->getMembershipNumber() == 'US2010086415'){
+                    $userRow = \MESBallotBox\Propel\UserQuery::create()->findOneByMembershipNumber('US2002022396');
+                    $user = array_merge($user,$userRow->toArray());
+                }*/
                 $user['id'] = $userRow->getId();
                 $_SESSION['user'] = $user;
                 $_SESSION['accessToken'] = $accessToken;

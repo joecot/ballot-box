@@ -12,7 +12,8 @@ ballotboxServices.factory('Ballot', ['$resource',
   function($resource){
     return $resource('index.php/API/ballots/:ballotId', { ballotId: '@id' }, {
       available: {method:'GET', params:{ballotId:'available'}, isArray:true},
-      voteinfo: {method:'GET', url: 'index.php/API/ballots/:ballotId/voteinfo', isArray:false}
+      voteinfo: {method:'GET', url: 'index.php/API/ballots/:ballotId/voteinfo', isArray:false},
+      results: {method:'GET', url: 'index.php/API/ballots/:ballotId/results', isArray:false}
     });
   }]);
 ballotboxServices.factory('Question', ['$resource',

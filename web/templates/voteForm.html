@@ -28,6 +28,7 @@
 </div>
 <br/>
 </div>
+Voting as: {{user.firstName}} {{user.lastName}} ({{user.membershipNumber}})<br/>
 <input type="submit" ng-hide="ballot.invalid" value="Submit Vote"/>
 <div ng-show="ballot.invalid">
 <span ng-bind="ballot.invalid"/><br/>

@@ -10,8 +10,9 @@ var ballotboxApp = angular.module(
         'ballotboxServices'
     ]
 );
-ballotboxApp.config(['$routeProvider',
-  function($routeProvider) {
+ballotboxApp.config(['$routeProvider','$compileProvider',
+  function($routeProvider,$compileProvider) {
+    $compileProvider.debugInfoEnabled(false);
     $routeProvider.
       when('/index', {
         templateUrl: '/templates/index.html',
@@ -44,6 +45,10 @@ ballotboxApp.config(['$routeProvider',
       when('/ballot/:ballotId/question/:questionId/edit', {
         templateUrl: '/templates/questionEdit.html',
         controller: 'questionEditController'
+      }).
+      when('/ballot/:ballotId/results', {
+        templateUrl: '/templates/ballotResults.html',
+        controller: 'ballotResultsController'
       }).
       otherwise({
         redirectTo: '/index'

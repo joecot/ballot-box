@@ -215,6 +215,106 @@ ballotboxControllers.controller('ballotViewController', ['$scope', '$http', '$lo
     };
 }]);
 
+ballotboxControllers.controller('ballotResultsController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Question', 'Voter', 'Affiliate', function($scope, $http, $location, $routeParams, User, Ballot, Question, Voter, Affiliate) {
+    $scope.ballot = Ballot.get({'ballotId': $routeParams.ballotId},
+        function successCallback(response) {
+            $scope.results = Ballot.results({'ballotId': $routeParams.ballotId});
+            $scope.voteinfo = Ballot.voteinfo({'ballotId': $routeParams.ballotId});
+        },
+        function errorCallback(response){
+            if(response.status == 401){
+                window.location = '/index.php/login?jspath='+$location.path();
+            }
+            console.log(response.data);
+        }
+    );
+    $scope.showDeletedQuestions = function(){
+        $scope.deletedQuestions = !$scope.deletedQuestions;
+        $scope.questions = Question.query({'ballotId': $routeParams.ballotId, 'show_deleted':$scope.deletedQuestions});
+    }
+    $scope.questionOrderValues = function(){
+        $scope.availableOrders = [];
+        for(var q = 1; q < $scope.questions.length +1; q++){
+            $scope.availableOrders.push(q);
+        }
+    };
+    $scope.takenOrder = function(questions, q, orderId){
+        for(var i =0; i < questions.length; i++){
+            if(i == q) continue;
+            if(questions[i].orderId == orderId) return true;
+        }
+        return false;
+    };
+    $scope.reorder = function (questions){
+        $scope.reorder_error = '';
+        for(var q = 0; q < questions.length; q++){
+            if(!questions[q].orderId){
+                $scope.reorder_error = 'All questions must have an assigned order';
+                return;
+            }
+        }
+        $scope.questions = Question.reorder({'ballotId': $scope.ballot.id, 'questions': questions},
+            function success(){
+                $scope.reorderForm = false;
+                $scope.questionOrderValues();
+            },
+            function failure(response){
+                $scope.reorder_error = response.data;
+            }
+        );
+    };
+    $scope.deleteQuestion = function(question){
+        question.$delete({},
+            function success(){
+                $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questionOrderValues();
+                    $scope.deletedQuestions = false;
+                }
+            );
+            }
+        );
+    };
+    $scope.restoreQuestion = function(question){
+        question.$restore({},
+            function success(){
+                $scope.questions = Question.query({'ballotId': $routeParams.ballotId},
+                function(){
+                    $scope.questionOrderValues();
+                    $scope.deletedQuestions = false;
+                }
+            );
+            }
+        );
+    };
+    $scope.addVoterForm = false;
+    $scope.showAddVoterForm = function(){
+        $scope.addVoterForm=true;
+    };
+    $scope.addVoter = function (newvoter){
+        $scope.formerror = false;
+        newvoter.$save(
+            function successCallback(response) {
+                    console.log('saved question');
+                    console.log(response);
+                    console.log(newvoter);
+                    $scope.newvoter = new Voter();
+                    $scope.newvoter.ballotId = $scope.ballot.id;
+                    $scope.newvoter.affiliateId = 0;
+                    $scope.voters = Voter.query({'ballotId': $routeParams.ballotId});
+                    $scope.formerror = false;
+            },
+            function errorCallback(response){
+                if(response.status == 401){
+                    window.location = '/index.php/login?jspath='+$location.path();
+                }
+                console.log(response.data);
+                $scope.formerror = response.data;
+            }
+        );
+    };
+}]);
+
 ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$location', '$routeParams', 'User', 'Ballot', 'Voter', 'Vote', function($scope, $http, $location, $routeParams, User, Ballot, Voter, Vote) {
     $scope.ballot = Ballot.voteinfo({'ballotId': $routeParams.ballotId},
         function successCallback(response) {
@@ -264,6 +364,7 @@ ballotboxControllers.controller('voteCreateController', ['$scope', '$http', '$lo
             }
         }
     );
+    $scope.user = User.query({});
     $scope.takenAnswer = function(candidates, c, answer){
         for(var i =0; i < candidates.length; i++){
             if(i == c) continue;
