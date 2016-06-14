@@ -439,55 +439,54 @@ th {
 /* line 1, ../sass/_base.scss */
 html, body {
   background-color: #1E1E1E;
-  color: #333;
+  color: #d6d4c8;
   font-family: "Cormorant Garamond", "Garamond", serif;
   font-size: 20px;
 }
 
 /* line 8, ../sass/_base.scss */
 h1, h2 {
-  font-family: "Cormorant SC", "Garamond", serif;
   font-style: italic;
 }
 
-/* line 13, ../sass/_base.scss */
+/* line 14, ../sass/_base.scss */
 h3, h4, h5 {
-  font-family: "Cormorant SC", "Garamond", serif;
+  font-family: "Cormorant Garamond", "Garamond", serif;
   font-style: normal;
 }
 
-/* line 18, ../sass/_base.scss */
+/* line 19, ../sass/_base.scss */
 h1 {
-  font-size: 2rem;
-}
-
-/* line 22, ../sass/_base.scss */
-h2 {
   font-size: 1.75rem;
 }
 
-/* line 26, ../sass/_base.scss */
-h3 {
+/* line 23, ../sass/_base.scss */
+h2 {
   font-size: 1.5rem;
+}
+
+/* line 27, ../sass/_base.scss */
+h3 {
+  font-size: 1.25rem;
   padding-bottom: 2rem;
 }
 
-/* line 31, ../sass/_base.scss */
+/* line 32, ../sass/_base.scss */
 a {
   color: #90a4af;
 }
 
-/* line 35, ../sass/_base.scss */
+/* line 36, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
 }
 
-/* line 39, ../sass/_base.scss */
+/* line 40, ../sass/_base.scss */
 select, input, textarea {
   color: #1E1E1E;
 }
 
-/* line 43, ../sass/_base.scss */
+/* line 44, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -495,7 +494,7 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 50, ../sass/_base.scss */
+/* line 51, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
@@ -503,7 +502,7 @@ select, input, textarea {
   color: #eef7f5;
 }
 
-/* line 57, ../sass/_base.scss */
+/* line 58, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }

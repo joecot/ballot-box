@@ -6,25 +6,26 @@ html, body {
 }
 
 h1, h2 {
-    font-family: $header-font;
+    
+    // font-family: $header-font;
     font-style: italic;
 }
 
 h3, h4, h5 {
-    font-family: $header-font;
+    font-family: $main-font;
     font-style: normal;
 }
 
 h1 {
-    font-size: 2rem;
-}
-
-h2 {
     font-size: 1.75rem;
 }
 
-h3 {
+h2 {
     font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.25rem;
     padding-bottom: $header-padding;
 }
 
