@@ -440,19 +440,19 @@ th {
 html, body {
   background-color: #1E1E1E;
   color: #333;
-  font-family: "Crimson", "Garamond", serif;
+  font-family: "Cormorant Garamond", "Garamond", serif;
   font-size: 20px;
 }
 
 /* line 8, ../sass/_base.scss */
 h1, h2 {
-  font-family: "Crimson", "Garamond", serif;
+  font-family: "Cormorant SC", "Garamond", serif;
   font-style: italic;
 }
 
 /* line 13, ../sass/_base.scss */
 h3, h4, h5 {
-  font-family: "Crimson", "Garamond", serif;
+  font-family: "Cormorant SC", "Garamond", serif;
   font-style: normal;
 }
 
