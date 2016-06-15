@@ -481,27 +481,27 @@ p {
 /* line 39, ../sass/_base.scss */
 a {
   color: #e4e2dc;
-  background-image: linear-gradient(#0a0104, #0a0104), linear-gradient(#0a0104, #0a0104), linear-gradient(#e4e2dc, #e4e2dc);
-  background-size: .05em 1px,.05em 1px,1px 1px;
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: 0 87%,100% 87%,0 87%;
   text-decoration: none;
-  text-shadow: 0.03em 0 #0a0104, -0.03em 0 #0a0104, 0 0.03em #0a0104, 0 -0.03em #0a0104, 0.06em 0 #0a0104, -0.06em 0 #0a0104, 0.09em 0 #0a0104, -0.09em 0 #0a0104, 0.12em 0 #0a0104, -0.12em 0 #0a0104, 0.15em 0 #0a0104, -0.15em 0 #0a0104;
+  background-image: linear-gradient(to bottom, rgba(228, 226, 220, 0) 50%, rgba(228, 226, 220, 0.8) 50%);
+  text-shadow: 1px 1px #0a0104, -1px -1px #0a0104, 2px 2px #0a0104, -2px -2px #0a0104;
+  background-repeat: repeat-x;
+  background-size: 2px 2px;
+  background-position: 0 23px;
 }
 
-/* line 49, ../sass/_base.scss */
+/* line 54, ../sass/_base.scss */
 a:hover {
   color: #aeaca9;
   text-decoration: none;
   border-bottom: 0;
 }
 
-/* line 55, ../sass/_base.scss */
+/* line 60, ../sass/_base.scss */
 select, input, textarea {
   color: #0a0104;
 }
 
-/* line 59, ../sass/_base.scss */
+/* line 64, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -509,14 +509,14 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 66, ../sass/_base.scss */
+/* line 71, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
 }
 
-/* line 73, ../sass/_base.scss */
+/* line 78, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
