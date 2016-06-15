@@ -49,7 +49,11 @@ a {
 a:hover {
     color: $link-hover-color;
     text-decoration: none;
-    border-bottom: 0;
+    background-image: 0;
+    text-shadow: 0;
+    background-repeat: repeat-x;
+    background-size: 0;
+    background-position: 0 23px;
 }
 
 select, input, textarea {

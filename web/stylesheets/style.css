@@ -493,15 +493,19 @@ a {
 a:hover {
   color: #aeaca9;
   text-decoration: none;
-  border-bottom: 0;
+  background-image: 0;
+  text-shadow: 0;
+  background-repeat: repeat-x;
+  background-size: 0;
+  background-position: 0 23px;
 }
 
-/* line 55, ../sass/_base.scss */
+/* line 59, ../sass/_base.scss */
 select, input, textarea {
   color: #0a0104;
 }
 
-/* line 59, ../sass/_base.scss */
+/* line 63, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -509,14 +513,14 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 66, ../sass/_base.scss */
+/* line 70, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
 }
 
-/* line 73, ../sass/_base.scss */
+/* line 77, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
