@@ -441,7 +441,7 @@ html, body {
   background-color: #0a0104;
   color: #d6d4c8;
   font-family: "Cormorant Garamond", "Garamond", serif;
-  font-size: 22px;
+  font-size: 24px;
 }
 
 /* line 8, ../sass/_base.scss */
@@ -478,25 +478,30 @@ p {
   padding-bottom: 1rem;
 }
 
-/* line 38, ../sass/_base.scss */
+/* line 39, ../sass/_base.scss */
 a {
-  color: #5E5A53;
-  border-bottom: 1px solid white;
+  color: #e4e2dc;
+  background-image: linear-gradient(#0a0104, #0a0104), linear-gradient(#0a0104, #0a0104), linear-gradient(#e4e2dc, #e4e2dc);
+  background-size: .05em 1px,.05em 1px,1px 1px;
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: 0 87%,100% 87%,0 87%;
+  text-decoration: none;
+  text-shadow: 0.03em 0 #0a0104, -0.03em 0 #0a0104, 0 0.03em #0a0104, 0 -0.03em #0a0104, 0.06em 0 #0a0104, -0.06em 0 #0a0104, 0.09em 0 #0a0104, -0.09em 0 #0a0104, 0.12em 0 #0a0104, -0.12em 0 #0a0104, 0.15em 0 #0a0104, -0.15em 0 #0a0104;
 }
 
-/* line 43, ../sass/_base.scss */
+/* line 60, ../sass/_base.scss */
 a:hover {
-  color: #b0bec6;
+  color: #aeaca9;
   text-decoration: none;
   border-bottom: 0;
 }
 
-/* line 49, ../sass/_base.scss */
+/* line 66, ../sass/_base.scss */
 select, input, textarea {
   color: #0a0104;
 }
 
-/* line 53, ../sass/_base.scss */
+/* line 70, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -504,14 +509,14 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 60, ../sass/_base.scss */
+/* line 77, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
 }
 
-/* line 67, ../sass/_base.scss */
+/* line 84, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }

@@ -33,11 +33,28 @@ h3 {
 p {
     color: #5E5A53;
     padding-bottom: 1rem;
+    
 }
 
 a {
     color: $link-color;
-    border-bottom: 1px solid white;
+    background-image: linear-gradient($color-for-background, $color-for-background), linear-gradient($color-for-background, $color-for-background), linear-gradient($link-color, $link-color);
+    background-size: .05em 1px,.05em 1px,1px 1px;
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position: 0 87%,100% 87%,0 87%;
+    text-decoration: none;
+    // text-shadow: 0px 1px $color-for-background, -1px 0px $color-for-background;
+    text-shadow: .03em 0 $color-for-background,-.03em 0 $color-for-background,0 .03em $color-for-background,0 -.03em $color-for-background,.06em 0 $color-for-background,-.06em 0 $color-for-background,.09em 0 $color-for-background,-.09em 0 $color-for-background,.12em 0 $color-for-background,-.12em 0 $color-for-background,.15em 0 $color-for-background,-.15em 0 $color-for-background;
+    // background: linear-gradient($color-for-background,$color-for-background),linear-gradient($color-for-background,$color-for-background),linear-gradient($link-color,$link-color);
+    // border-bottom: 1px solid $link-color;
+   
+   // color color
+  //text-decoration none
+  //textShadowToCropUnderline backgroundColor
+ // 
+ // background-size .05em 1px, .05em 1px, 1px 1px
+ // background-repeat no-repeat, no-repeat, repeat-x
+ // background-position 0% 90%, 100% 90%, 0% 90%
 }
 
 a:hover {
