@@ -489,19 +489,19 @@ a {
   text-shadow: 0.03em 0 #0a0104, -0.03em 0 #0a0104, 0 0.03em #0a0104, 0 -0.03em #0a0104, 0.06em 0 #0a0104, -0.06em 0 #0a0104, 0.09em 0 #0a0104, -0.09em 0 #0a0104, 0.12em 0 #0a0104, -0.12em 0 #0a0104, 0.15em 0 #0a0104, -0.15em 0 #0a0104;
 }
 
-/* line 60, ../sass/_base.scss */
+/* line 49, ../sass/_base.scss */
 a:hover {
   color: #aeaca9;
   text-decoration: none;
   border-bottom: 0;
 }
 
-/* line 66, ../sass/_base.scss */
+/* line 55, ../sass/_base.scss */
 select, input, textarea {
   color: #0a0104;
 }
 
-/* line 70, ../sass/_base.scss */
+/* line 59, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -509,14 +509,14 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 77, ../sass/_base.scss */
+/* line 66, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
 }
 
-/* line 84, ../sass/_base.scss */
+/* line 73, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
