@@ -498,7 +498,7 @@ ul {
 /* line 54, ../sass/_base.scss */
 ul li:before {
   content: "\25C6";
-  color: #d6d4c8;
+  color: rgba(214, 212, 200, 0.6);
   font-size: 0.8em;
   padding-right: 0.4rem;
 }
