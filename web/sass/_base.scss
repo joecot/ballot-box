@@ -46,6 +46,18 @@ a {
     background-position: 0 23px;
 }
 
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+ul li:before {
+    content: "\25C6";
+    color: $basic-text-color;
+    font-size: 0.8em;
+    padding-right: 0.4rem;
+}
+
 a:hover {
     color: $link-hover-color;
     text-decoration: none;
