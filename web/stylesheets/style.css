@@ -482,7 +482,7 @@ p {
 a {
   color: #e4e2dc;
   text-decoration: none;
-  background-image: linear-gradient(to bottom, rgba(228, 226, 220, 0) 50%, rgba(228, 226, 220, 0.8) 50%);
+  background-image: linear-gradient(to bottom, rgba(228, 226, 220, 0) 50%, rgba(228, 226, 220, 0.4) 50%);
   text-shadow: 1px 1px #0a0104, -1px -1px #0a0104, 2px 2px #0a0104, -2px -2px #0a0104;
   background-repeat: repeat-x;
   background-size: 2px 2px;
