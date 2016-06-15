@@ -18,10 +18,11 @@ h3, h4, h5 {
 
 h1 {
     font-size: 1.75rem;
+    letter-spacing: 0.125rem;
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 h3 {
@@ -29,12 +30,20 @@ h3 {
     padding-bottom: $header-padding;
 }
 
+p {
+    color: #5E5A53;
+    padding-bottom: 1rem;
+}
+
 a {
     color: $link-color;
+    border-bottom: 1px solid white;
 }
 
 a:hover {
     color: $link-hover-color;
+    text-decoration: none;
+    border-bottom: 0;
 }
 
 select, input, textarea {
@@ -52,7 +61,7 @@ select, input, textarea {
     margin: 0 auto;
     width: 94%;
     max-width: 1000px;
-    color: $main-content-color; 
+    // color: $main-content-color; 
 }
 
 .error {

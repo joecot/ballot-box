@@ -438,10 +438,10 @@ th {
 
 /* line 1, ../sass/_base.scss */
 html, body {
-  background-color: #1E1E1E;
+  background-color: #0a0104;
   color: #d6d4c8;
   font-family: "Cormorant Garamond", "Garamond", serif;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 /* line 8, ../sass/_base.scss */
@@ -458,35 +458,45 @@ h3, h4, h5 {
 /* line 19, ../sass/_base.scss */
 h1 {
   font-size: 1.75rem;
+  letter-spacing: 0.125rem;
 }
 
-/* line 23, ../sass/_base.scss */
+/* line 24, ../sass/_base.scss */
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
-/* line 27, ../sass/_base.scss */
+/* line 28, ../sass/_base.scss */
 h3 {
   font-size: 1.25rem;
   padding-bottom: 2rem;
 }
 
-/* line 32, ../sass/_base.scss */
-a {
-  color: #90a4af;
+/* line 33, ../sass/_base.scss */
+p {
+  color: #5E5A53;
+  padding-bottom: 1rem;
 }
 
-/* line 36, ../sass/_base.scss */
+/* line 38, ../sass/_base.scss */
+a {
+  color: #5E5A53;
+  border-bottom: 1px solid white;
+}
+
+/* line 43, ../sass/_base.scss */
 a:hover {
   color: #b0bec6;
+  text-decoration: none;
+  border-bottom: 0;
 }
 
-/* line 40, ../sass/_base.scss */
+/* line 49, ../sass/_base.scss */
 select, input, textarea {
-  color: #1E1E1E;
+  color: #0a0104;
 }
 
-/* line 44, ../sass/_base.scss */
+/* line 53, ../sass/_base.scss */
 .mes-header {
   height: 170px;
   margin-top: 2rem;
@@ -494,15 +504,14 @@ select, input, textarea {
   text-align: center;
 }
 
-/* line 51, ../sass/_base.scss */
+/* line 60, ../sass/_base.scss */
 .main-content {
   margin: 0 auto;
   width: 94%;
   max-width: 1000px;
-  color: #eef7f5;
 }
 
-/* line 58, ../sass/_base.scss */
+/* line 67, ../sass/_base.scss */
 .error {
   color: #4E0603;
 }
