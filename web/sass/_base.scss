@@ -47,6 +47,16 @@ a {
     background-position: 0 23px;
 }
 
+button, 
+html input[type="button"], 
+input[type="reset"], 
+input[type="submit"],
+.button {
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 3px;
+}
+
 ul {
     list-style: none;
     padding-left: 0;
