@@ -3,3 +3,4 @@
 /propel.yml
 /generated-migrations
 /generated-sql
+/node_modules
