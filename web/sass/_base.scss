@@ -6,9 +6,9 @@ html, body {
 }
 
 h1, h2 {
-    
+    font-family: $small-caps;
     // font-family: $header-font;
-    font-style: italic;
+    // font-style: italic;
 }
 
 h3, h4, h5 {
@@ -37,6 +37,7 @@ p {
 }
 
 a {
+    cursor: pointer;
     color: $link-color;
     text-decoration: none;
     background-image: linear-gradient(to bottom,rgba($link-color,0) 50%,rgba($link-color,.4) 50%);
