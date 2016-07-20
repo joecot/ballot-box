@@ -4,3 +4,4 @@
 /generated-migrations
 /generated-sql
 /node_modules
+/.codenvy.json
