@@ -615,6 +615,13 @@ class Ballot{
                 return $response->withStatus(400)->write('No questions for ballot.');
             }
             $results = Array();
+            $q = new \MESBallotBox\Propel\VoteQuery();
+            $votes = $q->filterByBallotId($args['ballotId'])->find();
+            $results = Array();
+            foreach($votes as $vote){
+                $results['votes'][] = array_merge($vote->getUser()->toArray(), $vote->toArray());
+                
+            }
             foreach($questions as $question){
                 $qid = $question->getId();
                 switch($question->getType()){
@@ -637,14 +644,13 @@ class Ballot{
                         $results[$qid] = $result;
                         break;
                     case 'office':
-                        $voteItems = \MESBallotBox\Propel\VoteItemQuery::create()->filterByQuestionId($qid)->find();
+                        $voteItems = \MESBallotBox\Propel\VoteItemQuery::create()->filterByQuestionId($qid)->orderByAnswer()->find();
                         $candidates = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($qid)->find();
                         $candidateIds = Array();
                         foreach($candidates as $candidate) $candidateIds[] = $candidate->getId();
                         $totalCandidates = count($candidateIds);
                         $votes = Array();
                         if($voteItems)foreach($voteItems as $voteItem){
-                            //print_r($voteItem->toArray());
                             $votes[$voteItem->getVoteId()][$voteItem->getAnswer()] = $voteItem->getCandidateId();
                         }
                         foreach($votes as $voteId => $vote){
@@ -652,7 +658,6 @@ class Ballot{
                         }
                         $rounds = array();
                         for($i =0; $i < $totalCandidates; $i++){
-                            $round++;
                             //echo "Round $i\n";
                             //print_r($votes);
                             $losers = false;
@@ -684,6 +689,10 @@ class Ballot{
                         //echo "rounds\n";
                         //print_r($rounds);
                         $result['result'] = $winner;
+                        if(is_numeric($winner) && $winner){
+                        		$candidate = \MESBallotBox\Propel\CandidateQuery::create()->findPk($winner);
+                        		$result['winningCandidate'] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
+                        }
                         $result['rounds'] = $rounds;
                         $results[$qid] = $result;
                         break;
@@ -713,7 +722,6 @@ class Ballot{
                 $totals[$candidateId][$ranking]++;
             }
         }
-        
         return $totals;
     }
     function getWinner($totals, $votes){

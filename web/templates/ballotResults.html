@@ -4,10 +4,35 @@
 <label>Ballot Name:</label> {{ballot.name}}<br/>
 <label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
 <label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
-<div ng-show="questions">
+<div ng-show="results.votes">Votes Cast:
+<ul>
+<li ng-repeat="vote in results.votes"><a href="#/ballot/{{ ballot.id }}/question/{{ question.id }}/vote/{{vote.id}}">{{vote.firstName}} {{vote.lastName}} ({{vote.membershipNumber}})</a></li>
+</ul>
+</div>
+<div ng-hide="results.votes">Not votes yet</div>
+<div ng-show="voteinfo.questions && results.votes">
 
-<div  ng-repeat="(questionId, question) in questions">
+<div  ng-repeat="question in voteinfo.questions">
+Question: {{question.name}}
+<div ng-show="question.type=='office'">
 
+<div ng-repeat="(roundId,round) in results[question.id].rounds">
+Round {{roundId}}:
+<table border=1>
+<tr><th>Candidate</th><th ng-repeat="(rank,rankTotal) in round[question.candidates[0].id] track by $index">Ranked #{{rank+1|number}}</th></tr>
+<tr ng-repeat="candidate in question.candidates">
+<td>{{candidate.firstName}} {{candidate.lastName}} ({{candidate.membershipNumber}})</td>
+<td ng-repeat="(rank,rankTotal) in round[candidate.id] track by $index">{{rankTotal}}</td>
+</tr>
+</table>
+</div>
+Winner: <span ng-show="results[question.id].winningCandidate" ng-init="winner = results[question.id].winningCandidate">{{winner.firstName}} {{winner.lastName}} ({{winner.membershipNumber}})</span>
+<span ng-show="results[question.id].result == 0">None of the Above</span>
+<span ng-show="results[question.id].result == 'tie'">Tie (no winner)</span>
+</div>
+<div ng-show="question.type=='proposition'">
+Proposition!
+</div>
 </div>
 
 </div>
