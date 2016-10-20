@@ -1,0 +1,38 @@
+<div  ng-repeat="(q, question) in ballot.questions">
+<label>Ballot Measure: {{ question.name }}</label><br/>
+<p ng-show="question.description">{{question.description}}</p>
+<p ng-show="question.readmore"><a href="{{question.readmore}}" target="_blank">More information</a></p>
+<p ng-show="question.discussion"><a href="{{question.discussion}}" target="_blank">Discussion</a></p>
+<div ng-show="question.type=='proposition'">
+    <label>
+    <input type="radio" ng-model="vote.voteItem[q].answer" value="2">
+    Yes
+  </label><br/>
+  <label>
+    <input type="radio" ng-model="vote.voteItem[q].answer" value="1">
+    No
+  </label><br/>
+  <label>
+  <input type="radio" ng-model="vote.voteItem[q].answer" value="0">
+    Abstain from voting
+  </label>
+</div>
+<div ng-show="question.type=='office'">
+    Officers:
+    <ul>
+        <li ng-repeat="(c,candidate) in question.candidates"><select ng-model="vote.voteItem[q].candidates[c].answer" ng-options = "answer disable when takenAnswer(vote.voteItem[q].candidates,c,answer) for answer in vote.voteItem[q].availableAnswers"><option value="">-</option></select>
+         {{candidate.firstName}} {{candidate.lastName}} <span ng-show="candidate.membershipNumber">({{candidate.membershipNumber}})</span> 
+         
+        </li>
+    </ul>
+</div>
+<br/>
+</div>
+Voting as: {{user.firstName}} {{user.lastName}} ({{user.membershipNumber}})<br/>
+<input type="submit" ng-hide="ballot.invalid" value="Submit Vote"/>
+<div ng-show="ballot.invalid">
+<span ng-bind="ballot.invalid"/><br/>
+<span><a href="https://portal.mindseyesociety.org/membership/" target="_blank">Check Membership Status</a></span><br/>
+<span><a ng-click="refresh()">Refresh Membership Information</a></span>
+</div>
+<span ng-show="error" class="error">Error encounted: {{error}}</span>

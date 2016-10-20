@@ -1,0 +1,102 @@
+html, body {
+    background-color: $color-for-background;
+    color: $basic-text-color;
+    font-family: $main-font;
+    font-size: $default-font-size;
+}
+
+h1, h2 {
+    font-family: $small-caps;
+    // font-family: $header-font;
+    // font-style: italic;
+}
+
+h3, h4, h5 {
+    font-family: $main-font;
+    font-style: normal;
+}
+
+h1 {
+    font-size: 1.75rem;
+    letter-spacing: 0.125rem;
+}
+
+h2 {
+    font-size: 1.25rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+    padding-bottom: $header-padding;
+}
+
+p {
+    // color: #5E5A53;
+    color: $basic-text-color;
+    padding-bottom: 1rem;
+}
+
+a {
+    cursor: pointer;
+    color: $link-color;
+    text-decoration: none;
+    background-image: linear-gradient(to bottom,rgba($link-color,0) 50%,rgba($link-color,.4) 50%);
+    text-shadow: 1px 1px $color-for-background, -1px -1px $color-for-background, 2px 2px $color-for-background, -2px -2px $color-for-background;
+    background-repeat: repeat-x;
+    background-size: 2px 2px;
+    background-position: 0 23px;
+}
+
+button, 
+html input[type="button"], 
+input[type="reset"], 
+input[type="submit"],
+.button {
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 3px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+ul li:before {
+    content: "\25C6";
+    color: rgba($basic-text-color, 0.6);
+    font-size: 0.8em;
+    padding-right: 0.4rem;
+}
+
+a:hover {
+    color: $link-hover-color;
+    text-decoration: none;
+    background-image: 0;
+    text-shadow: 0;
+    background-repeat: repeat-x;
+    background-size: 0;
+    background-position: 0 23px;
+}
+
+select, input, textarea {
+    color: $color-for-background;
+}
+
+.mes-header {
+    height: 170px;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+.main-content {
+    margin: 0 auto;
+    width: 94%;
+    max-width: 1000px;
+    // color: $main-content-color; 
+}
+
+.error {
+    color: $error-color;
+}

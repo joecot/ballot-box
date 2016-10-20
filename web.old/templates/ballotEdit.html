@@ -1,0 +1,7 @@
+<div class="main-content" ng-controller="ballotEditController">
+<a href="#/">Home</a> > <a class="linkbutton" href="#/ballot/{{ballot.id}}">{{ballot.name}}</a><br/>
+<h1>Edit Ballot</h1>
+<form novalidate ng-submit="edit(ballot)" class="ballot-form">
+<div ng-include="'templates/ballotForm.html'"/>
+</form>
+</div>

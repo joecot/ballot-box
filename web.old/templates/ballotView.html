@@ -1,0 +1,47 @@
+<div class="main-content" ng-hide="ballot.id">Loading...</div>
+<div class="main-content" ng-show="ballot.id" ng-controller="ballotViewController">
+<a href="#/">Home</a> > Ballot: {{ballot.name}} | <a class="linkbutton" href="#/ballot/{{ballot.id}}/edit">Edit</a><br/>
+<label>Ballot Name:</label> {{ballot.name}}<br/>
+<label>Ballot Start:</label> {{ballot.start}} {{ballot.timezoneNice}}<br/>
+<label>Ballot End:</label> {{ballot.end}} {{ballot.timezoneNice}}<br/>
+<div ng-show="questions">
+<form novalidate ng-submit="reorder(questions)" class="question-form">
+<label>Ballot Questions:</label> <span ng-hide="deletedQuestions || questions.length<2">(<a ng-click="reorderForm=!reorderForm" ng-init="reorderForm=false">Reorder?</a>)</span> (<a ng-click="showDeletedQuestions()">Show Deleted?</a>)
+<ul>
+<li  ng-repeat="(questionId, question) in questions">
+    <select ng-show="reorderForm" ng-model="question.orderId" ng-init="question.orderId=false" ng-options = "orderId disable when takenOrder(questions,questionId,orderId) for orderId in availableOrders">
+        <option value="">-</option>
+    </select>
+    <a class="linkbutton" href="#/ballot/{{ ballot.id }}/question/{{ question.id }}">{{ question.name }}</a>
+    (<a ng-hide="question.isDeleted || question.confirmDelete" ng-click="question.confirmDelete=true"><img width="20" height="20" alt="Delete?" title="Delete?" src="/images/close.svg"/></a><span  ng-show="question.confirmDelete"><a ng-click="deleteQuestion(question)">Confirm Delete</a> <a ng-show="question.confirmDelete" ng-click="question.confirmDelete=false">Cancel</a></span><a ng-show="question.isDeleted" ng-click="restoreQuestion(question)"><img src="/images/restore.svg" width="20" height="20" alt="Restore?" title="Restore?"/></a>)
+</li>
+</ul>
+<input ng-show="reorderForm" type="submit" value="Reorder Questions" /> <span ng-show="reorder_error">{{reorder_error}}</span>
+</form>
+</div>
+<a class="linkbutton" href="#/ballot/{{ballot.id}}/question/create">Create new question</a><br/><br/>
+<div ng-show="voters">
+<label>Eligible Voters:</label><br/>
+
+<ul>
+<li  ng-repeat="(voterid, voter) in voters">
+    <a ng-if="voter.userId" class="linkbutton" href="#/ballot/{{ ballot.id }}/voter/{{ voter.id }}">{{ voter.firstName }} {{ voter.lastName}} ({{ voter.membershipNumber }})</a>
+    <a ng-if="voter.affiliateId" class="linkbutton" href="#/ballot/{{ ballot.id }}/voter/{{ voter.id }}">All members of affiliate: {{ voter.name }}</a>
+</li>
+</ul>
+</div>
+<a ng-show="!addVoterForm" ng-click="showAddVoterForm()">Add Voter</a>
+<form ng-show="addVoterForm" novalidate ng-submit="addVoter(newvoter)" class="ballot-form">
+     <label>
+        Membership Number:
+    <input type="text" ng-model="newvoter.membershipNumber">
+  </label><br/>OR<br/>
+  <label>
+    Entire Affiliate: <select ng-options="affiliate.id as affiliate.name for affiliate in affiliates track by affiliate.id" ng-model="newvoter.affiliateId">
+        <option value="">None</option>
+    </select>
+  </label><br/>
+  <input type="submit" value="Add Candidate" />
+  <span ng-show="formerror" class="error">{{formerror}}</span>
+</form>
+</div>
