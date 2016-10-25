@@ -3,9 +3,9 @@ require 'compass/import-once/activate'
 
 # Set this to the root of your project when deployed:
 http_path = "/"
-css_dir = "/web/stylesheets"
-sass_dir = "/web/sass"
-images_dir = "/web/images"
+css_dir = "/ballotbox-angular/src"
+sass_dir = "/ballotbot-angular/src"
+images_dir = "/ballotbox-angular/assets/images"
 javascripts_dir = "/web/js"
 
 # You can select your preferred output style here (can be overridden via the command line):
