@@ -1,13 +1,17 @@
 {
   "project": {
-    "version": "1.0.0-beta.17",
+    "version": "1.0.0-beta.18",
     "name": "ballotbox-angular"
   },
   "apps": [
     {
       "root": "src",
       "outDir": "../web",
-      "assets": "assets",
+      "assets": [
+        "assets",
+        "app.php",
+        ".htaccess"
+      ],
       "index": "index.html",
       "main": "main.ts",
       "test": "test.ts",
@@ -15,7 +19,6 @@
       "prefix": "app",
       "mobile": false,
       "styles": [
-        "../node_modules/bootstrap/dist/css/bootstrap.css",
         "style.scss"
       ],
       "scripts": [
@@ -34,6 +37,18 @@
   "packages": [],
   "defaults": {
     "styleExt": "scss",
-    "prefixInterfaces": false
+    "prefixInterfaces": false,
+    "inline": {
+      "style": false,
+      "template": false
+    },
+    "spec": {
+      "class": false,
+      "component": false,
+      "directive": false,
+      "module": false,
+      "pipe": false,
+      "service": false
+    }
   }
 }
