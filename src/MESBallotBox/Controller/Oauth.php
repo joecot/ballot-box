@@ -73,7 +73,7 @@ class Oauth{
                 if($_SESSION['jspath']){
                     $jspath = $_SESSION['jspath'];
                     unset($_SESSION['jspath']);
-                    return $response->withStatus(301)->withHeader("Location", "/#".$jspath);
+                    return $response->withStatus(301)->withHeader("Location", $jspath);
                 }
                 else return $response->withStatus(301)->withHeader("Location", "/");
 
