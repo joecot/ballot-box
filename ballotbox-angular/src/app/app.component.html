@@ -11,7 +11,7 @@
           <a class="nav-link" routerLink="/ballot">Ballots</a>
         </li>
       </ul>
-      <div class="navbar-text float-xs-right" style="color:white" *ngIf="user">
+      <div class="navbar-text float-xs-right" *ngIf="user">
         {{user.firstName}} {{user.lastName}} {{user.membershipNumber}} <a href="app.php/logout">Logout</a>
       </div>
     </nav>
