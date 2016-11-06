@@ -57,7 +57,7 @@ class Ballot{
                 $result['name'] = $ballot->getName();
                 $result['start'] = $ballot->getStartDate();
                 $result['end'] = $ballot->getEndDate();
-                $result['timezone'] = $ballot->getTimezoneNice();
+                $result['timezoneNice'] = $ballot->getTimezoneNice();
                 $results[] = $result;
             }
             

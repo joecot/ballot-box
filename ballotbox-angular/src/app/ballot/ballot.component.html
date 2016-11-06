@@ -1,6 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-2 col-md-1 sidebar">
+            Current Ballots:
             <ul class="nav nav-sidebar">
                 <ul *ngIf="ballots">
                 <li *ngFor="let ballot of ballots">{{ballot.name}}</li>

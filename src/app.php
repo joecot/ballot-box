@@ -35,7 +35,7 @@ $app->get('/', function ($request, $response) {
 })->setName('index');
 $app->get('/logout', function($request, $response){
     unset($_SESSION['user']);
-    return $response->withStatus(301)->withHeader("Location", '/');
+    return $response->withStatus(301)->withHeader("Location", 'https://portal.mindseyesociety.org/');
 });
 $app->get('/session', function($request, $response){
     print_r($_SESSION);
