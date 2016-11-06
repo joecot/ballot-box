@@ -3,10 +3,10 @@ import { BallotService } from '../core/ballot.service';
 
 @Component({
   selector: 'app-ballot',
-  templateUrl: './ballot.component.html',
-  styleUrls: ['./ballot.component.scss']
+  templateUrl: './ballot-list.component.html',
+  styleUrls: ['./ballot-list.component.scss']
 })
-export class BallotComponent implements OnInit {
+export class BallotListComponent implements OnInit {
 
   constructor(private ballotService: BallotService) { }
   ballots:any;
