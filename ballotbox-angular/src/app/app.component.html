@@ -10,14 +10,10 @@
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link" routerLink="/ballot">Ballots</a>
         </li>
-        <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/results">Results</a>
-        </li>
       </ul>
+      <div class="navbar-text float-xs-right" style="color:white" *ngIf="user">
+        {{user.firstName}} {{user.lastName}} {{user.membershipNumber}} <a href="app.php/logout">Logout</a>
+      </div>
     </nav>
 
 <div class="container"><router-outlet></router-outlet></div>
-<br/>
-<div>
-    <a href="app.php/logout">Logout</a>
-</div>

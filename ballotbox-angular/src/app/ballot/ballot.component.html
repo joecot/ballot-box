@@ -1,3 +1,14 @@
-<p>
-  ballot works!
-</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2 col-md-1 sidebar">
+            <ul class="nav nav-sidebar">
+                <ul *ngIf="ballots">
+                <li *ngFor="let ballot of ballots">{{ballot.name}}</li>
+            </ul>
+        </ul>
+        </div>
+        <div class="col-sm-10 offset-sm-2 col-md-11 offset-md-1 main">
+            pants
+        </div>
+    </div>
+</div>

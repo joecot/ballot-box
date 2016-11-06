@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {UserService} from './user.service';
+import {BallotService} from './ballot.service';
 
 @NgModule({
   imports: [
@@ -8,7 +9,7 @@ import {UserService} from './user.service';
   ],
   exports: [ ],
   declarations: [],
-  providers: [UserService]
+  providers: [UserService,BallotService]
 })
 export class CoreModule {
   /*
