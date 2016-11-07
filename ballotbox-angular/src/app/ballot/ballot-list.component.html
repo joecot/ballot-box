@@ -1,15 +1,13 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="sidebar">
-            Current Ballots:
-            <ul class="nav nav-sidebar">
-                <ul *ngIf="ballots">
-                <li *ngFor="let ballot of ballots">{{ballot.name}}</li>
-            </ul>
+<div class="row">
+    <div class="sidebar">
+        <h3>Current Ballots:</h3>
+        <ul class="nav nav-sidebar">
+            <ul *ngIf="ballots">
+            <li *ngFor="let ballot of ballots">{{ballot.name}}</li>
         </ul>
-        </div>
-        <div class="col-sm-10 offset-sm-2 col-md-11 offset-md-1 main">
-            pants
-        </div>
+    </ul>
+    </div>
+    <div class="col-sm-10 offset-sm-2 col-md-11 offset-md-1 main">
+        pants
     </div>
 </div>

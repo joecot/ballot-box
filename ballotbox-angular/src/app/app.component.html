@@ -1,20 +1,22 @@
-<div class="mes-header">
-    <img src="/assets/images/mes-logo.png" />
-</div>
-
-<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
-  <a class="navbar-brand" href="#">MES Ballot Box</a>
-  <ul class="nav navbar-nav">
-    <li class="nav-item" routerLinkActive="active">
-      <a class="nav-link" routerLink="/voting">Voting</a>
-    </li>
-    <li class="nav-item" routerLinkActive="active">
-      <a class="nav-link" routerLink="/ballot">Ballots</a>
-    </li>
-  </ul>
-  <div class="navbar-text float-xs-right" *ngIf="user">
-    {{user.firstName}} {{user.lastName}} {{user.membershipNumber}} <a href="app.php/logout">Logout</a>
+<div class="container-fluid">
+  <div class="mes-header">
+      <img src="/assets/images/mes-logo.png" />
   </div>
-</nav>
+  
+  <nav class="navbar navbar-fixed-top">
+    <a class="navbar-brand" href="#">MES Ballot Box</a>
+    <ul class="nav navbar-nav">
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/voting">Voting</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" routerLink="/ballot">Ballots</a>
+      </li>
+    </ul>
+    <div class="navbar-text float-xs-right" *ngIf="user">
+      {{user.firstName}} {{user.lastName}} {{user.membershipNumber}} <a href="app.php/logout">Logout</a>
+    </div>
+  </nav>
 
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
+</div>
