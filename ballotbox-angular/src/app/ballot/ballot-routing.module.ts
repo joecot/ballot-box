@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { BallotListComponent }           from './ballot-list.component';
 import { BallotHomeComponent } from './ballot-home.component';
 import { BallotItemComponent } from './ballot-item.component';
+import { BallotItemService } from './ballot-item.service';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { BallotItemComponent } from './ballot-item.component';
         },
         {
           path: ':id',
-          component: BallotItemComponent
+          component: BallotItemComponent,
+          resolve: BallotItemService
         }]
       }
     ])
