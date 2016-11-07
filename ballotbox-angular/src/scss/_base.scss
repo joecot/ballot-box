@@ -40,8 +40,8 @@ a {
     cursor: pointer;
     color: $link-color;
     text-decoration: none;
-    background-image: linear-gradient(to bottom,rgba($link-color,0) 50%,rgba($link-color,.4) 50%);
-    text-shadow: 1px 1px $color-for-background, -1px -1px $color-for-background, 2px 2px $color-for-background, -2px -2px $color-for-background;
+    // background-image: linear-gradient(to bottom,rgba($link-color,0) 50%,rgba($link-color,.4) 50%);
+    // text-shadow: 1px 1px $color-for-background, -1px -1px $color-for-background, 2px 2px $color-for-background, -2px -2px $color-for-background;
     background-repeat: repeat-x;
     background-size: 2px 2px;
     background-position: 0 23px;
