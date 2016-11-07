@@ -4,7 +4,6 @@ import { BallotService } from '../core/ballot.service';
 @Component({
   selector: 'app-ballot',
   templateUrl: './ballot-list.component.html',
-  styleUrls: ['./ballot-list.component.scss']
 })
 export class BallotListComponent implements OnInit {
 
