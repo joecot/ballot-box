@@ -20,7 +20,6 @@ import { BallotItemService } from './ballot-item.service';
         {
           path: ':id',
           component: BallotItemComponent,
-          resolve: BallotItemService
         }]
       }
     ])

@@ -21,6 +21,10 @@ export class BallotService {
 	    return this.http.get(this.apiUrl+'ballots').map(response => response.json()).first().catch(this.handleError);
 	}
 	
+	getBallot(id:number){
+	    return this.http.get(this.apiUrl+'ballots/'+id).map(response => response.json()).first().catch(this.handleError);
+	}
+	
 	private handleError (error: Response | any) {
 		// In a real world app, we might use a remote logging infrastructure
 		let errMsg: string;

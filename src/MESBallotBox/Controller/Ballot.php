@@ -75,6 +75,7 @@ class Ballot{
             $result['endArray'] = $ballot->getEndArray();
             $result['timezone'] = $ballot->getTimezone();
             $result['timezoneNice'] = $ballot->getTimezoneNice();
+            $result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);
             return $response->write(json_encode($result));
         });
         $slim->get('/{ballotId}/voteinfo', function($request, $response, $args){
@@ -91,24 +92,7 @@ class Ballot{
             $result['endArray'] = $ballot->getEndArray();
             $result['timezone'] = $ballot->getTimezone();
             $result['timezoneNice'] = $ballot->getTimezoneNice();
-            $q = new \MESBallotBox\Propel\QuestionQuery();
-            $questions = $q->filterByBallotId($args['ballotId'])->orderById()->find();
-            if($questions){
-                $questionsresult = Array();
-                foreach($questions as $question){
-                    $questionresult = $question->toArray();
-                    if($questionresult['type'] == 'office'){
-                        $candidateresults = Array();
-                        $candidates = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($question->getId())->orderById()->find();
-                        foreach($candidates as $candidate){
-                            $candidateresults[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
-                        }
-                        $questionresult['candidates'] = $candidateresults;
-                    }
-                    $questionsresult[] = $questionresult;
-                }
-                $result['questions'] = $questionsresult;
-            }
+            $result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);
             
             $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($ballot->getId())->filterbyUserId($_SESSION['user']['id'])->findOne();
             if($vote) $result['voteId'] = $vote->getId();
@@ -795,6 +779,29 @@ class Ballot{
             $user->save();
         }
         return $user;
+    }
+    function getQuestions($ballot){
+        if(!$ballot) return false;
+        $q = new \MESBallotBox\Propel\QuestionQuery();
+        $questions = $q->filterByBallotId($ballot->getId())->orderById()->find();
+        $questionresults = Array();
+        if($questions){
+            $questionsresult = Array();
+            foreach($questions as $question){
+                $questionresult = $question->toArray();
+                if($questionresult['type'] == 'office'){
+                    $candidateresults = Array();
+                    $candidates = \MESBallotBox\Propel\CandidateQuery::create()->filterByQuestionId($question->getId())->orderById()->find();
+                    foreach($candidates as $candidate){
+                        $candidateresults[] = array_merge($candidate->getUser()->toArray(), $candidate->toArray());
+                    }
+                    $questionresult['candidates'] = $candidateresults;
+                }
+                $questionsresult[] = $questionresult;
+            }
+            $questionresults[] = $questionsresult;
+        }
+        return $questionresults;
     }
     function getVoterBallot($ballotId){
         $q = new \MESBallotBox\Propel\BallotQuery();

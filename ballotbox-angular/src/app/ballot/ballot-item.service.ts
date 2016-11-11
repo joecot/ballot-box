@@ -1,26 +1,29 @@
 import { Inject, Injectable } from '@angular/core';
 import {Subscription} from 'rxjs/Rx';
 import { Observable }     from 'rxjs/Observable';
-import { Router, Resolve,
-         ActivatedRoute } from '@angular/router';
+import {Subject} from 'rxjs/Subject';
 import { BallotService } from '../core/ballot.service';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/catch';
 
 @Injectable()
-export class BallotItemService implements Resolve<any> {
-    ballotId: number;
-    subscription: Observable<any>;
-    constructor(private ballotService: BallotService, private router: Router, private route: ActivatedRoute){}
-    resolve(): Observable<any>|boolean {
-        this.subscription = this.route.params.map(
-            (params : any) =>
+export class BallotItemService {
+    ballot: Observable<any>;
+    ballotId: Subject<any> = new Subject();
+    constructor(private ballotService: BallotService){
+        console.log('ballot item service constructed');
+        this.ballot = this.ballotId.asObservable().switchMap(
+            (ballotId: any)=>
             {
-                return params['id'];
+                console.log('switchmap called '+ballotId);
+                return this.ballotService.getBallot(ballotId);
             }
-        );
-        return this.subscription;
+        )
+    }
+    setBallotId(ballotId:number){
+        this.ballotId.next(ballotId);
+    }
+    getCurrentBallot():Observable<any>{
+        return this.ballot;
     }
 }

@@ -1,0 +1,15 @@
+<div *ngIf="ballot">
+    <div *ngIf="!ballotEdit">
+        <h1>{{ballot.name}}</h1> <button (click)="ballotEdit=true">Edit</button>
+        <p>{{ballot.start}} - {{ballot.end}} {{ballot.timezoneNice}}</p>
+    </div>
+    <div *ngIf="ballotEdit">
+        <input type="text" [(ngModel)]="ballot.name"><br/>
+        
+    </div>
+    <div>
+        Questions:
+        
+        Add Question
+    </div>
+</div>
