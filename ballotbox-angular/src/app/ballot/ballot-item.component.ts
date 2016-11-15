@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {Subscription} from 'rxjs/Rx';
 import * as moment from 'moment-timezone';
 import {BallotItemService} from './ballot-item.service';
+import {BallotService} from '../core/ballot.service';
 @Component({
     selector: 'app-ballot-item',
     templateUrl: './ballot-item.component.html',
@@ -15,11 +16,13 @@ export class BallotItemComponent implements OnInit {
     private ballot: any;
     private ballotChanges: any;
     private ballotEdit:boolean = false;
-    constructor(private route: ActivatedRoute, private ballotItemService: BallotItemService) { }
+    constructor(private route: ActivatedRoute, private ballotService: BallotService, private ballotItemService: BallotItemService) { }
 
     ngOnInit() {
         this.ballotSubscription = this.ballotItemService.getCurrentBallot().subscribe(
             (ballot:any) => {
+                console.log('new ballot');
+                console.log(ballot);
                 this.ballot = ballot;
                 this.ballot.edit = false;
                 this.ballot.startMoment = this.localTimeMoment(this.ballot.start);
@@ -48,6 +51,7 @@ export class BallotItemComponent implements OnInit {
     convertTimeMoment(timeMoment,timezone){
         //I hate timezones
         //Convert local time into actual timezone
+        console.log(timeMoment.format('MMMM Do YYYY, HH:mm:ss'));
         return moment.tz(
             timeMoment.format('MMMM Do YYYY, HH:mm:ss'), //format time without timezone
             'MMMM Do YYYY, HH:mm:ss', //parse time to actual timezone
@@ -56,6 +60,7 @@ export class BallotItemComponent implements OnInit {
     }
     startEdit(){
         this.ballotChanges = {
+            'id': this.ballot.id,
             'name': this.ballot.name,
             'startMoment': this.ballot.startMoment.clone(),
             'endMoment': this.ballot.endMoment.clone(),
@@ -67,12 +72,21 @@ export class BallotItemComponent implements OnInit {
         this.ballot.edit = true;
     }
     changeEndDate(){
-        this.ballotChanges.endMoment = this.ballotChanges.endMoment.hour(23).minute(59).second(59);
+        this.ballotChanges.endMoment = moment(this.ballotChanges.endDate).hour(23).minute(59).second(59);
         this.ballotChanges.endDate = this.ballotChanges.endMoment.toDate();
     }
     save(){
+        this.ballotChanges.startMoment = moment(this.ballotChanges.startDate);
+        this.ballotChanges.endMoment = moment(this.ballotChanges.endDate);
         this.ballotChanges.start = this.convertTimeMoment(this.ballotChanges.startMoment,this.ballotChanges.timezone).format('X');
         this.ballotChanges.end = this.convertTimeMoment(this.ballotChanges.endMoment,this.ballotChanges.timezone).format('X');
         console.log(this.ballotChanges);
+        this.ballotService.saveBallot(this.ballotChanges).subscribe(
+            anything => {
+                this.ballotItemService.setBallotId(this.ballot.id);
+                this.ballot.edit=false;
+            },
+            error => {this.ballotChanges.error = error}
+        )
     }
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {Http, Headers, URLSearchParams, Response} from '@angular/http';
+import {Http, Headers, URLSearchParams, RequestOptions, Response} from '@angular/http';
 import {Subscription} from 'rxjs/Rx';
 import { Observable }     from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -23,6 +23,16 @@ export class BallotService {
 	
 	getBallot(id:number){
 	    return this.http.get(this.apiUrl+'ballots/'+id).map(response => response.json()).first().catch(this.handleError);
+	}
+	
+	saveBallot(ballot:any){
+		let headers = new Headers({ 'Content-Type': 'application/json' });
+	    let options = new RequestOptions({ headers: headers });
+	    let ballotPost = {'id':ballot.id,'name':ballot.name,'start':ballot.start,'end':ballot.end, 'timezone': ballot.timezone};
+	    return this.http.post(this.apiUrl+'ballots/'+ballot.id, ballotPost, options)
+	    	.first()
+			.catch(this.handleError);
+		//return this.http.post(this.apiUrl+'ballots/'+ballot.id,)
 	}
 	
 	private handleError (error: Response | any) {

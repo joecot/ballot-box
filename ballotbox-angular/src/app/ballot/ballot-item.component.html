@@ -13,10 +13,10 @@
             <option *ngFor="let timezone of timezones" [value]="timezone.value">{{timezone.name}}</option>
         </select>
         <br/>
-        <button (click)="save()">Save</button><button (click)="ballot.edit=false">Cancel</button>
+        <button class="btn btn-primary" (click)="save()">Save</button><button class="btn btn-secondary" (click)="ballot.edit=false">Cancel</button>
     </div>
     <div *ngIf="!ballot.edit">
-        <h1>{{ballot.name}}</h1> <button (click)="startEdit()">Edit</button>
+        <h1>{{ballot.name}}</h1> <button class="btn btn-primary" (click)="startEdit()">Edit</button>
         <p>{{ballot.startFormatted}} - {{ballot.endFormatted}} {{ballot.timezoneNice}}</p>
     </div>
     

@@ -33,7 +33,7 @@ class Ballot extends BaseBallot
         6 => 'Pacific/Honolulu'
     );
     
-    public function setStartDate($start){
+    /*public function setStartDate($start){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
         $startTime = new \DateTime($start,$timezone);
         $this->setStartTime($startTime->format('U'));
@@ -78,7 +78,7 @@ class Ballot extends BaseBallot
         $endTime = new \DateTime(false,$timezone);
         $endTime->setTimestamp($this->getEndtime());
         return $endTime->format($format);
-    }
+    }*/
 
     public function getTimezoneNice(){
         return $this->timezonesNice[(int)$this->getTimezone()];
