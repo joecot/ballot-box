@@ -69,10 +69,8 @@ class Ballot{
             $result = Array();
             $result['id'] = $ballot->getId();
             $result['name'] = $ballot->getName();
-            $result['start'] = $ballot->getStartDate();
-            $result['startArray'] = $ballot->getStartArray();
-            $result['end'] = $ballot->getEndDate();
-            $result['endArray'] = $ballot->getEndArray();
+            $result['start'] = $ballot->getStartTime();
+            $result['end'] = $ballot->getEndTime();
             $result['timezone'] = $ballot->getTimezone();
             $result['timezoneNice'] = $ballot->getTimezoneNice();
             $result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);

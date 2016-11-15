@@ -1,13 +1,26 @@
 <div *ngIf="ballot">
-    <div *ngIf="!ballotEdit">
-        <h1>{{ballot.name}}</h1> <button (click)="ballotEdit=true">Edit</button>
-        <p>{{ballot.start}} - {{ballot.end}} {{ballot.timezoneNice}}</p>
+    <div *ngIf="ballot.edit">
+        Name:<br/>
+        <input type="text" [(ngModel)]="ballotChanges.name"><br/>
+        Start:<datepicker [(ngModel)]="ballotChanges.startDate"></datepicker>
+        <timepicker [(ngModel)]="ballotChanges.startDate"></timepicker>
+        <br/>
+        End:<datepicker [(ngModel)]="ballotChanges.endDate" (ngModelChange)="changeEndDate()"></datepicker>
+        <timepicker [(ngModel)]="ballotChanges.endDate"></timepicker>
+        <br/>
+        Timezone:
+        <select [(ngModel)]="ballotChanges.timezone">
+            <option *ngFor="let timezone of timezones" [value]="timezone.value">{{timezone.name}}</option>
+        </select>
+        <br/>
+        <button (click)="save()">Save</button><button (click)="ballot.edit=false">Cancel</button>
     </div>
-    <div *ngIf="ballotEdit">
-        <input type="text" [(ngModel)]="ballot.name"><br/>
-        
+    <div *ngIf="!ballot.edit">
+        <h1>{{ballot.name}}</h1> <button (click)="startEdit()">Edit</button>
+        <p>{{ballot.startFormatted}} - {{ballot.endFormatted}} {{ballot.timezoneNice}}</p>
     </div>
-    <div>
+    
+    <div *ngIf="!ballot.edit">
         Questions:
         
         Add Question
