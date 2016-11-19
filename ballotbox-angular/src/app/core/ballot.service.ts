@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import {Http, Headers, URLSearchParams, RequestOptions, Response} from '@angular/http';
 import {Subscription} from 'rxjs/Rx';
+import { BehaviorSubject } from 'rxjs/Rx';
 import { Observable }     from 'rxjs/Observable';
 import 'rxjs/Rx';
 import 'rxjs/add/operator/map';
@@ -11,14 +12,27 @@ import 'rxjs/add/operator/catch';
 export class BallotService {
 	apiUrl: string;
 	currentUser: Observable<any>;
+	ballots: Observable<any>;
+	ballotsRefresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	//private headers = new Headers();
 	constructor(private http: Http){
 		this.apiUrl = 'app.php/API/';
 		//this.headers.append('x-CSRFToken', this.apiToken);
+		this.ballots = this.ballotsRefresh.asObservable().switchMap(
+            ()=>
+            {
+                console.log('ballots switchmap called');
+                return this.http.get(this.apiUrl+'ballots').map(response => response.json()).first().catch(this.handleError);
+            }
+        )
 	}
 	
 	getBallots(){
-	    return this.http.get(this.apiUrl+'ballots').map(response => response.json()).first().catch(this.handleError);
+	    return this.ballots;
+	}
+	
+	refreshBallots(){
+		this.ballotsRefresh.next(false);
 	}
 	
 	getBallot(id:number){
@@ -28,8 +42,12 @@ export class BallotService {
 	saveBallot(ballot:any){
 		let headers = new Headers({ 'Content-Type': 'application/json' });
 	    let options = new RequestOptions({ headers: headers });
-	    let ballotPost = {'id':ballot.id,'name':ballot.name,'start':ballot.start,'end':ballot.end, 'timezone': ballot.timezone};
-	    return this.http.post(this.apiUrl+'ballots/'+ballot.id, ballotPost, options)
+	    let ballotPost = {'id':0,'name':ballot.name,'start':ballot.start,'end':ballot.end, 'timezone': ballot.timezone};
+	    var url = '';
+	    if(ballot.id){ ballotPost.id = ballot.id; url = 'ballots/'+ballot.id}
+	    else{ url = 'ballots';}
+	    return this.http.post(this.apiUrl+url, ballotPost, options)
+	    	.map(response => response.json())
 	    	.first()
 			.catch(this.handleError);
 		//return this.http.post(this.apiUrl+'ballots/'+ballot.id,)

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {Subscription} from 'rxjs/Rx';
 import * as moment from 'moment-timezone';
 import {BallotItemService} from './ballot-item.service';
@@ -16,7 +16,7 @@ export class BallotItemComponent implements OnInit {
     private ballot: any;
     private ballotChanges: any;
     private ballotEdit:boolean = false;
-    constructor(private route: ActivatedRoute, private ballotService: BallotService, private ballotItemService: BallotItemService) { }
+    constructor(private route: ActivatedRoute, private router: Router, private ballotService: BallotService, private ballotItemService: BallotItemService) { }
 
     ngOnInit() {
         this.ballotSubscription = this.ballotItemService.getCurrentBallot().subscribe(
@@ -25,14 +25,28 @@ export class BallotItemComponent implements OnInit {
                 console.log(ballot);
                 this.ballot = ballot;
                 this.ballot.edit = false;
-                this.ballot.startMoment = this.localTimeMoment(this.ballot.start);
-                this.ballot.startFormatted = this.ballot.startMoment.format('MMMM Do YYYY, h:mm:ss a');
-                this.ballot.endMoment = this.localTimeMoment(this.ballot.end);
-                this.ballot.endFormatted = this.ballot.endMoment.format('MMMM Do YYYY, h:mm:ss a');
+                this.ballot.isNew = false;
+                this.populateBallotDate();
                 console.log(this.ballot);
             }
         );
-        this.ballotIdSubscription = this.route.params.subscribe(params => {this.ballot = false; this.ballotItemService.setBallotId(params['id']);});
+        this.ballotIdSubscription = this.route.params.subscribe(
+            params => {
+                this.ballot = false;
+                if(params['id'] == 'new'){
+                    this.newBallot();
+                }
+                else{
+                    this.ballotItemService.setBallotId(params['id']);
+                }
+            }
+        );
+    }
+    populateBallotDate(){
+        this.ballot.startMoment = this.localTimeMoment(this.ballot.start);
+        this.ballot.startFormatted = this.ballot.startMoment.format('MMMM Do YYYY, h:mm:ss a');
+        this.ballot.endMoment = this.localTimeMoment(this.ballot.end);
+        this.ballot.endFormatted = this.ballot.endMoment.format('MMMM Do YYYY, h:mm:ss a');
     }
     localTimeMoment(time:any){
         //I hate timezones
@@ -58,6 +72,13 @@ export class BallotItemComponent implements OnInit {
             this.timezonesMoment[timezone]
         );
     }
+    newBallot(){
+        this.ballot = { 'isNew': true, 'name':'', 'timezone':1};
+        this.ballot.start = moment().add(1,'d').hour(0).minute(0).second(0).format('X');
+        this.ballot.end = moment().add(7,'d').hour(23).minute(59).second(59).format('X');
+        this.populateBallotDate();
+        this.startEdit();
+    }
     startEdit(){
         this.ballotChanges = {
             'id': this.ballot.id,
@@ -82,9 +103,14 @@ export class BallotItemComponent implements OnInit {
         this.ballotChanges.end = this.convertTimeMoment(this.ballotChanges.endMoment,this.ballotChanges.timezone).format('X');
         console.log(this.ballotChanges);
         this.ballotService.saveBallot(this.ballotChanges).subscribe(
-            anything => {
-                this.ballotItemService.setBallotId(this.ballot.id);
-                this.ballot.edit=false;
+            ballot => {
+                if(this.ballot.isNew){
+                    this.ballotService.refreshBallots();
+                    this.router.navigate(['/ballot',ballot.id]);
+                }else{
+                    this.ballotItemService.setBallotId(this.ballot.id);
+                    this.ballot.edit=false;
+                }
             },
             error => {this.ballotChanges.error = error}
         )

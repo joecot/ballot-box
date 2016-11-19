@@ -8,8 +8,8 @@ class Ballot{
             $ballot = new \MESBallotBox\Propel\Ballot();
             $ballot->setName($vars['name']);
             $ballot->setTimezone($vars['timezone']);
-            $ballot->setStartDate($vars['start']);
-            $ballot->setEndDate($vars['end']);
+            $ballot->setStartTime($vars['start']);
+            $ballot->setEndTime($vars['end']);
             $ballot->setUserId($_SESSION['user']['id']);
             $ballot->setVersionCreatedBy($_SESSION['user']['id']);
             if(!$ballot->validate()){
