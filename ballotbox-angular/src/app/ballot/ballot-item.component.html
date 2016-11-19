@@ -2,18 +2,23 @@
     <div *ngIf="ballot.edit">
         Name:<br/>
         <input type="text" [(ngModel)]="ballotChanges.name"><br/>
+        <div class="col-sm-12 col-md-5">
         Start:<datepicker [(ngModel)]="ballotChanges.startDate"></datepicker>
         <timepicker [(ngModel)]="ballotChanges.startDate"></timepicker>
-        <br/>
+        </div>
+        <div class="col-sm-12 col-md-5">
         End:<datepicker [(ngModel)]="ballotChanges.endDate" (ngModelChange)="changeEndDate()"></datepicker>
         <timepicker [(ngModel)]="ballotChanges.endDate"></timepicker>
-        <br/>
+        </div>
+        <div class="col-sm-2 col-md-2">
         Timezone:
         <select [(ngModel)]="ballotChanges.timezone">
             <option *ngFor="let timezone of timezones" [value]="timezone.value">{{timezone.name}}</option>
         </select>
-        <br/>
+        </div>
+        <div class="col-sm-12 col-md-12">
         <button class="btn btn-primary" (click)="save()">Save</button><button *ngIf="!ballot.isNew" class="btn btn-secondary" (click)="ballot.edit=false">Cancel</button>
+        </div>
     </div>
     <div *ngIf="!ballot.edit">
         <h1>{{ballot.name}}</h1> <button class="btn btn-primary" (click)="startEdit()">Edit</button>
