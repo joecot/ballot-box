@@ -1,7 +1,7 @@
 <div>
 Questions:
 <div *ngFor="let question of questions">
-    <app-question [question] = "question"></app-question>
+    <app-question [ballotId]="ballotId" [question] = "question"></app-question>
 </div>
 Add Question
 </div>

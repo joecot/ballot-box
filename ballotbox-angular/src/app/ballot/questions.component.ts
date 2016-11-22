@@ -5,7 +5,8 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './questions.component.html',
 })
 export class QuestionsComponent implements OnInit {
-  @Input('questions') questions: any;
+  @Input() questions: any;
+  @Input() ballotId: number;
 
   constructor() { }
 

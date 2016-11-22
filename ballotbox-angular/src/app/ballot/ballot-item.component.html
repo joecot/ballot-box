@@ -25,6 +25,6 @@
         <p>{{ballot.startFormatted}} - {{ballot.endFormatted}} {{ballot.timezoneNice}}</p>
     </div>
     
-    <app-questions [questions]="ballot.questions" *ngIf="!ballot.edit"></app-questions>
+    <app-questions [ballotId]="ballot.id" [questions]="ballot.questions" *ngIf="!ballot.edit"></app-questions>
         
 </div>

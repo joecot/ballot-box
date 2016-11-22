@@ -1,3 +1,22 @@
-<p>
-  question works!
-</p>
+<div style="border:1px solid white;">
+    <div *ngIf="!question.edit">
+        <h2>{{question.name}} <a (click)="startEdit()">(Edit)</a></h2>
+        <strong>Type:</strong> {{question.type}}<br/>
+        <span *ngIf="question.description">{{question.description}}</span>
+        <strong>Read More Link:</strong> {{question.readmore || 'None Set'}}<br/>
+        <strong>Discussion Link:</strong> {{question.discussion || 'None Set'}}<br/>
+        <div *ngIf="question.type=='office'">
+            <strong>Positions open:</strong> {{question.count}}
+        </div>
+    </div>
+    <div *ngIf="question.edit">
+        <label>Name:</label> <input type="text" [(ngModel)]="questionChanges.name"/><br/>
+        <label>Type:</label> <span *ngIf="!question.isNew">{{question.type}}</span><br/>
+        <span *ngIf="question.type=='office'"><label>Positions Open:</label> {{question.count}}</span><br/>
+        <label>Description:</label><br/>
+        <textarea rows="4" cols="30" [(ngModel)]="questionChanges.description"></textarea><br/>
+        <label>Read More Link:</label> <input type="text" [(ngModel)]="questionChanges.readmore"/><br/>
+        <label>Discussion Link:</label> <input type="text" [(ngModel)]="questionChanges.discussion"/><br/>
+        <button class="btn btn-primary" (click)="save()">Save</button><button class="btn btn-secondary" (click)="question.edit=false">Cancel</button>
+    </div>
+</div>
