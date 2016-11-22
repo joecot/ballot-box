@@ -780,7 +780,6 @@ class Ballot{
         if(!$ballot) return false;
         $q = new \MESBallotBox\Propel\QuestionQuery();
         $questions = $q->filterByBallotId($ballot->getId())->orderById()->find();
-        $questionresults = Array();
         if($questions){
             $questionsresult = Array();
             foreach($questions as $question){
@@ -795,9 +794,8 @@ class Ballot{
                 }
                 $questionsresult[] = $questionresult;
             }
-            $questionresults[] = $questionsresult;
         }
-        return $questionresults;
+        return $questionsresult;
     }
     function getVoterBallot($ballotId){
         $q = new \MESBallotBox\Propel\BallotQuery();
