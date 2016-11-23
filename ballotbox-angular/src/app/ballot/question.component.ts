@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import {BallotItemService} from './ballot-item.service';
+import {BallotService} from '../core/ballot.service';
 
 @Component({
     selector: 'app-question',
@@ -9,7 +11,8 @@ export class QuestionComponent implements OnInit {
     @Input() ballotId: number;
     private questionChanges: any;
     private questionEdit:boolean = false;
-    constructor() { }
+    private countOptions:number[] = [1,2,3,4,5,6,7,8,9];
+    constructor(private ballotService: BallotService, private ballotItemService: BallotItemService) { }
     
     ngOnInit() {
         this.question.edit = false;
@@ -17,6 +20,7 @@ export class QuestionComponent implements OnInit {
   
     startEdit(){
         this.questionChanges = {
+            'ballotId' : this.ballotId,
             'name': this.question.name,
             'type': this.question.type,
             'count': this.question.count,
@@ -28,6 +32,16 @@ export class QuestionComponent implements OnInit {
         if(!this.question.isNew) this.question.isNew = false;
         else this.question.isNew = true;
         this.question.edit = true;
+    }
+    save(){
+        console.log(this.questionChanges);
+        this.ballotService.saveQuestion(this.questionChanges).subscribe(
+            question => {
+                this.ballotItemService.setBallotId(this.ballotId);
+                this.question.edit=false;
+            },
+            error => {this.questionChanges.error = error}
+        )
     }
 
 }

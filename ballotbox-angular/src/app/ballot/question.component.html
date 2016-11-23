@@ -2,7 +2,7 @@
     <div *ngIf="!question.edit">
         <h2>{{question.name}} <a (click)="startEdit()">(Edit)</a></h2>
         <strong>Type:</strong> {{question.type}}<br/>
-        <span *ngIf="question.description">{{question.description}}</span>
+        <span *ngIf="question.description">{{question.description}}</span><br/>
         <strong>Read More Link:</strong> {{question.readmore || 'None Set'}}<br/>
         <strong>Discussion Link:</strong> {{question.discussion || 'None Set'}}<br/>
         <div *ngIf="question.type=='office'">
@@ -12,7 +12,10 @@
     <div *ngIf="question.edit">
         <label>Name:</label> <input type="text" [(ngModel)]="questionChanges.name"/><br/>
         <label>Type:</label> <span *ngIf="!question.isNew">{{question.type}}</span><br/>
-        <span *ngIf="question.type=='office'"><label>Positions Open:</label> {{question.count}}</span><br/>
+        <span *ngIf="question.type=='office'"><label>Positions Open:</label> 
+        <select [(ngModel)]="questionChanges.count">
+            <option *ngFor="let count of countOptions" [value]="count">{{count}}</option>
+        </select></span><br/>
         <label>Description:</label><br/>
         <textarea rows="4" cols="30" [(ngModel)]="questionChanges.description"></textarea><br/>
         <label>Read More Link:</label> <input type="text" [(ngModel)]="questionChanges.readmore"/><br/>
