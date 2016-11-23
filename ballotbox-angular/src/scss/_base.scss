@@ -1,7 +1,7 @@
 html, body {
     background-color: $color-for-background;
     color: $basic-text-color;
-    font-family: $main-font;
+    font-family: $body-font;
     font-size: $default-font-size;
 }
 
@@ -12,7 +12,7 @@ h1, h2 {
 }
 
 h3, h4, h5 {
-    font-family: $main-font;
+    font-family: $header-font;
     font-style: normal;
 }
 
@@ -55,6 +55,7 @@ input[type="submit"],
     padding: 10px;
     border: 1px solid;
     border-radius: 3px;
+    font-family: $button-font;
 }
 
 ul {
