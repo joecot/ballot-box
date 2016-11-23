@@ -29,8 +29,7 @@ export class QuestionComponent implements OnInit {
             'discussion': this.question.discussion
         };
         if(this.question.id) this.questionChanges.id = this.question.id;
-        if(!this.question.isNew) this.question.isNew = false;
-        else this.question.isNew = true;
+ 
         this.question.edit = true;
     }
     save(){

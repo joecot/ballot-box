@@ -57,6 +57,7 @@ export class BallotService {
 		let headers = new Headers({ 'Content-Type': 'application/json' });
 	    let options = new RequestOptions({ headers: headers });
 	    let questionPost = {
+	    	'ballotId':question.ballotId,
             'name': question.name,
             'type': question.type,
             'count': question.count,
