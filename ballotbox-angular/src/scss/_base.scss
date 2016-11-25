@@ -56,10 +56,23 @@ input[type="submit"],
     padding: 10px;
     border-radius: 3px;
     font-family: $button-font;
-    font-weight: 600;
+    font-weight: 400;
+    letter-spacing: 2px;
+    font-size: 20px;
     text-transform: uppercase;
-    background-color: #aaa;
+   
+    background-color: #ad974f;
+    color: white;
     border: 0;
+    
+    &:hover {
+        background-color: #aaa;
+    }
+    
+    &.btn-secondary {
+        background-color: $gray;
+        color: #bbb;
+    }
 }
 
 ul {

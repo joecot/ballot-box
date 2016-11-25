@@ -21,7 +21,7 @@
         </div>
     </div>
     <div *ngIf="!ballot.edit">
-        <h1>{{ballot.name}}</h1> <button class="btn btn-primary" (click)="startEdit()">Edit</button>
+        <h1>{{ballot.name}}</h1> <button class="btn btn-secondary" (click)="startEdit()">Edit</button>
         <p>{{ballot.startFormatted}} - {{ballot.endFormatted}} {{ballot.timezoneNice}}</p>
     </div>
     
