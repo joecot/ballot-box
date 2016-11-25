@@ -47,6 +47,18 @@ a {
     background-position: 0 23px;
 }
 
+input {
+    background-color: transparent;
+    color: white;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    
+    &:focus {
+        outline: 0;
+    }
+}
+
 button, 
 html input[type="button"], 
 input[type="reset"], 
@@ -97,9 +109,9 @@ a:hover {
     background-position: 0 23px;
 }
 
-select, input, textarea {
-    color: $color-for-background;
-}
+// select, input, textarea {
+//     color: $color-for-background;
+// }
 
 .main-content {
     margin: 0 auto;
@@ -110,4 +122,8 @@ select, input, textarea {
 
 .error {
     color: $error-color;
+}
+
+.content {
+    padding-left: 4%;
 }
