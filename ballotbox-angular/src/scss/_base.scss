@@ -14,6 +14,7 @@ h1, h2 {
 h3, h4, h5 {
     font-family: $header-font;
     font-style: normal;
+    font-size: 22px;
 }
 
 h1 {
@@ -66,13 +67,12 @@ input[type="submit"],
 .button,
 .btn {
     padding: 10px;
-    border-radius: 3px;
+    border-radius: 0;
     font-family: $button-font;
     font-weight: 400;
     letter-spacing: 2px;
     font-size: 20px;
     text-transform: uppercase;
-   
     background-color: #ad974f;
     color: white;
     border: 0;
@@ -126,4 +126,10 @@ a:hover {
 
 .content {
     padding-left: 4%;
+}
+
+.sidebar {
+    .btn {
+        margin-bottom: 20px;
+    }
 }
