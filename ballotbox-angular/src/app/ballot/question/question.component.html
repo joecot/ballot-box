@@ -29,4 +29,7 @@
         <label>Discussion Link:</label> <input type="text" [(ngModel)]="questionChanges.discussion"/><br/>
         <button class="btn btn-primary" (click)="save()">Save</button><button class="btn btn-secondary" (click)="question.edit=false">Cancel</button>
     </div>
+    <div *ngIf="question.id && question.type=='office'">
+        <app-candidates [candidates] = "question.candidates" [ballotId]="ballotId" [questionId]="question.id"></app-candidates>
+    </div>
 </div>

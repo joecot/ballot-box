@@ -74,6 +74,24 @@ export class BallotService {
 			.catch(this.handleError);
 	}
 	
+	saveCandidate(candidate: any){
+		let headers = new Headers({ 'Content-Type': 'application/json' });
+	    let options = new RequestOptions({ headers: headers });
+	    let candidatePost = {
+	    	'ballotId':candidate.ballotId,
+	    	'questionId':candidate.questionId,
+            'membershipNumber': candidate.membershipNumber,
+            'application': candidate.application
+        }
+	    var url = '';
+	    if(candidate.id){ url = 'ballots/'+candidate.ballotId+'/question/'+candidate.questionId+'/candidate/'+candidate.id}
+	    else{ url = 'ballots/'+candidate.ballotId+'/question/'+candidate.questionId+'/candidate';}
+	    return this.http.post(this.apiUrl+url, candidatePost, options)
+	    	.map(response => response.json())
+	    	.first()
+			.catch(this.handleError);
+	}
+	
 	private handleError (error: Response | any) {
 		// In a real world app, we might use a remote logging infrastructure
 		let errMsg: string;

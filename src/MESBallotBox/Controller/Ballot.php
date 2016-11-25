@@ -285,13 +285,29 @@ class Ballot{
             $vars = $request->getParsedBody();
             $q = new \MESBallotBox\Propel\QuestionQuery();
             $question = $q->findPK($vars['questionId']);
-            
             $user = \MESBallotBox\Controller\Ballot::getUser($vars['membershipNumber']);
             if(!$user) return $response->withStatus(400)->write('User not found');
             
             $candidate = new \MESBallotBox\Propel\Candidate();
             $candidate->setQuestionId($question->getId());
             $candidate->setUserId($user->getId());
+            $candidate->setApplication($vars['application']);
+            $candidate->setVersionCreatedBy($_SESSION['user']['id']);
+            if(!$candidate->validate()){
+                return $response->withStatus(400)->write($candidate->getValidationFailures()->__toString());
+            }
+            try{
+                $candidate->save();
+            }catch(Exception $e){
+                return $response->withStatus(500)->write($e->getMessage());
+            }
+            return $response->write($candidate->toJSON());
+        });
+        $slim->post('/{ballotId}/question/{questionId}/candidate/{candidateId}', function($request, $response, $args){
+            $vars = $request->getParsedBody();
+            $q = new \MESBallotBox\Propel\CandidateQuery();
+            $candidate = $q->findPK($args['candidateId']);
+            if(!$candidate) return $response->withStatus(400)->write('Candidate not found');
             $candidate->setApplication($vars['application']);
             $candidate->setVersionCreatedBy($_SESSION['user']['id']);
             if(!$candidate->validate()){
@@ -764,10 +780,11 @@ class Ballot{
     }
     function getUser($membershipNumber){
         $q = new \MESBallotBox\Propel\UserQuery();
+        if(!$membershipNumber) return false;
         $user = $q->filterByMembershipNumber($membershipNumber)->findOne();
         if(!$user){
             $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($membershipNumber);
-            if(!$userInfo['membershipNumber']){
+            if(!$userInfo || ! is_array($userInfo) || !$userInfo['membershipNumber']){
                 return false;
             }
             $user = new \MESBallotBox\Propel\User();

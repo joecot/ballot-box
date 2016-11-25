@@ -1,0 +1,7 @@
+<div>
+Candidates:
+<div *ngFor="let candidate of candidates">
+    <app-candidate [ballotId]="ballotId" [questionId] = "questionId" [candidate]="candidate"></app-candidate>
+</div>
+<app-candidate [ballotId]="ballotId" [questionId]="questionId" [candidate] = "addCandidate"></app-candidate>
+</div>

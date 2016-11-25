@@ -1,0 +1,15 @@
+<div *ngIf="candidate" style="border:1px solid white;">
+    <div *ngIf="!candidate.edit && !candidate.id">
+        <a (click)="startEdit()">Add Candidate</a>
+    </div>
+    <div *ngIf="!candidate.edit && candidate.id">
+        <h2>{{candidate.firstName}} {{candidate.lastName}} ({{candidate.membershipNumber}}) <a (click)="startEdit()">(Edit)</a></h2>
+        <span *ngIf="candidate.application"><a [href]="candidate.application" target="_blank">Application</a></span>
+    </div>
+    <div *ngIf="candidate.edit">
+        <h2 *ngIf="candidate.id">{{candidate.firstName}} {{candidate.lastName}} ({{candidate.membershipNumber}})</h2>
+        <span *ngIf="!candidate.id"><label>Membership Number:</label> <input type="text" [(ngModel)]="candidateChanges.membershipNumber"/></span><br/>
+        <label>Applcation Link:</label> <input type="text" [(ngModel)]="candidateChanges.application"/><br/>
+        <button class="btn btn-primary" (click)="save()">Save</button><button class="btn btn-secondary" (click)="candidate.edit=false">Cancel</button>
+    </div>
+</div>

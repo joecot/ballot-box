@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {BallotItemService} from './ballot-item.service';
-import {BallotService} from '../core/ballot.service';
+import {BallotItemService} from '../ballot-item.service';
+import {BallotService} from '../../core/ballot.service';
 
 @Component({
     selector: 'app-question',
@@ -10,7 +10,6 @@ export class QuestionComponent implements OnInit {
     @Input() question: any;
     @Input() ballotId: number;
     private questionChanges: any;
-    private questionEdit:boolean = false;
     private countOptions:number[] = [1,2,3,4,5,6,7,8,9];
     constructor(private ballotService: BallotService, private ballotItemService: BallotItemService) { }
     
