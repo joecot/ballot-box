@@ -51,13 +51,15 @@ button,
 html input[type="button"], 
 input[type="reset"], 
 input[type="submit"],
-.button {
+.button,
+.btn {
     padding: 10px;
-    border: 1px solid;
     border-radius: 3px;
     font-family: $button-font;
     font-weight: 600;
     text-transform: uppercase;
+    background-color: #aaa;
+    border: 0;
 }
 
 ul {
