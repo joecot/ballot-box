@@ -1,12 +1,12 @@
 .mes-header {
-    margin-top: 100px;
-    margin-bottom: 4rem;
+    margin-top: 120px;
+    margin-bottom: 40px;
     text-align: center;
 }
 
 .navbar-text {
-    color: white;
-    
+    color: $basic-text-color;
+    font-weight: 700;
 }
 
 .navbar {
