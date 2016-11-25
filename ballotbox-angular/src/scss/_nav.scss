@@ -9,6 +9,12 @@
     font-weight: 700;
 }
 
+.nav-link {
+    a {
+        color: $basic-text-color;
+    }
+}
+
 .navbar {
     background-color: #232425;
     font-family: $header-font;

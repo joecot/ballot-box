@@ -66,6 +66,7 @@ input[type="reset"],
 input[type="submit"],
 .button,
 .btn {
+    transition: background-color .2s ease-in-out;
     padding: 10px;
     border-radius: 0;
     font-family: $button-font;
@@ -78,7 +79,7 @@ input[type="submit"],
     border: 0;
     
     &:hover {
-        background-color: #aaa;
+        background-color: $main-content-color;
     }
     
     &.btn-secondary {
