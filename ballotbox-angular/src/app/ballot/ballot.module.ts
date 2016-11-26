@@ -10,6 +10,8 @@ import { QuestionComponent } from './question/question.component';
 import { QuestionsComponent } from './question/questions.component';
 import { CandidateComponent } from './candidate/candidate.component';
 import { CandidatesComponent } from './candidate/candidates.component';
+import { VoterComponent } from './voter/voter.component';
+import { VotersComponent } from './voter/voters.component';
 
 
 @NgModule({
@@ -19,7 +21,7 @@ import { CandidatesComponent } from './candidate/candidates.component';
     TimepickerModule,
     BallotRoutingModule
   ],
-  declarations: [BallotListComponent, BallotItemComponent, BallotHomeComponent, QuestionComponent, QuestionsComponent, CandidatesComponent, CandidateComponent, CandidateComponent, CandidatesComponent],
+  declarations: [BallotListComponent, BallotItemComponent, BallotHomeComponent, QuestionComponent, QuestionsComponent, CandidatesComponent, CandidateComponent, CandidateComponent, CandidatesComponent, VoterComponent, VotersComponent],
   providers: [BallotItemService]
 })
 export class BallotModule { }

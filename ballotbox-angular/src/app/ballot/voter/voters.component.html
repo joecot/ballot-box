@@ -1,0 +1,22 @@
+<div style="border:1px solid white;">
+Voters:
+<ul *ngFor="let voter of voters">
+    <app-voter [ballotId]="ballotId" [voter] = "voter"></app-voter>
+</ul>
+    <div *ngIf="!addVoter.edit">
+        <a (click)="add()">Add Voter</a>
+    </div>
+    <div style="border:1px solid white;" *ngIf="addVoter.edit && affiliates">
+        <label>
+            Membership Number:
+            <input type="text" [(ngModel)]="addVoter.membershipNumber">
+        </label><br/>OR<br/>
+        <label>
+            Entire Affiliate: <select [(ngModel)]="addVoter.affiliateId">
+                <option value="0">None</option>
+                <option *ngFor="let affiliate of affiliates" [value]="affiliate.id">{{affiliate.name}}</option>
+            </select>
+        </label><br/>
+        <input type="button" (click)="save()" value="Add Voter" />
+    </div>
+</div>
