@@ -45,9 +45,10 @@ a {
     text-decoration: none;
     // background-image: linear-gradient(to bottom,rgba($link-color,0) 50%,rgba($link-color,.4) 50%);
     // text-shadow: 1px 1px $color-for-background, -1px -1px $color-for-background, 2px 2px $color-for-background, -2px -2px $color-for-background;
-    background-repeat: repeat-x;
-    background-size: 2px 2px;
-    background-position: 0 23px;
+    
+    &:hover {
+        color: $link-hover-color;
+    }
 }
 
 input {
@@ -56,7 +57,12 @@ input {
     border-top: 0;
     border-right: 0;
     border-left: 0;
-    
+}
+
+a,
+input,
+button,
+.btn {
     &:focus {
         outline: 0;
     }
@@ -102,16 +108,6 @@ ul li:before {
     color: rgba($basic-text-color, 0.6);
     font-size: 0.8em;
     padding-right: 0.4rem;
-}
-
-a:hover {
-    color: $link-hover-color;
-    text-decoration: none;
-    background-image: 0;
-    text-shadow: 0;
-    background-repeat: repeat-x;
-    background-size: 0;
-    background-position: 0 23px;
 }
 
 // select, input, textarea {
