@@ -1,0 +1,4 @@
+<li *ngIf="voter.id">
+    <span *ngIf="voter.userId">Member: {{voter.firstName}} {{voter.lastName}} ({{voter.membershipNumber}})</span>
+    <span *ngIf="voter.affiliateId">Affiliate: {{voter.name}}</span>
+</li>

@@ -26,5 +26,6 @@
     </div>
     
     <app-questions [ballotId]="ballot.id" [questions]="ballot.questions" *ngIf="!ballot.edit"></app-questions>
-        
+    
+    <app-voters [ballotId]="ballot.id"></app-voters>
 </div>

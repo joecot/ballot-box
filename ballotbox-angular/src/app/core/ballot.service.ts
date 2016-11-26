@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import {Http, Headers, URLSearchParams, RequestOptions, Response} from '@angular/http';
 import {Subscription} from 'rxjs/Rx';
+import {Subject} from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { Observable }     from 'rxjs/Observable';
 import 'rxjs/Rx';
@@ -13,7 +14,7 @@ export class BallotService {
 	apiUrl: string;
 	currentUser: Observable<any>;
 	ballots: Observable<any>;
-	ballotsRefresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	ballotsRefresh:BehaviorSubject<boolean> = new BehaviorSubject(false);
 	//private headers = new Headers();
 	constructor(private http: Http){
 		this.apiUrl = 'app.php/API/';
@@ -24,7 +25,7 @@ export class BallotService {
                 console.log('ballots switchmap called');
                 return this.http.get(this.apiUrl+'ballots').map(response => response.json()).first().catch(this.handleError);
             }
-        )
+        );
 	}
 	
 	getBallots(){
@@ -92,6 +93,15 @@ export class BallotService {
 			.catch(this.handleError);
 	}
 	
+	public getVoters(ballotId:number){
+		return this.http.get(this.apiUrl+'ballots/'+ballotId+'/voter').map(response => response.json()).first().catch(this.handleError);
+	}
+	
+	public getAffiliates(){
+		return this.http.get(this.apiUrl+'affiliate').map(response => response.json()).first().catch(this.handleError);
+	}
+	
+	
 	private handleError (error: Response | any) {
 		// In a real world app, we might use a remote logging infrastructure
 		let errMsg: string;
@@ -108,16 +118,5 @@ export class BallotService {
 		console.error(errMsg);
 		return Observable.throw(errMsg);
 	}
-	
-	get(pathUrl: string): Observable<any>{
-		return this.http.get(this.apiUrl+pathUrl, {
-			//headers: this.headers
-		});
-	}
-	
-	patch(pathUrl:string, body:string): Observable<any>{
-		return this.http.patch(this.apiUrl+pathUrl, body, {});
-	}
-	
 	
 }
