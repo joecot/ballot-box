@@ -9,17 +9,19 @@ h1, h2 {
     font-family: $small-caps;
     // font-family: $header-font;
     // font-style: italic;
+    letter-spacing: 0.125rem;
 }
 
 h3, h4, h5 {
     font-family: $header-font;
     font-style: normal;
     font-size: 22px;
+    letter-spacing: 2px;
 }
 
 h1 {
     font-size: 1.75rem;
-    letter-spacing: 0.125rem;
+    
 }
 
 h2 {
@@ -66,7 +68,7 @@ input[type="reset"],
 input[type="submit"],
 .button,
 .btn {
-    transition: background-color .2s ease-in-out;
+    transition: border-color .2s ease-in-out, color .2s ease-in-out;
     padding: 10px;
     border-radius: 0;
     font-family: $button-font;
@@ -74,12 +76,14 @@ input[type="submit"],
     letter-spacing: 2px;
     font-size: 20px;
     text-transform: uppercase;
-    background-color: #ad974f;
-    color: white;
-    border: 0;
+    // background-color: #ad974f;
+    color: $basic-text-color;
+    border: 1px solid $gold;
     
     &:hover {
-        background-color: $main-content-color;
+        // background-color: $main-content-color;
+        border-color: white;
+        color: $gold;
     }
     
     &.btn-secondary {
