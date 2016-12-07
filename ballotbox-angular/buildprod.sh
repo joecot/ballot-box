@@ -1,2 +1,2 @@
 #!/bin/bash
-ng build --prod
+ng build --prod --aot

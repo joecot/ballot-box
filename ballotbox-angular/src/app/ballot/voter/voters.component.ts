@@ -42,5 +42,9 @@ export class VotersComponent implements OnInit {
         }
         this.addVoter.edit=true;
     }
+    
+    save(){
+        
+    }
 
 }
