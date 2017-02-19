@@ -885,16 +885,16 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v3.2.1",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "b13f838f9ca9cf6d0de54dfe72d5d359ca2f886f"
+                "reference": "42964eb6d5898e7238cf4fca36bf5c467fd5eaed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/b13f838f9ca9cf6d0de54dfe72d5d359ca2f886f",
-                "reference": "b13f838f9ca9cf6d0de54dfe72d5d359ca2f886f",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/42964eb6d5898e7238cf4fca36bf5c467fd5eaed",
+                "reference": "42964eb6d5898e7238cf4fca36bf5c467fd5eaed",
                 "shasum": ""
             },
             "require": {
@@ -955,7 +955,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-08 16:02:17"
+            "time": "2017-02-14 16:27:43"
         },
         {
             "name": "symfony/yaml",
