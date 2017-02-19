@@ -1,11 +1,11 @@
 <?php
 $start = microtime(true);
 include('../vendor/autoload.php');
-include('../../credentials.php');
+//include('../../credentials.php');
 include('propel-config.php');
 use Propel\Runtime\Propel;
 $con = Propel::getWriteConnection('default');
-$con->useDebug(true);
+//$con->useDebug(true);
 //session_start();
 $configuration = [
     'settings' => [
@@ -32,10 +32,11 @@ $app->group('/API/', function(){
         $userRow->fromArray($user);
         $userRow->save();
     }
-    /*else{
+    else{
         $userRow = new \MESBallotBox\Propel\User();
         $userRow->fromArray($user);
-    }*/
+        $userRow->save();
+    }
     
     $user['id'] = $userRow->getId();
     $user['affiliateId'] = $userRow->getAffiliateId();
