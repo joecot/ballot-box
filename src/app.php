@@ -44,36 +44,5 @@ $app->group('/API/', function(){
     return $next($request, $response);
 });
 
-
-/*$app->get('/login', function($request,$response,$args){
-    $uri = $request->getUri();
-    $scheme = 'http';
-    if($uri->getPort() == 443) $scheme = 'https';
-    $redirectUrl = $scheme."://".$uri->getHost();
-    if(!in_array($uri->getPort(),Array(80,443))) $redirectUrl.=':'.$uri->getPort();
-    $redirectUrl.= $this->router->pathFor('oauth');
-    return \MESBallotBox\Controller\Oauth::login($request,$response,$args,$redirectUrl);
-})->setName('login');
-
-$app->get('/oauth', function($request,$response,$args){
-    try{
-        $uri = $request->getUri();
-    $scheme = 'http';
-    if($uri->getPort() == 443) $scheme = 'https';
-    $redirectUrl = $scheme."://".$uri->getHost();
-    if(!in_array($uri->getPort(),Array(80,443))) $redirectUrl.=':'.$uri->getPort();
-    $redirectUrl.= $this->router->pathFor('oauth');
-    return \MESBallotBox\Controller\Oauth::token($request,$response,$args,$redirectUrl);
-    }
-    catch(Exception $e){
-        echo $e->getMessage();
-    }
-    
-
-})->setName('oauth');
-
-$app->get('/template/{name:[a-zA-Z0-9]+\.html}', function ($request, $response, $args) {
-    return $this->view->render($response, 'angular/'.$args['name'], []);
-});*/
 $app->run();
 $end = microtime(true);
