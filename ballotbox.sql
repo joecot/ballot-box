@@ -293,7 +293,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES (1,'US2010086415','Joe','Terranova','joeterranova@gmail.com',1);
+INSERT INTO `User` VALUES (1,'US2010086415','Joseph','Terranova','joeterranova@gmail.com',1);
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -511,4 +511,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-19 13:30:02
+-- Dump completed on 2017-02-02 22:00:06

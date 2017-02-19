@@ -10,8 +10,8 @@ class Ballot{
             $ballot->setTimezone($vars['timezone']);
             $ballot->setStartTime($vars['start']);
             $ballot->setEndTime($vars['end']);
-            $ballot->setUserId($_SESSION['user']['id']);
-            $ballot->setVersionCreatedBy($_SESSION['user']['id']);
+            $ballot->setUserId($_ENV['ballot_user']['user']['id']);
+            $ballot->setVersionCreatedBy($_ENV['ballot_user']['id']);
             if(!$ballot->validate()){
                 return $response->withStatus(400)->write($ballot->getValidationFailures()->__toString());
             }
@@ -24,7 +24,7 @@ class Ballot{
         });
         $slim->get('', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\BallotQuery();
-            $ballots = $q->filterByUserId($_SESSION['user']['id'])->find();
+            $ballots = $q->filterByUserId($_ENV['ballot_user']['id'])->find();
             $results = Array();
             foreach($ballots as $ballot){
                 $result = Array();
@@ -43,8 +43,8 @@ class Ballot{
             $time = time();
             $ballots = $q::create()
                         ->join('Ballot.Voter')
-                        ->condition('byUser', 'Voter.userId = ?', $_SESSION['user']['id'])
-                        ->condition('byAffiliate', 'Voter.affiliateId = ?', $_SESSION['user']['affiliateId'])
+                        ->condition('byUser', 'Voter.userId = ?', $_ENV['ballot_user']['id'])
+                        ->condition('byAffiliate', 'Voter.affiliateId = ?', $_ENV['ballot_user']['affiliateId'])
                         ->where(Array('byUser', 'byAffiliate'), 'or')
                         ->where('Ballot.startTime < ?', $time)
                         ->where('Ballot.endTime > ?', $time)
@@ -90,7 +90,7 @@ class Ballot{
             $result['timezoneNice'] = $ballot->getTimezoneNice();
             $result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);
             
-            $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($ballot->getId())->filterbyUserId($_SESSION['user']['id'])->findOne();
+            $vote = \MESBallotBox\Propel\VoteQuery::create()->filterByBallotId($ballot->getId())->filterbyUserId($_ENV['ballot_user']['id'])->findOne();
             if($vote) $result['voteId'] = $vote->getId();
             else{
                 $invalid_message = \MESBallotBox\Controller\Ballot::checkInvalidVoter($ballot);
@@ -106,7 +106,7 @@ class Ballot{
             $ballot->setTimezone($vars['timezone']);
             $ballot->setStartTime($vars['start']);
             $ballot->setEndTime($vars['end']);
-            $ballot->setVersionCreatedBy($_SESSION['user']['id']);
+            $ballot->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$ballot->validate()){
                 return $response->withStatus(400)->write($ballot->getValidationFailures()->__toString());
             }
@@ -151,7 +151,7 @@ class Ballot{
                 return $response->withStatus(400)->write('Either affiliate or member is required');
             }
             
-            $voter->setVersionCreatedBy($_SESSION['user']['id']);
+            $voter->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$voter->validate()){
                 return $response->withStatus(400)->write($voter->getValidationFailures()->__toString());
             }
@@ -186,7 +186,7 @@ class Ballot{
 
             $question = new \MESBallotBox\Propel\Question();
             $question->fromArray($vars);
-            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            $question->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->orderByorderId('desc')->findOne();
             if(!$max_question) $question->setOrderId(1);
             else $question->setOrderId($max_question->getOrderId()+1);
@@ -212,7 +212,7 @@ class Ballot{
                     return $response->withStatus(400)->write('Question not found.');
                 }
                 $question->setOrderId($var_question['orderId']);
-                $question->setVersionCreatedBy($_SESSION['user']['id']);
+                $question->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
                 try{
                     $question->save();
                 }catch(Exception $e){
@@ -233,7 +233,7 @@ class Ballot{
             $vars = $request->getParsedBody();
             
             $question->fromArray($vars);
-            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            $question->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$question->validate()){
                 return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
             }
@@ -250,7 +250,7 @@ class Ballot{
             
             $question->SetIsDeleted(1);
             $question->SetOrderId(1000);
-            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            $question->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$question->validate()){
                 return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
             }
@@ -269,7 +269,7 @@ class Ballot{
             $max_question = \MESBallotBox\Propel\QuestionQuery::create()->filterByBallotId($question->getBallotId())->filterByIsDeleted(0)->orderByorderId('desc')->findOne();
             if(!$max_question) $question->setOrderId(1);
             else $question->setOrderId($max_question->getOrderId()+1);
-            $question->setVersionCreatedBy($_SESSION['user']['id']);
+            $question->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             
             if(!$question->validate()){
                 return $response->withStatus(400)->write($question->getValidationFailures()->__toString());
@@ -292,7 +292,7 @@ class Ballot{
             $candidate->setQuestionId($question->getId());
             $candidate->setUserId($user->getId());
             $candidate->setApplication($vars['application']);
-            $candidate->setVersionCreatedBy($_SESSION['user']['id']);
+            $candidate->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$candidate->validate()){
                 return $response->withStatus(400)->write($candidate->getValidationFailures()->__toString());
             }
@@ -309,7 +309,7 @@ class Ballot{
             $candidate = $q->findPK($args['candidateId']);
             if(!$candidate) return $response->withStatus(400)->write('Candidate not found');
             $candidate->setApplication($vars['application']);
-            $candidate->setVersionCreatedBy($_SESSION['user']['id']);
+            $candidate->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$candidate->validate()){
                 return $response->withStatus(400)->write($candidate->getValidationFailures()->__toString());
             }
@@ -341,8 +341,8 @@ class Ballot{
             }
             $vote = new \MESBallotBox\Propel\Vote();
             $vote->setBallotId($ballot->getId());
-            $vote->setUserId($_SESSION['user']['id']);
-            $vote->setVersionCreatedBy($_SESSION['user']['id']);
+            $vote->setUserId($_ENV['ballot_user']['user']['id']);
+            $vote->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             if(!$vote->validate()){
                 return $response->withStatus(400)->write($vote->getValidationFailures()->__toString());
             }
@@ -453,8 +453,8 @@ class Ballot{
             if(!$vote){
                 return $response->withStatus(400)->write('Vote not found.');
             }
-            if($vote->getUserId() != $_SESSION['user']['id']){
-                if($ballot->getUserId() != $_SESSION['user']['id']){
+            if($vote->getUserId() != $_ENV['ballot_user']['user']['id']){
+                if($ballot->getUserId() != $_ENV['ballot_user']['user']['id']){
                     return $response->withStatus(400)->write('Vote not accessible.');
                 }
             }
@@ -471,13 +471,13 @@ class Ballot{
             if(!$vote){
                 return $response->withStatus(400)->write('Vote not found.');
             }
-            if($vote->getUserId() != $_SESSION['user']['id']){
-                if($ballot->getUserId() != $_SESSION['user']['id']){
+            if($vote->getUserId() != $_ENV['ballot_user']['user']['id']){
+                if($ballot->getUserId() != $_ENV['ballot_user']['user']['id']){
                     return $response->withStatus(400)->write('Vote not accessible.');
                 }
             }
             
-            $vote->setVersionCreatedBy($_SESSION['user']['id']);
+            $vote->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
             $vote->setUpdatedAt(time());
             if(!$vars['voteItem']){
                 return $response->withStatus(400)->write('Vote answers required');
@@ -503,7 +503,7 @@ class Ballot{
                     if(!$voteItem->validate()){
                         return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
                     }
-                    $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                    $voteItem->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
                     $voteItems[] = $voteItem;
                 }
                 elseif($question->getType() == 'office'){
@@ -537,7 +537,7 @@ class Ballot{
                             $voteItem->setCandidateId($rankItem);
                         }
                         $voteItem->setAnswer($i);
-                        $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                        $voteItem->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
                         if(!$voteItem->validate()){
                             return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
                         }
@@ -555,7 +555,7 @@ class Ballot{
                                 $voteItem->setCandidateId(0);
                             }
                             $voteItem->setAnswer($i);
-                            $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                            $voteItem->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
                             $voteItem = new \MESBallotBox\Propel\VoteItem();
                             if(!$voteItem->validate()){
                                 return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
@@ -571,7 +571,7 @@ class Ballot{
                                 $voteItem->setCandidateId($rankItem);
                             }
                             $voteItem->setAnswer($i);
-                            $voteItem->setVersionCreatedBy($_SESSION['user']['id']);
+                            $voteItem->setVersionCreatedBy($_ENV['ballot_user']['user']['id']);
                             $voteItem = new \MESBallotBox\Propel\VoteItem();
                             if(!$voteItem->validate()){
                                 return $response->withStatus(400)->write($voteItem->getValidationFailures()->__toString());
@@ -602,7 +602,7 @@ class Ballot{
             if(!$ballot){
                 return $response->withStatus(400)->write('Ballot not found.');
             }
-            if($ballot->getUserId() != $_SESSION['user']['id']){
+            if($ballot->getUserId() != $_ENV['ballot_user']['user']['id']){
                 return $response->withStatus(400)->write('Ballot results forbidden.');
             }
 
@@ -820,8 +820,8 @@ class Ballot{
 
         $ballot = $q::create()
             ->join('Ballot.Voter')
-            ->condition('byUser', 'Voter.userId = ?', $_SESSION['user']['id'])
-            ->condition('byAffiliate', 'Voter.affiliateId = ?', $_SESSION['user']['affiliateId'])
+            ->condition('byUser', 'Voter.userId = ?', $_ENV['ballot_user']['user']['id'])
+            ->condition('byAffiliate', 'Voter.affiliateId = ?', $_ENV['ballot_user']['user']['affiliateId'])
             ->where(Array('byUser', 'byAffiliate'), 'or')
             ->where('Ballot.startTime < ?', $time)
             ->where('Ballot.endTime > ?', $time)
@@ -875,15 +875,15 @@ class Ballot{
     }
     
     function checkInvalidVoter($ballot){
-        $expire_time = strtotime($_SESSION['user']['membershipExpiration']);
+        $expire_time = strtotime($_ENV['ballot_user']['user']['membershipExpiration']);
         if($expire_time < time()){
             return "Cannot vote while membership is expired.";
         }
         if($expire_time < $ballot->getEndTime()){
             return "You will be expired before the vote has closed, and therefore cannot vote.";
         }
-        if($_SESSION['user']['membershipType'] != 'Full'){
-            return "You are a ".$_SESSION['user']['membershipType']." member. Only full members can vote";
+        if($_ENV['ballot_user']['user']['membershipType'] != 'Full'){
+            return "You are a ".$_ENV['ballot_user']['user']['membershipType']." member. Only full members can vote";
         }
         return false;
     }

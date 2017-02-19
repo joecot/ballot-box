@@ -15,6 +15,7 @@ export class VotersComponent implements OnInit {
     addVoter:any;
     constructor(private ballotService: BallotService, private ballotItemService: BallotItemService) {
         this.addVoter ={
+            'ballotId' : this.ballotId,
             'affiliateId': 0,
             'membershipNumber': '',
             'edit':false
@@ -44,7 +45,19 @@ export class VotersComponent implements OnInit {
     }
     
     save(){
-        
+        console.log(this.addVoter);
+        this.ballotService.addVoter(this.addVoter).subscribe(
+            result => {
+                this.addVoter = {
+                    'ballotId' : this.ballotId,
+                    'affiliateId': 0,
+                    'membershipNumber': '',
+                    'edit':false
+                };
+                this.ballotItemService.setBallotId(this.ballotId);
+            },
+            error => {this.addVoter.error = error}
+        )
     }
 
 }

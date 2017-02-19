@@ -6,51 +6,45 @@ include('propel-config.php');
 use Propel\Runtime\Propel;
 $con = Propel::getWriteConnection('default');
 $con->useDebug(true);
-session_start();
+//session_start();
 $configuration = [
     'settings' => [
         'displayErrorDetails' => false,
     ],
 ];
 $container = new \Slim\Container($configuration);
-// Register component on container
-/*$container['view'] = function ($c) {
-    $view = new \Slim\Views\Twig('../templates', [
-        'cache' => '../cache',
-        'auto_reload' => false,
-    ]);
-    $view->addExtension(new \Slim\Views\TwigExtension(
-        $c['router'],
-        $c['request']->getUri()
-    ));
-
-    return $view;
-};*/
 
 $app = new \Slim\App($container);
 unset($app->getContainer()['errorHandler']);
 
-$app->get('/', function ($request, $response) {
-    return file_get_contents('../web/index.html');
-})->setName('index');
-$app->get('/logout', function($request, $response){
-    unset($_SESSION['user']);
-    return $response->withStatus(301)->withHeader("Location", 'https://portal.mindseyesociety.org/');
-});
-$app->get('/session', function($request, $response){
-    print_r($_SESSION);
-});
 $app->group('/API/', function(){
     \MESBallotBox\Controller\API::route($this);
 })->add(function ($request, $response, $next) {
-   if(empty($_SESSION['user'])){
+   /*if(empty($_SESSION['user'])){
         return $response->withStatus(401)->write('Login required');
+    }*/
+    $user = json_decode($_SERVER['HTTP_AUTH_USER_DATA'],true);
+    $user['remoteId'] = $user['id'];
+    unset($user['id']);
+    $userselect = \MESBallotBox\Propel\UserQuery::create();
+    $userRow = $userselect->findOneByMembershipNumber($user['membershipNumber']);
+    if($userRow){
+        $userRow->fromArray($user);
+        $userRow->save();
     }
+    /*else{
+        $userRow = new \MESBallotBox\Propel\User();
+        $userRow->fromArray($user);
+    }*/
+    
+    $user['id'] = $userRow->getId();
+    $user['affiliateId'] = $userRow->getAffiliateId();
+    $_ENV['ballot_user'] = $user;
     return $next($request, $response);
 });
 
 
-$app->get('/login', function($request,$response,$args){
+/*$app->get('/login', function($request,$response,$args){
     $uri = $request->getUri();
     $scheme = 'http';
     if($uri->getPort() == 443) $scheme = 'https';
@@ -77,7 +71,7 @@ $app->get('/oauth', function($request,$response,$args){
 
 })->setName('oauth');
 
-/*$app->get('/template/{name:[a-zA-Z0-9]+\.html}', function ($request, $response, $args) {
+$app->get('/template/{name:[a-zA-Z0-9]+\.html}', function ($request, $response, $args) {
     return $this->view->render($response, 'angular/'.$args['name'], []);
 });*/
 $app->run();

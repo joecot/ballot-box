@@ -4,7 +4,7 @@ class API{
     function route($slim){
         $slim->group('users/', function(){
             $this->get('current', function ($request, $response) {
-                echo json_encode($_SESSION['user']);
+                echo json_encode($_ENV['ballot_user']);
             });
             $this->get('{membershipNumber}', function ($request, $response,$args) {
                 $q = new \MESBallotBox\Propel\UserQuery();
