@@ -25,14 +25,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByfirstName($order = Criteria::ASC) Order by the first_name column
  * @method     ChildUserQuery orderBylastName($order = Criteria::ASC) Order by the last_name column
  * @method     ChildUserQuery orderByemailAddress($order = Criteria::ASC) Order by the email_address column
- * @method     ChildUserQuery orderByaffiliateId($order = Criteria::ASC) Order by the affiliate_id column
  *
  * @method     ChildUserQuery groupByid() Group by the id column
  * @method     ChildUserQuery groupBymembershipNumber() Group by the membership_number column
  * @method     ChildUserQuery groupByfirstName() Group by the first_name column
  * @method     ChildUserQuery groupBylastName() Group by the last_name column
  * @method     ChildUserQuery groupByemailAddress() Group by the email_address column
- * @method     ChildUserQuery groupByaffiliateId() Group by the affiliate_id column
  *
  * @method     ChildUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -81,8 +79,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneBymembershipNumber(string $membership_number) Return the first ChildUser filtered by the membership_number column
  * @method     ChildUser findOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column
  * @method     ChildUser findOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column
- * @method     ChildUser findOneByemailAddress(string $email_address) Return the first ChildUser filtered by the email_address column
- * @method     ChildUser findOneByaffiliateId(int $affiliate_id) Return the first ChildUser filtered by the affiliate_id column *
+ * @method     ChildUser findOneByemailAddress(string $email_address) Return the first ChildUser filtered by the email_address column *
 
  * @method     ChildUser requirePk($key, ConnectionInterface $con = null) Return the ChildUser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOne(ConnectionInterface $con = null) Return the first ChildUser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -92,7 +89,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByfirstName(string $first_name) Return the first ChildUser filtered by the first_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneBylastName(string $last_name) Return the first ChildUser filtered by the last_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByemailAddress(string $email_address) Return the first ChildUser filtered by the email_address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByaffiliateId(int $affiliate_id) Return the first ChildUser filtered by the affiliate_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUser objects based on current ModelCriteria
  * @method     ChildUser[]|ObjectCollection findByid(int $id) Return ChildUser objects filtered by the id column
@@ -100,7 +96,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByfirstName(string $first_name) Return ChildUser objects filtered by the first_name column
  * @method     ChildUser[]|ObjectCollection findBylastName(string $last_name) Return ChildUser objects filtered by the last_name column
  * @method     ChildUser[]|ObjectCollection findByemailAddress(string $email_address) Return ChildUser objects filtered by the email_address column
- * @method     ChildUser[]|ObjectCollection findByaffiliateId(int $affiliate_id) Return ChildUser objects filtered by the affiliate_id column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -199,7 +194,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, membership_number, first_name, last_name, email_address, affiliate_id FROM User WHERE id = :p0';
+        $sql = 'SELECT id, membership_number, first_name, last_name, email_address FROM User WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -336,11 +331,10 @@ abstract class UserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterBymembershipNumber('fooValue');   // WHERE membership_number = 'fooValue'
-     * $query->filterBymembershipNumber('%fooValue%'); // WHERE membership_number LIKE '%fooValue%'
+     * $query->filterBymembershipNumber('%fooValue%', Criteria::LIKE); // WHERE membership_number LIKE '%fooValue%'
      * </code>
      *
      * @param     string $membershipNumber The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
@@ -350,9 +344,6 @@ abstract class UserQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($membershipNumber)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $membershipNumber)) {
-                $membershipNumber = str_replace('*', '%', $membershipNumber);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -365,11 +356,10 @@ abstract class UserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByfirstName('fooValue');   // WHERE first_name = 'fooValue'
-     * $query->filterByfirstName('%fooValue%'); // WHERE first_name LIKE '%fooValue%'
+     * $query->filterByfirstName('%fooValue%', Criteria::LIKE); // WHERE first_name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $firstName The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
@@ -379,9 +369,6 @@ abstract class UserQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($firstName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $firstName)) {
-                $firstName = str_replace('*', '%', $firstName);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -394,11 +381,10 @@ abstract class UserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterBylastName('fooValue');   // WHERE last_name = 'fooValue'
-     * $query->filterBylastName('%fooValue%'); // WHERE last_name LIKE '%fooValue%'
+     * $query->filterBylastName('%fooValue%', Criteria::LIKE); // WHERE last_name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $lastName The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
@@ -408,9 +394,6 @@ abstract class UserQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($lastName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $lastName)) {
-                $lastName = str_replace('*', '%', $lastName);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -423,11 +406,10 @@ abstract class UserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByemailAddress('fooValue');   // WHERE email_address = 'fooValue'
-     * $query->filterByemailAddress('%fooValue%'); // WHERE email_address LIKE '%fooValue%'
+     * $query->filterByemailAddress('%fooValue%', Criteria::LIKE); // WHERE email_address LIKE '%fooValue%'
      * </code>
      *
      * @param     string $emailAddress The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
@@ -437,54 +419,10 @@ abstract class UserQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($emailAddress)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $emailAddress)) {
-                $emailAddress = str_replace('*', '%', $emailAddress);
-                $comparison = Criteria::LIKE;
             }
         }
 
         return $this->addUsingAlias(UserTableMap::COL_EMAIL_ADDRESS, $emailAddress, $comparison);
-    }
-
-    /**
-     * Filter the query on the affiliate_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByaffiliateId(1234); // WHERE affiliate_id = 1234
-     * $query->filterByaffiliateId(array(12, 34)); // WHERE affiliate_id IN (12, 34)
-     * $query->filterByaffiliateId(array('min' => 12)); // WHERE affiliate_id > 12
-     * </code>
-     *
-     * @param     mixed $affiliateId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByaffiliateId($affiliateId = null, $comparison = null)
-    {
-        if (is_array($affiliateId)) {
-            $useMinMax = false;
-            if (isset($affiliateId['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($affiliateId['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(UserTableMap::COL_AFFILIATE_ID, $affiliateId, $comparison);
     }
 
     /**

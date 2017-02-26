@@ -38,6 +38,10 @@ class Ballot{
             
             return $response->write(json_encode($results));
         });
+        $slim->get('/user/{membershipNumber}', function($request, $response, $args){
+            $user = \MESBallotBox\Controller\Ballot::getUser($args['membershipNumber']);
+            $response->write(json_encode($user));
+        });
         $slim->get('/available', function($request, $response, $args){
             $q = new \MESBallotBox\Propel\BallotQuery();
             $time = time();
@@ -136,7 +140,14 @@ class Ballot{
                 return $response->withStatus(400)->write('Fill in EITHER Membership Number OR Affiliate');
             }
             if($vars['membershipNumber']){
-                $user = \MESBallotBox\Controller\Ballot::getUser($vars['membershipNumber']);
+                try{
+                    $user = \MESBallotBox\Controller\Ballot::getUser($vars['membershipNumber']);
+                }catch(\Exception $e){
+                    return $response->withStatus(500)->write($e->getMessage());
+                }
+                /*if(!is_array($user) && is_object($user) && method_exists('toArray',$user)) $userReturn = $user->toArray();
+                else $userReturn = $user;
+                return $response->write(json_encode($userReturn));*/
                 if(!$user) return $response->withStatus(400)->write('User not found');
                 $existingVoter = $q->filterByBallotId($vars['ballotId'])->filterByUserId($user->getId())->findOne();
                 if($existingVoter) return $response->withStatus(400)->write('Already Added');
@@ -783,7 +794,10 @@ class Ballot{
         if(!$membershipNumber) return false;
         $user = $q->filterByMembershipNumber($membershipNumber)->findOne();
         if(!$user){
-            $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($membershipNumber);
+            
+            /*$userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($membershipNumber);*/
+            //$userInfo = \MESBallotBox\Controller\Hub::getOrgUnits($membershipNumber);
+            $userInfo = \MESBallotBox\Controller\Hub::getUser($membershipNumber);
             if(!$userInfo || ! is_array($userInfo) || !$userInfo['membershipNumber']){
                 return false;
             }

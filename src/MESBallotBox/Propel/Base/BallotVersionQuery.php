@@ -426,11 +426,10 @@ abstract class BallotVersionQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByname('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByname('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByname('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildBallotVersionQuery The current query, for fluid interface
@@ -440,9 +439,6 @@ abstract class BallotVersionQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
             }
         }
 

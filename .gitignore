@@ -5,4 +5,5 @@
 /generated-sql
 /node_modules
 /.codenvy.json
+/.sass-cache
 /web

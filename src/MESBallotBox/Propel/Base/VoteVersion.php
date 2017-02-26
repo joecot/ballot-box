@@ -27,8 +27,8 @@ use Propel\Runtime\Util\PropelDateTime;
  *
  *
  *
-* @package    propel.generator.MESBallotBox.Propel.Base
-*/
+ * @package    propel.generator.MESBallotBox.Propel.Base
+ */
 abstract class VoteVersion implements ActiveRecordInterface
 {
     /**
@@ -540,7 +540,7 @@ abstract class VoteVersion implements ActiveRecordInterface
         }
         if (!$this->vote_item_ids_unserialized && null !== $this->vote_item_ids) {
             $vote_item_ids_unserialized = substr($this->vote_item_ids, 2, -2);
-            $this->vote_item_ids_unserialized = $vote_item_ids_unserialized ? explode(' | ', $vote_item_ids_unserialized) : array();
+            $this->vote_item_ids_unserialized = '' !== $vote_item_ids_unserialized ? explode(' | ', $vote_item_ids_unserialized) : array();
         }
 
         return $this->vote_item_ids_unserialized;
@@ -569,7 +569,7 @@ abstract class VoteVersion implements ActiveRecordInterface
         }
         if (!$this->vote_item_versions_unserialized && null !== $this->vote_item_versions) {
             $vote_item_versions_unserialized = substr($this->vote_item_versions, 2, -2);
-            $this->vote_item_versions_unserialized = $vote_item_versions_unserialized ? explode(' | ', $vote_item_versions_unserialized) : array();
+            $this->vote_item_versions_unserialized = '' !== $vote_item_versions_unserialized ? explode(' | ', $vote_item_versions_unserialized) : array();
         }
 
         return $this->vote_item_versions_unserialized;
@@ -661,7 +661,7 @@ abstract class VoteVersion implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
                 $this->created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteVersionTableMap::COL_CREATED_AT] = true;
             }
@@ -681,7 +681,7 @@ abstract class VoteVersion implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
                 $this->updated_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteVersionTableMap::COL_UPDATED_AT] = true;
             }
@@ -721,7 +721,7 @@ abstract class VoteVersion implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->version_created_at !== null || $dt !== null) {
-            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->version_created_at->format("Y-m-d H:i:s")) {
+            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->version_created_at->format("Y-m-d H:i:s.u")) {
                 $this->version_created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteVersionTableMap::COL_VERSION_CREATED_AT] = true;
             }
@@ -1085,6 +1085,10 @@ abstract class VoteVersion implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(VoteVersionTableMap::DATABASE_NAME);
         }
@@ -1230,16 +1234,16 @@ abstract class VoteVersion implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
                     case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'version':
                         $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
                         break;
                     case 'version_created_at':
-                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'version_created_by':
                         $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);

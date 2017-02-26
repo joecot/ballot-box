@@ -597,11 +597,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterByname('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByname('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByname('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionQuery The current query, for fluid interface
@@ -611,9 +610,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -626,11 +622,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterBydescription('fooValue');   // WHERE description = 'fooValue'
-     * $query->filterBydescription('%fooValue%'); // WHERE description LIKE '%fooValue%'
+     * $query->filterBydescription('%fooValue%', Criteria::LIKE); // WHERE description LIKE '%fooValue%'
      * </code>
      *
      * @param     string $description The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionQuery The current query, for fluid interface
@@ -640,9 +635,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($description)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $description)) {
-                $description = str_replace('*', '%', $description);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -655,11 +647,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterByreadmore('fooValue');   // WHERE readmore = 'fooValue'
-     * $query->filterByreadmore('%fooValue%'); // WHERE readmore LIKE '%fooValue%'
+     * $query->filterByreadmore('%fooValue%', Criteria::LIKE); // WHERE readmore LIKE '%fooValue%'
      * </code>
      *
      * @param     string $readmore The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionQuery The current query, for fluid interface
@@ -669,9 +660,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($readmore)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $readmore)) {
-                $readmore = str_replace('*', '%', $readmore);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -684,11 +672,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterBydiscussion('fooValue');   // WHERE discussion = 'fooValue'
-     * $query->filterBydiscussion('%fooValue%'); // WHERE discussion LIKE '%fooValue%'
+     * $query->filterBydiscussion('%fooValue%', Criteria::LIKE); // WHERE discussion LIKE '%fooValue%'
      * </code>
      *
      * @param     string $discussion The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionQuery The current query, for fluid interface
@@ -698,9 +685,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($discussion)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $discussion)) {
-                $discussion = str_replace('*', '%', $discussion);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -883,11 +867,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterByVersionCreatedBy('fooValue');   // WHERE version_created_by = 'fooValue'
-     * $query->filterByVersionCreatedBy('%fooValue%'); // WHERE version_created_by LIKE '%fooValue%'
+     * $query->filterByVersionCreatedBy('%fooValue%', Criteria::LIKE); // WHERE version_created_by LIKE '%fooValue%'
      * </code>
      *
      * @param     string $versionCreatedBy The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionQuery The current query, for fluid interface
@@ -897,9 +880,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($versionCreatedBy)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $versionCreatedBy)) {
-                $versionCreatedBy = str_replace('*', '%', $versionCreatedBy);
-                $comparison = Criteria::LIKE;
             }
         }
 

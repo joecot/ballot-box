@@ -34,8 +34,8 @@ use Propel\Runtime\Parser\AbstractParser;
  *
  *
  *
-* @package    propel.generator.MESBallotBox.Propel.Base
-*/
+ * @package    propel.generator.MESBallotBox.Propel.Base
+ */
 abstract class User implements ActiveRecordInterface
 {
     /**
@@ -104,13 +104,6 @@ abstract class User implements ActiveRecordInterface
      * @var        string
      */
     protected $email_address;
-
-    /**
-     * The value for the affiliate_id field.
-     *
-     * @var        int
-     */
-    protected $affiliate_id;
 
     /**
      * @var        ObjectCollection|ChildVoter[] Collection to store aggregation of ChildVoter objects.
@@ -432,16 +425,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [affiliate_id] column value.
-     *
-     * @return int
-     */
-    public function getaffiliateId()
-    {
-        return $this->affiliate_id;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -542,26 +525,6 @@ abstract class User implements ActiveRecordInterface
     } // setemailAddress()
 
     /**
-     * Set the value of [affiliate_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\MESBallotBox\Propel\User The current object (for fluent API support)
-     */
-    public function setaffiliateId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->affiliate_id !== $v) {
-            $this->affiliate_id = $v;
-            $this->modifiedColumns[UserTableMap::COL_AFFILIATE_ID] = true;
-        }
-
-        return $this;
-    } // setaffiliateId()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -611,9 +574,6 @@ abstract class User implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('emailAddress', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email_address = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('affiliateId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->affiliate_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -622,7 +582,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\MESBallotBox\\Propel\\User'), 0, $e);
@@ -740,6 +700,10 @@ abstract class User implements ActiveRecordInterface
     {
         if ($this->isDeleted()) {
             throw new PropelException("You cannot save an object that has been deleted.");
+        }
+
+        if ($this->alreadyInSave) {
+            return 0;
         }
 
         if ($con === null) {
@@ -892,9 +856,6 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_ADDRESS)) {
             $modifiedColumns[':p' . $index++]  = 'email_address';
         }
-        if ($this->isColumnModified(UserTableMap::COL_AFFILIATE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'affiliate_id';
-        }
 
         $sql = sprintf(
             'INSERT INTO User (%s) VALUES (%s)',
@@ -920,9 +881,6 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case 'email_address':
                         $stmt->bindValue($identifier, $this->email_address, PDO::PARAM_STR);
-                        break;
-                    case 'affiliate_id':
-                        $stmt->bindValue($identifier, $this->affiliate_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1001,9 +959,6 @@ abstract class User implements ActiveRecordInterface
             case 4:
                 return $this->getemailAddress();
                 break;
-            case 5:
-                return $this->getaffiliateId();
-                break;
             default:
                 return null;
                 break;
@@ -1039,7 +994,6 @@ abstract class User implements ActiveRecordInterface
             $keys[2] => $this->getfirstName(),
             $keys[3] => $this->getlastName(),
             $keys[4] => $this->getemailAddress(),
-            $keys[5] => $this->getaffiliateId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1141,9 +1095,6 @@ abstract class User implements ActiveRecordInterface
             case 4:
                 $this->setemailAddress($value);
                 break;
-            case 5:
-                $this->setaffiliateId($value);
-                break;
         } // switch()
 
         return $this;
@@ -1184,9 +1135,6 @@ abstract class User implements ActiveRecordInterface
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setemailAddress($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setaffiliateId($arr[$keys[5]]);
         }
     }
 
@@ -1243,9 +1191,6 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_EMAIL_ADDRESS)) {
             $criteria->add(UserTableMap::COL_EMAIL_ADDRESS, $this->email_address);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_AFFILIATE_ID)) {
-            $criteria->add(UserTableMap::COL_AFFILIATE_ID, $this->affiliate_id);
         }
 
         return $criteria;
@@ -1337,7 +1282,6 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setfirstName($this->getfirstName());
         $copyObj->setlastName($this->getlastName());
         $copyObj->setemailAddress($this->getemailAddress());
-        $copyObj->setaffiliateId($this->getaffiliateId());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2201,7 +2145,6 @@ abstract class User implements ActiveRecordInterface
         $this->first_name = null;
         $this->last_name = null;
         $this->email_address = null;
-        $this->affiliate_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

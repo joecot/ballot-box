@@ -500,11 +500,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterByapplication('fooValue');   // WHERE application = 'fooValue'
-     * $query->filterByapplication('%fooValue%'); // WHERE application LIKE '%fooValue%'
+     * $query->filterByapplication('%fooValue%', Criteria::LIKE); // WHERE application LIKE '%fooValue%'
      * </code>
      *
      * @param     string $application The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildCandidateQuery The current query, for fluid interface
@@ -514,9 +513,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($application)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $application)) {
-                $application = str_replace('*', '%', $application);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -699,11 +695,10 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      * Example usage:
      * <code>
      * $query->filterByVersionCreatedBy('fooValue');   // WHERE version_created_by = 'fooValue'
-     * $query->filterByVersionCreatedBy('%fooValue%'); // WHERE version_created_by LIKE '%fooValue%'
+     * $query->filterByVersionCreatedBy('%fooValue%', Criteria::LIKE); // WHERE version_created_by LIKE '%fooValue%'
      * </code>
      *
      * @param     string $versionCreatedBy The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildCandidateQuery The current query, for fluid interface
@@ -713,9 +708,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         if (null === $comparison) {
             if (is_array($versionCreatedBy)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $versionCreatedBy)) {
-                $versionCreatedBy = str_replace('*', '%', $versionCreatedBy);
-                $comparison = Criteria::LIKE;
             }
         }
 

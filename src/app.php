@@ -39,8 +39,10 @@ $app->group('/API/', function(){
     }
     
     $user['id'] = $userRow->getId();
-    $user['affiliateId'] = $userRow->getAffiliateId();
     $_ENV['ballot_user'] = $user;
+    $response = $response->withAddedHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token')
+                        ->withAddedHeader('Access-Control-Allow-Methods', 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT')
+                        ->withAddedHeader('Access-Control-Allow-Origin', '*');
     return $next($request, $response);
 });
 

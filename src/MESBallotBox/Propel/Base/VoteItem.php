@@ -49,8 +49,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  *
  *
-* @package    propel.generator.MESBallotBox.Propel.Base
-*/
+ * @package    propel.generator.MESBallotBox.Propel.Base
+ */
 abstract class VoteItem implements ActiveRecordInterface
 {
     /**
@@ -707,7 +707,7 @@ abstract class VoteItem implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
                 $this->created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteItemTableMap::COL_CREATED_AT] = true;
             }
@@ -727,7 +727,7 @@ abstract class VoteItem implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
                 $this->updated_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteItemTableMap::COL_UPDATED_AT] = true;
             }
@@ -767,7 +767,7 @@ abstract class VoteItem implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->version_created_at !== null || $dt !== null) {
-            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->version_created_at->format("Y-m-d H:i:s")) {
+            if ($this->version_created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->version_created_at->format("Y-m-d H:i:s.u")) {
                 $this->version_created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[VoteItemTableMap::COL_VERSION_CREATED_AT] = true;
             }
@@ -1010,6 +1010,10 @@ abstract class VoteItem implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(VoteItemTableMap::DATABASE_NAME);
         }
@@ -1030,16 +1034,16 @@ abstract class VoteItem implements ActiveRecordInterface
                 // timestampable behavior
 
                 if (!$this->isColumnModified(VoteItemTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(time());
+                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
                 if (!$this->isColumnModified(VoteItemTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
                 // timestampable behavior
                 if ($this->isModified() && !$this->isColumnModified(VoteItemTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             }
             if ($ret) {
@@ -1217,16 +1221,16 @@ abstract class VoteItem implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->answer, PDO::PARAM_INT);
                         break;
                     case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'version':
                         $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
                         break;
                     case 'version_created_at':
-                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'version_created_by':
                         $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
@@ -2266,9 +2270,10 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * Checks whether the current state must be recorded as a version
      *
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      * @return  boolean
      */
-    public function isVersioningNecessary($con = null)
+    public function isVersioningNecessary(ConnectionInterface $con = null)
     {
         if ($this->alreadyInSave) {
             return false;
@@ -2300,11 +2305,11 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * Creates a version of the current object and saves it.
      *
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  ChildVoteItemVersion A version object
      */
-    public function addVersion($con = null)
+    public function addVersion(ConnectionInterface $con = null)
     {
         $this->enforceVersion = false;
 
@@ -2338,11 +2343,11 @@ abstract class VoteItem implements ActiveRecordInterface
      * Sets the properties of the current object to the value they had at a specific version
      *
      * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con The connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  $this|ChildVoteItem The current object (for fluent API support)
      */
-    public function toVersion($versionNumber, $con = null)
+    public function toVersion($versionNumber, ConnectionInterface $con = null)
     {
         $version = $this->getOneVersion($versionNumber, $con);
         if (!$version) {
@@ -2382,7 +2387,7 @@ abstract class VoteItem implements ActiveRecordInterface
                 $related = new ChildVote();
                 $relatedVersion = ChildVoteVersionQuery::create()
                     ->filterByid($fkValue)
-                    ->filterByVersion($version->getVoteIdVersion())
+                    ->filterByVersionCreatedBy($version->getVoteIdVersion())
                     ->findOne($con);
                 $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
                 $related->setNew(false);
@@ -2396,7 +2401,7 @@ abstract class VoteItem implements ActiveRecordInterface
                 $related = new ChildQuestion();
                 $relatedVersion = ChildQuestionVersionQuery::create()
                     ->filterByid($fkValue)
-                    ->filterByVersion($version->getQuestionIdVersion())
+                    ->filterByVersionCreatedBy($version->getQuestionIdVersion())
                     ->findOne($con);
                 $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
                 $related->setNew(false);
@@ -2410,7 +2415,7 @@ abstract class VoteItem implements ActiveRecordInterface
                 $related = new ChildCandidate();
                 $relatedVersion = ChildCandidateVersionQuery::create()
                     ->filterByid($fkValue)
-                    ->filterByVersion($version->getCandidateIdVersion())
+                    ->filterByVersionCreatedBy($version->getCandidateIdVersion())
                     ->findOne($con);
                 $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
                 $related->setNew(false);
@@ -2424,11 +2429,11 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * Gets the latest persisted version number for the current object
      *
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  integer
      */
-    public function getLastVersionNumber($con = null)
+    public function getLastVersionNumber(ConnectionInterface $con = null)
     {
         $v = ChildVoteItemVersionQuery::create()
             ->filterByVoteItem($this)
@@ -2444,11 +2449,11 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * Checks whether the current object is the latest one
      *
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  Boolean
      */
-    public function isLastVersion($con = null)
+    public function isLastVersion(ConnectionInterface $con = null)
     {
         return $this->getLastVersionNumber($con) == $this->getVersion();
     }
@@ -2457,11 +2462,11 @@ abstract class VoteItem implements ActiveRecordInterface
      * Retrieves a version object for this entity and a version number
      *
      * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  ChildVoteItemVersion A version object
      */
-    public function getOneVersion($versionNumber, $con = null)
+    public function getOneVersion($versionNumber, ConnectionInterface $con = null)
     {
         return ChildVoteItemVersionQuery::create()
             ->filterByVoteItem($this)
@@ -2472,11 +2477,11 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * Gets all the versions of this object, in incremental order
      *
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      *
      * @return  ObjectCollection|ChildVoteItemVersion[] A list of ChildVoteItemVersion objects
      */
-    public function getAllVersions($con = null)
+    public function getAllVersions(ConnectionInterface $con = null)
     {
         $criteria = new Criteria();
         $criteria->addAscendingOrderByColumn(VoteItemVersionTableMap::COL_VERSION);
@@ -2496,12 +2501,12 @@ abstract class VoteItem implements ActiveRecordInterface
      *
      * @param   integer             $versionNumber
      * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      * @param   array               $ignoredColumns  The columns to exclude from the diff.
      *
      * @return  array A list of differences
      */
-    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    public function compareVersion($versionNumber, $keys = 'columns', ConnectionInterface $con = null, $ignoredColumns = array())
     {
         $fromVersion = $this->toArray();
         $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
@@ -2522,12 +2527,12 @@ abstract class VoteItem implements ActiveRecordInterface
      * @param   integer             $fromVersionNumber
      * @param   integer             $toVersionNumber
      * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
+     * @param   ConnectionInterface $con The ConnectionInterface connection to use.
      * @param   array               $ignoredColumns  The columns to exclude from the diff.
      *
      * @return  array A list of differences
      */
-    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
+    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', ConnectionInterface $con = null, $ignoredColumns = array())
     {
         $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
         $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
@@ -2587,10 +2592,13 @@ abstract class VoteItem implements ActiveRecordInterface
     /**
      * retrieve the last $number versions.
      *
-     * @param Integer $number the number of record to return.
+     * @param  Integer             $number The number of record to return.
+     * @param  Criteria            $criteria The Criteria object containing modified values.
+     * @param  ConnectionInterface $con The ConnectionInterface connection to use.
+     *
      * @return PropelCollection|\MESBallotBox\Propel\VoteItemVersion[] List of \MESBallotBox\Propel\VoteItemVersion objects
      */
-    public function getLastVersions($number = 10, $criteria = null, $con = null)
+    public function getLastVersions($number = 10, $criteria = null, ConnectionInterface $con = null)
     {
         $criteria = ChildVoteItemVersionQuery::create(null, $criteria);
         $criteria->addDescendingOrderByColumn(VoteItemVersionTableMap::COL_VERSION);

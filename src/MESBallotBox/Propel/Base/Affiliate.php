@@ -28,8 +28,8 @@ use Propel\Runtime\Parser\AbstractParser;
  *
  *
  *
-* @package    propel.generator.MESBallotBox.Propel.Base
-*/
+ * @package    propel.generator.MESBallotBox.Propel.Base
+ */
 abstract class Affiliate implements ActiveRecordInterface
 {
     /**
@@ -546,6 +546,10 @@ abstract class Affiliate implements ActiveRecordInterface
     {
         if ($this->isDeleted()) {
             throw new PropelException("You cannot save an object that has been deleted.");
+        }
+
+        if ($this->alreadyInSave) {
+            return 0;
         }
 
         if ($con === null) {

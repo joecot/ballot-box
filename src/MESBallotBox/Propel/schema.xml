@@ -13,7 +13,6 @@
     <column name="first_name" phpName="firstName" type="VARCHAR" size="128" required="true"/>
     <column name="last_name" phpName="lastName" type="VARCHAR" size="128" required="true"/>
     <column name="email_address" phpName="emailAddress" type="VARCHAR" size="128" required="true"/>
-    <column name="affiliate_id" phpName="affiliateId" type="INTEGER" size="10" sqlType="int(10) unsigned"/>
     <unique name="membership_number">
       <unique-column name="membership_number"/>
     </unique>

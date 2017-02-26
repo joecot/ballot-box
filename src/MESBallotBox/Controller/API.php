@@ -10,7 +10,8 @@ class API{
                 $q = new \MESBallotBox\Propel\UserQuery();
                 $user = $q->filterByMembershipNumber($args['membershipNumber'])->findOne();
                 if(!$user){
-                    $userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($args['membershipNumber']);
+                    $userInfo = \MESBallotBox\Controller\Hub::getUser($args['membershipNumber'])
+                    //$userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($args['membershipNumber']);
                     if(!$userInfo['membershipNumber']){
                         return $response->withStatus(400)->write('User not found');
                     }

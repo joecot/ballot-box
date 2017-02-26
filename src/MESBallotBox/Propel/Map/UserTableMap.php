@@ -59,7 +59,7 @@ class UserTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -97,11 +97,6 @@ class UserTableMap extends TableMap
     const COL_EMAIL_ADDRESS = 'User.email_address';
 
     /**
-     * the column name for the affiliate_id field
-     */
-    const COL_AFFILIATE_ID = 'User.affiliate_id';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -113,11 +108,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', 'affiliateId', ),
-        self::TYPE_CAMELNAME     => array('id', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', 'affiliateId', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_MEMBERSHIP_NUMBER, UserTableMap::COL_FIRST_NAME, UserTableMap::COL_LAST_NAME, UserTableMap::COL_EMAIL_ADDRESS, UserTableMap::COL_AFFILIATE_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'membership_number', 'first_name', 'last_name', 'email_address', 'affiliate_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('id', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', ),
+        self::TYPE_CAMELNAME     => array('id', 'membershipNumber', 'firstName', 'lastName', 'emailAddress', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_MEMBERSHIP_NUMBER, UserTableMap::COL_FIRST_NAME, UserTableMap::COL_LAST_NAME, UserTableMap::COL_EMAIL_ADDRESS, ),
+        self::TYPE_FIELDNAME     => array('id', 'membership_number', 'first_name', 'last_name', 'email_address', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -127,11 +122,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'membershipNumber' => 1, 'firstName' => 2, 'lastName' => 3, 'emailAddress' => 4, 'affiliateId' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'membershipNumber' => 1, 'firstName' => 2, 'lastName' => 3, 'emailAddress' => 4, 'affiliateId' => 5, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_MEMBERSHIP_NUMBER => 1, UserTableMap::COL_FIRST_NAME => 2, UserTableMap::COL_LAST_NAME => 3, UserTableMap::COL_EMAIL_ADDRESS => 4, UserTableMap::COL_AFFILIATE_ID => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'membership_number' => 1, 'first_name' => 2, 'last_name' => 3, 'email_address' => 4, 'affiliate_id' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('id' => 0, 'membershipNumber' => 1, 'firstName' => 2, 'lastName' => 3, 'emailAddress' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'membershipNumber' => 1, 'firstName' => 2, 'lastName' => 3, 'emailAddress' => 4, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_MEMBERSHIP_NUMBER => 1, UserTableMap::COL_FIRST_NAME => 2, UserTableMap::COL_LAST_NAME => 3, UserTableMap::COL_EMAIL_ADDRESS => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'membership_number' => 1, 'first_name' => 2, 'last_name' => 3, 'email_address' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -156,7 +151,6 @@ class UserTableMap extends TableMap
         $this->addColumn('first_name', 'firstName', 'VARCHAR', true, 128, null);
         $this->addColumn('last_name', 'lastName', 'VARCHAR', true, 128, null);
         $this->addColumn('email_address', 'emailAddress', 'VARCHAR', true, 128, null);
-        $this->addColumn('affiliate_id', 'affiliateId', 'INTEGER', false, 10, null);
     } // initialize()
 
     /**
@@ -333,14 +327,12 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn(UserTableMap::COL_FIRST_NAME);
             $criteria->addSelectColumn(UserTableMap::COL_LAST_NAME);
             $criteria->addSelectColumn(UserTableMap::COL_EMAIL_ADDRESS);
-            $criteria->addSelectColumn(UserTableMap::COL_AFFILIATE_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.membership_number');
             $criteria->addSelectColumn($alias . '.first_name');
             $criteria->addSelectColumn($alias . '.last_name');
             $criteria->addSelectColumn($alias . '.email_address');
-            $criteria->addSelectColumn($alias . '.affiliate_id');
         }
     }
 
