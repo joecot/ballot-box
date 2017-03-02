@@ -10,7 +10,7 @@ class API{
                 $q = new \MESBallotBox\Propel\UserQuery();
                 $user = $q->filterByMembershipNumber($args['membershipNumber'])->findOne();
                 if(!$user){
-                    $userInfo = \MESBallotBox\Controller\Hub::getUser($args['membershipNumber'])
+                    $userInfo = \MESBallotBox\Controller\Hub::getUser($args['membershipNumber']);
                     //$userInfo = \MESBallotBox\Controller\Oauth::LookupByMembershipNumber($args['membershipNumber']);
                     if(!$userInfo['membershipNumber']){
                         return $response->withStatus(400)->write('User not found');
@@ -34,6 +34,16 @@ class API{
             }
             
             return $response->write(json_encode($results)); 
+        });
+        $slim->get('orgUnit',function($request,$response){
+            $query = $request->getQueryParams();
+            $orgUnits = \MESBallotBox\Controller\Hub::getOrgUnits($query);
+            return json_encode($orgUnits);
+        });
+        $slim->get('orgUnit/{unitId}',function($request,$response,$args){
+            $query = $request->getQueryParams();
+            $orgUnit = \MESBallotBox\Controller\Hub::getOrgUnit($args['unitId']);
+            return json_encode($orgUnit);
         });
     }
 }

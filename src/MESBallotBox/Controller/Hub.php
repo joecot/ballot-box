@@ -34,10 +34,10 @@ class Hub{
 		unset($user['id']);
 		return $user;
 	}
-	function getOrgUnits(){
+	function getOrgUnits($args){
 		$client = self::getClient();
 		try{
-			$response = $client->request('GET', 'org-unit/');
+			$response = $client->request('GET', 'org-unit/',Array('query' => $args));
 			$body = (string)$response->getBody();
 		}catch(RequestException $e){
 			$error = $e->getMessage();
@@ -46,6 +46,24 @@ class Hub{
 			}
 			throw new \Exception('User hub threw exception '.$error);
 		}
-		return $body;
+		$units = json_decode($body,true);
+		if(!$units) throw new Exception('Invalid user response');
+		return $units;
+	}
+	function getOrgUnit($id){
+		$client = self::getClient();
+		try{
+			$response = $client->request('GET', 'org-unit/'.$id);
+			$body = (string)$response->getBody();
+		}catch(RequestException $e){
+			$error = $e->getMessage();
+			if ($e->hasResponse()) {
+				$error .= '/'. Psr7\str($e->getResponse());
+			}
+			throw new \Exception('User hub threw exception '.$error);
+		}
+		$unit = json_decode($body,true);
+		if(!$unit) throw new Exception('Invalid user response');
+		return $unit;
 	}
 }

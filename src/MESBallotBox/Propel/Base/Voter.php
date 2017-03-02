@@ -5,8 +5,6 @@ namespace MESBallotBox\Propel\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use MESBallotBox\Propel\Affiliate as ChildAffiliate;
-use MESBallotBox\Propel\AffiliateQuery as ChildAffiliateQuery;
 use MESBallotBox\Propel\Ballot as ChildBallot;
 use MESBallotBox\Propel\BallotQuery as ChildBallotQuery;
 use MESBallotBox\Propel\BallotVersionQuery as ChildBallotVersionQuery;
@@ -105,11 +103,11 @@ abstract class Voter implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the affiliate_id field.
+     * The value for the org_unit_id field.
      *
      * @var        int
      */
-    protected $affiliate_id;
+    protected $org_unit_id;
 
     /**
      * The value for the created_at field.
@@ -151,11 +149,6 @@ abstract class Voter implements ActiveRecordInterface
      * @var        ChildUser
      */
     protected $aUser;
-
-    /**
-     * @var        ChildAffiliate
-     */
-    protected $aAffiliate;
 
     /**
      * @var        ChildBallot
@@ -476,13 +469,13 @@ abstract class Voter implements ActiveRecordInterface
     }
 
     /**
-     * Get the [affiliate_id] column value.
+     * Get the [org_unit_id] column value.
      *
      * @return int
      */
-    public function getaffiliateId()
+    public function getorgUnitId()
     {
-        return $this->affiliate_id;
+        return $this->org_unit_id;
     }
 
     /**
@@ -634,28 +627,24 @@ abstract class Voter implements ActiveRecordInterface
     } // setuserId()
 
     /**
-     * Set the value of [affiliate_id] column.
+     * Set the value of [org_unit_id] column.
      *
      * @param int $v new value
      * @return $this|\MESBallotBox\Propel\Voter The current object (for fluent API support)
      */
-    public function setaffiliateId($v)
+    public function setorgUnitId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->affiliate_id !== $v) {
-            $this->affiliate_id = $v;
-            $this->modifiedColumns[VoterTableMap::COL_AFFILIATE_ID] = true;
-        }
-
-        if ($this->aAffiliate !== null && $this->aAffiliate->getid() !== $v) {
-            $this->aAffiliate = null;
+        if ($this->org_unit_id !== $v) {
+            $this->org_unit_id = $v;
+            $this->modifiedColumns[VoterTableMap::COL_ORG_UNIT_ID] = true;
         }
 
         return $this;
-    } // setaffiliateId()
+    } // setorgUnitId()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -806,8 +795,8 @@ abstract class Voter implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : VoterTableMap::translateFieldName('userId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VoterTableMap::translateFieldName('affiliateId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->affiliate_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VoterTableMap::translateFieldName('orgUnitId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->org_unit_id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : VoterTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
@@ -868,9 +857,6 @@ abstract class Voter implements ActiveRecordInterface
         if ($this->aUser !== null && $this->user_id !== $this->aUser->getid()) {
             $this->aUser = null;
         }
-        if ($this->aAffiliate !== null && $this->affiliate_id !== $this->aAffiliate->getid()) {
-            $this->aAffiliate = null;
-        }
     } // ensureConsistency
 
     /**
@@ -911,7 +897,6 @@ abstract class Voter implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aUser = null;
-            $this->aAffiliate = null;
             $this->aBallot = null;
             $this->collVoterVersions = null;
 
@@ -1054,13 +1039,6 @@ abstract class Voter implements ActiveRecordInterface
                 $this->setUser($this->aUser);
             }
 
-            if ($this->aAffiliate !== null) {
-                if ($this->aAffiliate->isModified() || $this->aAffiliate->isNew()) {
-                    $affectedRows += $this->aAffiliate->save($con);
-                }
-                $this->setAffiliate($this->aAffiliate);
-            }
-
             if ($this->aBallot !== null) {
                 if ($this->aBallot->isModified() || $this->aBallot->isNew()) {
                     $affectedRows += $this->aBallot->save($con);
@@ -1131,8 +1109,8 @@ abstract class Voter implements ActiveRecordInterface
         if ($this->isColumnModified(VoterTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(VoterTableMap::COL_AFFILIATE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'affiliate_id';
+        if ($this->isColumnModified(VoterTableMap::COL_ORG_UNIT_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'org_unit_id';
         }
         if ($this->isColumnModified(VoterTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -1169,8 +1147,8 @@ abstract class Voter implements ActiveRecordInterface
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'affiliate_id':
-                        $stmt->bindValue($identifier, $this->affiliate_id, PDO::PARAM_INT);
+                    case 'org_unit_id':
+                        $stmt->bindValue($identifier, $this->org_unit_id, PDO::PARAM_INT);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1259,7 +1237,7 @@ abstract class Voter implements ActiveRecordInterface
                 return $this->getuserId();
                 break;
             case 3:
-                return $this->getaffiliateId();
+                return $this->getorgUnitId();
                 break;
             case 4:
                 return $this->getCreatedAt();
@@ -1309,7 +1287,7 @@ abstract class Voter implements ActiveRecordInterface
             $keys[0] => $this->getid(),
             $keys[1] => $this->getballotId(),
             $keys[2] => $this->getuserId(),
-            $keys[3] => $this->getaffiliateId(),
+            $keys[3] => $this->getorgUnitId(),
             $keys[4] => $this->getCreatedAt(),
             $keys[5] => $this->getUpdatedAt(),
             $keys[6] => $this->getVersion(),
@@ -1348,21 +1326,6 @@ abstract class Voter implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aAffiliate) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'affiliate';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'Affiliate';
-                        break;
-                    default:
-                        $key = 'Affiliate';
-                }
-
-                $result[$key] = $this->aAffiliate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aBallot) {
 
@@ -1438,7 +1401,7 @@ abstract class Voter implements ActiveRecordInterface
                 $this->setuserId($value);
                 break;
             case 3:
-                $this->setaffiliateId($value);
+                $this->setorgUnitId($value);
                 break;
             case 4:
                 $this->setCreatedAt($value);
@@ -1491,7 +1454,7 @@ abstract class Voter implements ActiveRecordInterface
             $this->setuserId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setaffiliateId($arr[$keys[3]]);
+            $this->setorgUnitId($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setCreatedAt($arr[$keys[4]]);
@@ -1558,8 +1521,8 @@ abstract class Voter implements ActiveRecordInterface
         if ($this->isColumnModified(VoterTableMap::COL_USER_ID)) {
             $criteria->add(VoterTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(VoterTableMap::COL_AFFILIATE_ID)) {
-            $criteria->add(VoterTableMap::COL_AFFILIATE_ID, $this->affiliate_id);
+        if ($this->isColumnModified(VoterTableMap::COL_ORG_UNIT_ID)) {
+            $criteria->add(VoterTableMap::COL_ORG_UNIT_ID, $this->org_unit_id);
         }
         if ($this->isColumnModified(VoterTableMap::COL_CREATED_AT)) {
             $criteria->add(VoterTableMap::COL_CREATED_AT, $this->created_at);
@@ -1664,7 +1627,7 @@ abstract class Voter implements ActiveRecordInterface
     {
         $copyObj->setballotId($this->getballotId());
         $copyObj->setuserId($this->getuserId());
-        $copyObj->setaffiliateId($this->getaffiliateId());
+        $copyObj->setorgUnitId($this->getorgUnitId());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setVersion($this->getVersion());
@@ -1761,57 +1724,6 @@ abstract class Voter implements ActiveRecordInterface
         }
 
         return $this->aUser;
-    }
-
-    /**
-     * Declares an association between this object and a ChildAffiliate object.
-     *
-     * @param  ChildAffiliate $v
-     * @return $this|\MESBallotBox\Propel\Voter The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setAffiliate(ChildAffiliate $v = null)
-    {
-        if ($v === null) {
-            $this->setaffiliateId(NULL);
-        } else {
-            $this->setaffiliateId($v->getid());
-        }
-
-        $this->aAffiliate = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildAffiliate object, it will not be re-added.
-        if ($v !== null) {
-            $v->addVoter($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildAffiliate object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildAffiliate The associated ChildAffiliate object.
-     * @throws PropelException
-     */
-    public function getAffiliate(ConnectionInterface $con = null)
-    {
-        if ($this->aAffiliate === null && ($this->affiliate_id !== null)) {
-            $this->aAffiliate = ChildAffiliateQuery::create()->findPk($this->affiliate_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aAffiliate->addVoters($this);
-             */
-        }
-
-        return $this->aAffiliate;
     }
 
     /**
@@ -2119,16 +2031,13 @@ abstract class Voter implements ActiveRecordInterface
         if (null !== $this->aUser) {
             $this->aUser->removeVoter($this);
         }
-        if (null !== $this->aAffiliate) {
-            $this->aAffiliate->removeVoter($this);
-        }
         if (null !== $this->aBallot) {
             $this->aBallot->removeVoter($this);
         }
         $this->id = null;
         $this->ballot_id = null;
         $this->user_id = null;
-        $this->affiliate_id = null;
+        $this->org_unit_id = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->version = null;
@@ -2162,7 +2071,6 @@ abstract class Voter implements ActiveRecordInterface
 
         $this->collVoterVersions = null;
         $this->aUser = null;
-        $this->aAffiliate = null;
         $this->aBallot = null;
     }
 
@@ -2246,7 +2154,7 @@ abstract class Voter implements ActiveRecordInterface
         $version->setid($this->getid());
         $version->setballotId($this->getballotId());
         $version->setuserId($this->getuserId());
-        $version->setaffiliateId($this->getaffiliateId());
+        $version->setorgUnitId($this->getorgUnitId());
         $version->setCreatedAt($this->getCreatedAt());
         $version->setUpdatedAt($this->getUpdatedAt());
         $version->setVersion($this->getVersion());
@@ -2295,7 +2203,7 @@ abstract class Voter implements ActiveRecordInterface
         $this->setid($version->getid());
         $this->setballotId($version->getballotId());
         $this->setuserId($version->getuserId());
-        $this->setaffiliateId($version->getaffiliateId());
+        $this->setorgUnitId($version->getorgUnitId());
         $this->setCreatedAt($version->getCreatedAt());
         $this->setUpdatedAt($version->getUpdatedAt());
         $this->setVersion($version->getVersion());
@@ -2544,12 +2452,6 @@ abstract class Voter implements ActiveRecordInterface
             if (method_exists($this->aUser, 'validate')) {
                 if (!$this->aUser->validate($validator)) {
                     $failureMap->addAll($this->aUser->getValidationFailures());
-                }
-            }
-            // If validate() method exists, the validate-behavior is configured for related object
-            if (method_exists($this->aAffiliate, 'validate')) {
-                if (!$this->aAffiliate->validate($validator)) {
-                    $failureMap->addAll($this->aAffiliate->getValidationFailures());
                 }
             }
             // If validate() method exists, the validate-behavior is configured for related object

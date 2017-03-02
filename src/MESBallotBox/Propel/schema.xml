@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="MESBallotBox\Propel">
-  <table name="Affiliate" idMethod="native" phpName="Affiliate">
-    <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="name" phpName="name" type="VARCHAR" size="128" required="true"/>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
   <table name="User" idMethod="native" phpName="User">
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="membership_number" phpName="membershipNumber" type="VARCHAR" size="20" required="true"/>
@@ -53,15 +46,12 @@
     <column name="id" phpName="id" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="ballot_id" phpName='ballotId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="user_id" phpName='userId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
-    <column name="affiliate_id" phpName='affiliateId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
+    <column name="org_unit_id" phpName='orgUnitId' type="INTEGER" size="10" sqlType="int(10) unsigned" required="false"/>
     <index name="ballot_id">
       <index-column name="ballot_id"/>
     </index>
     <foreign-key foreignTable="User">
       <reference local="user_id" foreign="id"/>
-    </foreign-key>
-    <foreign-key foreignTable="Affiliate">
-      <reference local="affiliate_id" foreign="id"/>
     </foreign-key>
     <foreign-key foreignTable="Ballot">
       <reference local="ballot_id" foreign="id"/>

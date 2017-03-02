@@ -87,9 +87,9 @@ class VoterVersionTableMap extends TableMap
     const COL_USER_ID = 'Voter_version.user_id';
 
     /**
-     * the column name for the affiliate_id field
+     * the column name for the org_unit_id field
      */
-    const COL_AFFILIATE_ID = 'Voter_version.affiliate_id';
+    const COL_ORG_UNIT_ID = 'Voter_version.org_unit_id';
 
     /**
      * the column name for the created_at field
@@ -133,10 +133,10 @@ class VoterVersionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('id', 'ballotId', 'userId', 'affiliateId', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', 'BallotIdVersion', ),
-        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'userId', 'affiliateId', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', 'ballotIdVersion', ),
-        self::TYPE_COLNAME       => array(VoterVersionTableMap::COL_ID, VoterVersionTableMap::COL_BALLOT_ID, VoterVersionTableMap::COL_USER_ID, VoterVersionTableMap::COL_AFFILIATE_ID, VoterVersionTableMap::COL_CREATED_AT, VoterVersionTableMap::COL_UPDATED_AT, VoterVersionTableMap::COL_VERSION, VoterVersionTableMap::COL_VERSION_CREATED_AT, VoterVersionTableMap::COL_VERSION_CREATED_BY, VoterVersionTableMap::COL_BALLOT_ID_VERSION, ),
-        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'user_id', 'affiliate_id', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', 'ballot_id_version', ),
+        self::TYPE_PHPNAME       => array('id', 'ballotId', 'userId', 'orgUnitId', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', 'BallotIdVersion', ),
+        self::TYPE_CAMELNAME     => array('id', 'ballotId', 'userId', 'orgUnitId', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', 'ballotIdVersion', ),
+        self::TYPE_COLNAME       => array(VoterVersionTableMap::COL_ID, VoterVersionTableMap::COL_BALLOT_ID, VoterVersionTableMap::COL_USER_ID, VoterVersionTableMap::COL_ORG_UNIT_ID, VoterVersionTableMap::COL_CREATED_AT, VoterVersionTableMap::COL_UPDATED_AT, VoterVersionTableMap::COL_VERSION, VoterVersionTableMap::COL_VERSION_CREATED_AT, VoterVersionTableMap::COL_VERSION_CREATED_BY, VoterVersionTableMap::COL_BALLOT_ID_VERSION, ),
+        self::TYPE_FIELDNAME     => array('id', 'ballot_id', 'user_id', 'org_unit_id', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', 'ballot_id_version', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
@@ -147,10 +147,10 @@ class VoterVersionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'userId' => 2, 'affiliateId' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, 'Version' => 6, 'VersionCreatedAt' => 7, 'VersionCreatedBy' => 8, 'BallotIdVersion' => 9, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'userId' => 2, 'affiliateId' => 3, 'createdAt' => 4, 'updatedAt' => 5, 'version' => 6, 'versionCreatedAt' => 7, 'versionCreatedBy' => 8, 'ballotIdVersion' => 9, ),
-        self::TYPE_COLNAME       => array(VoterVersionTableMap::COL_ID => 0, VoterVersionTableMap::COL_BALLOT_ID => 1, VoterVersionTableMap::COL_USER_ID => 2, VoterVersionTableMap::COL_AFFILIATE_ID => 3, VoterVersionTableMap::COL_CREATED_AT => 4, VoterVersionTableMap::COL_UPDATED_AT => 5, VoterVersionTableMap::COL_VERSION => 6, VoterVersionTableMap::COL_VERSION_CREATED_AT => 7, VoterVersionTableMap::COL_VERSION_CREATED_BY => 8, VoterVersionTableMap::COL_BALLOT_ID_VERSION => 9, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'user_id' => 2, 'affiliate_id' => 3, 'created_at' => 4, 'updated_at' => 5, 'version' => 6, 'version_created_at' => 7, 'version_created_by' => 8, 'ballot_id_version' => 9, ),
+        self::TYPE_PHPNAME       => array('id' => 0, 'ballotId' => 1, 'userId' => 2, 'orgUnitId' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, 'Version' => 6, 'VersionCreatedAt' => 7, 'VersionCreatedBy' => 8, 'BallotIdVersion' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'ballotId' => 1, 'userId' => 2, 'orgUnitId' => 3, 'createdAt' => 4, 'updatedAt' => 5, 'version' => 6, 'versionCreatedAt' => 7, 'versionCreatedBy' => 8, 'ballotIdVersion' => 9, ),
+        self::TYPE_COLNAME       => array(VoterVersionTableMap::COL_ID => 0, VoterVersionTableMap::COL_BALLOT_ID => 1, VoterVersionTableMap::COL_USER_ID => 2, VoterVersionTableMap::COL_ORG_UNIT_ID => 3, VoterVersionTableMap::COL_CREATED_AT => 4, VoterVersionTableMap::COL_UPDATED_AT => 5, VoterVersionTableMap::COL_VERSION => 6, VoterVersionTableMap::COL_VERSION_CREATED_AT => 7, VoterVersionTableMap::COL_VERSION_CREATED_BY => 8, VoterVersionTableMap::COL_BALLOT_ID_VERSION => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'ballot_id' => 1, 'user_id' => 2, 'org_unit_id' => 3, 'created_at' => 4, 'updated_at' => 5, 'version' => 6, 'version_created_at' => 7, 'version_created_by' => 8, 'ballot_id_version' => 9, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
@@ -174,7 +174,7 @@ class VoterVersionTableMap extends TableMap
         $this->addForeignPrimaryKey('id', 'id', 'INTEGER' , 'Voter', 'id', true, 10, null);
         $this->addColumn('ballot_id', 'ballotId', 'INTEGER', true, 10, null);
         $this->addColumn('user_id', 'userId', 'INTEGER', false, 10, null);
-        $this->addColumn('affiliate_id', 'affiliateId', 'INTEGER', false, 10, null);
+        $this->addColumn('org_unit_id', 'orgUnitId', 'INTEGER', false, 10, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addPrimaryKey('version', 'Version', 'INTEGER', true, null, 0);
@@ -403,7 +403,7 @@ class VoterVersionTableMap extends TableMap
             $criteria->addSelectColumn(VoterVersionTableMap::COL_ID);
             $criteria->addSelectColumn(VoterVersionTableMap::COL_BALLOT_ID);
             $criteria->addSelectColumn(VoterVersionTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(VoterVersionTableMap::COL_AFFILIATE_ID);
+            $criteria->addSelectColumn(VoterVersionTableMap::COL_ORG_UNIT_ID);
             $criteria->addSelectColumn(VoterVersionTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(VoterVersionTableMap::COL_UPDATED_AT);
             $criteria->addSelectColumn(VoterVersionTableMap::COL_VERSION);
@@ -414,7 +414,7 @@ class VoterVersionTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.ballot_id');
             $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.affiliate_id');
+            $criteria->addSelectColumn($alias . '.org_unit_id');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
             $criteria->addSelectColumn($alias . '.version');

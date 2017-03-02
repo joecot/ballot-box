@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterQuery orderByid($order = Criteria::ASC) Order by the id column
  * @method     ChildVoterQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
  * @method     ChildVoterQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildVoterQuery orderByaffiliateId($order = Criteria::ASC) Order by the affiliate_id column
+ * @method     ChildVoterQuery orderByorgUnitId($order = Criteria::ASC) Order by the org_unit_id column
  * @method     ChildVoterQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildVoterQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildVoterQuery orderByVersion($order = Criteria::ASC) Order by the version column
@@ -33,7 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterQuery groupByid() Group by the id column
  * @method     ChildVoterQuery groupByballotId() Group by the ballot_id column
  * @method     ChildVoterQuery groupByuserId() Group by the user_id column
- * @method     ChildVoterQuery groupByaffiliateId() Group by the affiliate_id column
+ * @method     ChildVoterQuery groupByorgUnitId() Group by the org_unit_id column
  * @method     ChildVoterQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildVoterQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildVoterQuery groupByVersion() Group by the version column
@@ -58,16 +58,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
  * @method     ChildVoterQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
- * @method     ChildVoterQuery leftJoinAffiliate($relationAlias = null) Adds a LEFT JOIN clause to the query using the Affiliate relation
- * @method     ChildVoterQuery rightJoinAffiliate($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Affiliate relation
- * @method     ChildVoterQuery innerJoinAffiliate($relationAlias = null) Adds a INNER JOIN clause to the query using the Affiliate relation
- *
- * @method     ChildVoterQuery joinWithAffiliate($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Affiliate relation
- *
- * @method     ChildVoterQuery leftJoinWithAffiliate() Adds a LEFT JOIN clause and with to the query using the Affiliate relation
- * @method     ChildVoterQuery rightJoinWithAffiliate() Adds a RIGHT JOIN clause and with to the query using the Affiliate relation
- * @method     ChildVoterQuery innerJoinWithAffiliate() Adds a INNER JOIN clause and with to the query using the Affiliate relation
- *
  * @method     ChildVoterQuery leftJoinBallot($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ballot relation
  * @method     ChildVoterQuery rightJoinBallot($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ballot relation
  * @method     ChildVoterQuery innerJoinBallot($relationAlias = null) Adds a INNER JOIN clause to the query using the Ballot relation
@@ -88,7 +78,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterQuery rightJoinWithVoterVersion() Adds a RIGHT JOIN clause and with to the query using the VoterVersion relation
  * @method     ChildVoterQuery innerJoinWithVoterVersion() Adds a INNER JOIN clause and with to the query using the VoterVersion relation
  *
- * @method     \MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\AffiliateQuery|\MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\VoterVersionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \MESBallotBox\Propel\UserQuery|\MESBallotBox\Propel\BallotQuery|\MESBallotBox\Propel\VoterVersionQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildVoter findOne(ConnectionInterface $con = null) Return the first ChildVoter matching the query
  * @method     ChildVoter findOneOrCreate(ConnectionInterface $con = null) Return the first ChildVoter matching the query, or a new ChildVoter object populated from the query conditions when no match is found
@@ -96,7 +86,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoter findOneByid(int $id) Return the first ChildVoter filtered by the id column
  * @method     ChildVoter findOneByballotId(int $ballot_id) Return the first ChildVoter filtered by the ballot_id column
  * @method     ChildVoter findOneByuserId(int $user_id) Return the first ChildVoter filtered by the user_id column
- * @method     ChildVoter findOneByaffiliateId(int $affiliate_id) Return the first ChildVoter filtered by the affiliate_id column
+ * @method     ChildVoter findOneByorgUnitId(int $org_unit_id) Return the first ChildVoter filtered by the org_unit_id column
  * @method     ChildVoter findOneByCreatedAt(string $created_at) Return the first ChildVoter filtered by the created_at column
  * @method     ChildVoter findOneByUpdatedAt(string $updated_at) Return the first ChildVoter filtered by the updated_at column
  * @method     ChildVoter findOneByVersion(int $version) Return the first ChildVoter filtered by the version column
@@ -109,7 +99,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoter requireOneByid(int $id) Return the first ChildVoter filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoter requireOneByballotId(int $ballot_id) Return the first ChildVoter filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoter requireOneByuserId(int $user_id) Return the first ChildVoter filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildVoter requireOneByaffiliateId(int $affiliate_id) Return the first ChildVoter filtered by the affiliate_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVoter requireOneByorgUnitId(int $org_unit_id) Return the first ChildVoter filtered by the org_unit_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoter requireOneByCreatedAt(string $created_at) Return the first ChildVoter filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoter requireOneByUpdatedAt(string $updated_at) Return the first ChildVoter filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoter requireOneByVersion(int $version) Return the first ChildVoter filtered by the version column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -120,7 +110,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoter[]|ObjectCollection findByid(int $id) Return ChildVoter objects filtered by the id column
  * @method     ChildVoter[]|ObjectCollection findByballotId(int $ballot_id) Return ChildVoter objects filtered by the ballot_id column
  * @method     ChildVoter[]|ObjectCollection findByuserId(int $user_id) Return ChildVoter objects filtered by the user_id column
- * @method     ChildVoter[]|ObjectCollection findByaffiliateId(int $affiliate_id) Return ChildVoter objects filtered by the affiliate_id column
+ * @method     ChildVoter[]|ObjectCollection findByorgUnitId(int $org_unit_id) Return ChildVoter objects filtered by the org_unit_id column
  * @method     ChildVoter[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildVoter objects filtered by the created_at column
  * @method     ChildVoter[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildVoter objects filtered by the updated_at column
  * @method     ChildVoter[]|ObjectCollection findByVersion(int $version) Return ChildVoter objects filtered by the version column
@@ -231,7 +221,7 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ballot_id, user_id, affiliate_id, created_at, updated_at, version, version_created_at, version_created_by FROM Voter WHERE id = :p0';
+        $sql = 'SELECT id, ballot_id, user_id, org_unit_id, created_at, updated_at, version, version_created_at, version_created_by FROM Voter WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -449,18 +439,16 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
     }
 
     /**
-     * Filter the query on the affiliate_id column
+     * Filter the query on the org_unit_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByaffiliateId(1234); // WHERE affiliate_id = 1234
-     * $query->filterByaffiliateId(array(12, 34)); // WHERE affiliate_id IN (12, 34)
-     * $query->filterByaffiliateId(array('min' => 12)); // WHERE affiliate_id > 12
+     * $query->filterByorgUnitId(1234); // WHERE org_unit_id = 1234
+     * $query->filterByorgUnitId(array(12, 34)); // WHERE org_unit_id IN (12, 34)
+     * $query->filterByorgUnitId(array('min' => 12)); // WHERE org_unit_id > 12
      * </code>
      *
-     * @see       filterByAffiliate()
-     *
-     * @param     mixed $affiliateId The value to use as filter.
+     * @param     mixed $orgUnitId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -468,16 +456,16 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
      *
      * @return $this|ChildVoterQuery The current query, for fluid interface
      */
-    public function filterByaffiliateId($affiliateId = null, $comparison = null)
+    public function filterByorgUnitId($orgUnitId = null, $comparison = null)
     {
-        if (is_array($affiliateId)) {
+        if (is_array($orgUnitId)) {
             $useMinMax = false;
-            if (isset($affiliateId['min'])) {
-                $this->addUsingAlias(VoterTableMap::COL_AFFILIATE_ID, $affiliateId['min'], Criteria::GREATER_EQUAL);
+            if (isset($orgUnitId['min'])) {
+                $this->addUsingAlias(VoterTableMap::COL_ORG_UNIT_ID, $orgUnitId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($affiliateId['max'])) {
-                $this->addUsingAlias(VoterTableMap::COL_AFFILIATE_ID, $affiliateId['max'], Criteria::LESS_EQUAL);
+            if (isset($orgUnitId['max'])) {
+                $this->addUsingAlias(VoterTableMap::COL_ORG_UNIT_ID, $orgUnitId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -488,7 +476,7 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
             }
         }
 
-        return $this->addUsingAlias(VoterTableMap::COL_AFFILIATE_ID, $affiliateId, $comparison);
+        return $this->addUsingAlias(VoterTableMap::COL_ORG_UNIT_ID, $orgUnitId, $comparison);
     }
 
     /**
@@ -761,83 +749,6 @@ protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityN
         return $this
             ->joinUser($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'User', '\MESBallotBox\Propel\UserQuery');
-    }
-
-    /**
-     * Filter the query by a related \MESBallotBox\Propel\Affiliate object
-     *
-     * @param \MESBallotBox\Propel\Affiliate|ObjectCollection $affiliate The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildVoterQuery The current query, for fluid interface
-     */
-    public function filterByAffiliate($affiliate, $comparison = null)
-    {
-        if ($affiliate instanceof \MESBallotBox\Propel\Affiliate) {
-            return $this
-                ->addUsingAlias(VoterTableMap::COL_AFFILIATE_ID, $affiliate->getid(), $comparison);
-        } elseif ($affiliate instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(VoterTableMap::COL_AFFILIATE_ID, $affiliate->toKeyValue('PrimaryKey', 'id'), $comparison);
-        } else {
-            throw new PropelException('filterByAffiliate() only accepts arguments of type \MESBallotBox\Propel\Affiliate or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Affiliate relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildVoterQuery The current query, for fluid interface
-     */
-    public function joinAffiliate($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Affiliate');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Affiliate');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Affiliate relation Affiliate object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \MESBallotBox\Propel\AffiliateQuery A secondary query class using the current class as primary query
-     */
-    public function useAffiliateQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinAffiliate($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Affiliate', '\MESBallotBox\Propel\AffiliateQuery');
     }
 
     /**

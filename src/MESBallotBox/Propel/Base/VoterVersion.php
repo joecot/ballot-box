@@ -85,11 +85,11 @@ abstract class VoterVersion implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the affiliate_id field.
+     * The value for the org_unit_id field.
      *
      * @var        int
      */
-    protected $affiliate_id;
+    protected $org_unit_id;
 
     /**
      * The value for the created_at field.
@@ -418,13 +418,13 @@ abstract class VoterVersion implements ActiveRecordInterface
     }
 
     /**
-     * Get the [affiliate_id] column value.
+     * Get the [org_unit_id] column value.
      *
      * @return int
      */
-    public function getaffiliateId()
+    public function getorgUnitId()
     {
-        return $this->affiliate_id;
+        return $this->org_unit_id;
     }
 
     /**
@@ -582,24 +582,24 @@ abstract class VoterVersion implements ActiveRecordInterface
     } // setuserId()
 
     /**
-     * Set the value of [affiliate_id] column.
+     * Set the value of [org_unit_id] column.
      *
      * @param int $v new value
      * @return $this|\MESBallotBox\Propel\VoterVersion The current object (for fluent API support)
      */
-    public function setaffiliateId($v)
+    public function setorgUnitId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->affiliate_id !== $v) {
-            $this->affiliate_id = $v;
-            $this->modifiedColumns[VoterVersionTableMap::COL_AFFILIATE_ID] = true;
+        if ($this->org_unit_id !== $v) {
+            $this->org_unit_id = $v;
+            $this->modifiedColumns[VoterVersionTableMap::COL_ORG_UNIT_ID] = true;
         }
 
         return $this;
-    } // setaffiliateId()
+    } // setorgUnitId()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -774,8 +774,8 @@ abstract class VoterVersion implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : VoterVersionTableMap::translateFieldName('userId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VoterVersionTableMap::translateFieldName('affiliateId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->affiliate_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VoterVersionTableMap::translateFieldName('orgUnitId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->org_unit_id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : VoterVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
@@ -1033,8 +1033,8 @@ abstract class VoterVersion implements ActiveRecordInterface
         if ($this->isColumnModified(VoterVersionTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(VoterVersionTableMap::COL_AFFILIATE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'affiliate_id';
+        if ($this->isColumnModified(VoterVersionTableMap::COL_ORG_UNIT_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'org_unit_id';
         }
         if ($this->isColumnModified(VoterVersionTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -1074,8 +1074,8 @@ abstract class VoterVersion implements ActiveRecordInterface
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'affiliate_id':
-                        $stmt->bindValue($identifier, $this->affiliate_id, PDO::PARAM_INT);
+                    case 'org_unit_id':
+                        $stmt->bindValue($identifier, $this->org_unit_id, PDO::PARAM_INT);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1160,7 +1160,7 @@ abstract class VoterVersion implements ActiveRecordInterface
                 return $this->getuserId();
                 break;
             case 3:
-                return $this->getaffiliateId();
+                return $this->getorgUnitId();
                 break;
             case 4:
                 return $this->getCreatedAt();
@@ -1213,7 +1213,7 @@ abstract class VoterVersion implements ActiveRecordInterface
             $keys[0] => $this->getid(),
             $keys[1] => $this->getballotId(),
             $keys[2] => $this->getuserId(),
-            $keys[3] => $this->getaffiliateId(),
+            $keys[3] => $this->getorgUnitId(),
             $keys[4] => $this->getCreatedAt(),
             $keys[5] => $this->getUpdatedAt(),
             $keys[6] => $this->getVersion(),
@@ -1298,7 +1298,7 @@ abstract class VoterVersion implements ActiveRecordInterface
                 $this->setuserId($value);
                 break;
             case 3:
-                $this->setaffiliateId($value);
+                $this->setorgUnitId($value);
                 break;
             case 4:
                 $this->setCreatedAt($value);
@@ -1354,7 +1354,7 @@ abstract class VoterVersion implements ActiveRecordInterface
             $this->setuserId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setaffiliateId($arr[$keys[3]]);
+            $this->setorgUnitId($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setCreatedAt($arr[$keys[4]]);
@@ -1424,8 +1424,8 @@ abstract class VoterVersion implements ActiveRecordInterface
         if ($this->isColumnModified(VoterVersionTableMap::COL_USER_ID)) {
             $criteria->add(VoterVersionTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(VoterVersionTableMap::COL_AFFILIATE_ID)) {
-            $criteria->add(VoterVersionTableMap::COL_AFFILIATE_ID, $this->affiliate_id);
+        if ($this->isColumnModified(VoterVersionTableMap::COL_ORG_UNIT_ID)) {
+            $criteria->add(VoterVersionTableMap::COL_ORG_UNIT_ID, $this->org_unit_id);
         }
         if ($this->isColumnModified(VoterVersionTableMap::COL_CREATED_AT)) {
             $criteria->add(VoterVersionTableMap::COL_CREATED_AT, $this->created_at);
@@ -1549,7 +1549,7 @@ abstract class VoterVersion implements ActiveRecordInterface
         $copyObj->setid($this->getid());
         $copyObj->setballotId($this->getballotId());
         $copyObj->setuserId($this->getuserId());
-        $copyObj->setaffiliateId($this->getaffiliateId());
+        $copyObj->setorgUnitId($this->getorgUnitId());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setVersion($this->getVersion());
@@ -1647,7 +1647,7 @@ abstract class VoterVersion implements ActiveRecordInterface
         $this->id = null;
         $this->ballot_id = null;
         $this->user_id = null;
-        $this->affiliate_id = null;
+        $this->org_unit_id = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->version = null;

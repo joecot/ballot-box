@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterVersionQuery orderByid($order = Criteria::ASC) Order by the id column
  * @method     ChildVoterVersionQuery orderByballotId($order = Criteria::ASC) Order by the ballot_id column
  * @method     ChildVoterVersionQuery orderByuserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildVoterVersionQuery orderByaffiliateId($order = Criteria::ASC) Order by the affiliate_id column
+ * @method     ChildVoterVersionQuery orderByorgUnitId($order = Criteria::ASC) Order by the org_unit_id column
  * @method     ChildVoterVersionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildVoterVersionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildVoterVersionQuery orderByVersion($order = Criteria::ASC) Order by the version column
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterVersionQuery groupByid() Group by the id column
  * @method     ChildVoterVersionQuery groupByballotId() Group by the ballot_id column
  * @method     ChildVoterVersionQuery groupByuserId() Group by the user_id column
- * @method     ChildVoterVersionQuery groupByaffiliateId() Group by the affiliate_id column
+ * @method     ChildVoterVersionQuery groupByorgUnitId() Group by the org_unit_id column
  * @method     ChildVoterVersionQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildVoterVersionQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildVoterVersionQuery groupByVersion() Group by the version column
@@ -68,7 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterVersion findOneByid(int $id) Return the first ChildVoterVersion filtered by the id column
  * @method     ChildVoterVersion findOneByballotId(int $ballot_id) Return the first ChildVoterVersion filtered by the ballot_id column
  * @method     ChildVoterVersion findOneByuserId(int $user_id) Return the first ChildVoterVersion filtered by the user_id column
- * @method     ChildVoterVersion findOneByaffiliateId(int $affiliate_id) Return the first ChildVoterVersion filtered by the affiliate_id column
+ * @method     ChildVoterVersion findOneByorgUnitId(int $org_unit_id) Return the first ChildVoterVersion filtered by the org_unit_id column
  * @method     ChildVoterVersion findOneByCreatedAt(string $created_at) Return the first ChildVoterVersion filtered by the created_at column
  * @method     ChildVoterVersion findOneByUpdatedAt(string $updated_at) Return the first ChildVoterVersion filtered by the updated_at column
  * @method     ChildVoterVersion findOneByVersion(int $version) Return the first ChildVoterVersion filtered by the version column
@@ -82,7 +82,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterVersion requireOneByid(int $id) Return the first ChildVoterVersion filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoterVersion requireOneByballotId(int $ballot_id) Return the first ChildVoterVersion filtered by the ballot_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoterVersion requireOneByuserId(int $user_id) Return the first ChildVoterVersion filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildVoterVersion requireOneByaffiliateId(int $affiliate_id) Return the first ChildVoterVersion filtered by the affiliate_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVoterVersion requireOneByorgUnitId(int $org_unit_id) Return the first ChildVoterVersion filtered by the org_unit_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoterVersion requireOneByCreatedAt(string $created_at) Return the first ChildVoterVersion filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoterVersion requireOneByUpdatedAt(string $updated_at) Return the first ChildVoterVersion filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVoterVersion requireOneByVersion(int $version) Return the first ChildVoterVersion filtered by the version column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -94,7 +94,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoterVersion[]|ObjectCollection findByid(int $id) Return ChildVoterVersion objects filtered by the id column
  * @method     ChildVoterVersion[]|ObjectCollection findByballotId(int $ballot_id) Return ChildVoterVersion objects filtered by the ballot_id column
  * @method     ChildVoterVersion[]|ObjectCollection findByuserId(int $user_id) Return ChildVoterVersion objects filtered by the user_id column
- * @method     ChildVoterVersion[]|ObjectCollection findByaffiliateId(int $affiliate_id) Return ChildVoterVersion objects filtered by the affiliate_id column
+ * @method     ChildVoterVersion[]|ObjectCollection findByorgUnitId(int $org_unit_id) Return ChildVoterVersion objects filtered by the org_unit_id column
  * @method     ChildVoterVersion[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildVoterVersion objects filtered by the created_at column
  * @method     ChildVoterVersion[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildVoterVersion objects filtered by the updated_at column
  * @method     ChildVoterVersion[]|ObjectCollection findByVersion(int $version) Return ChildVoterVersion objects filtered by the version column
@@ -199,7 +199,7 @@ abstract class VoterVersionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ballot_id, user_id, affiliate_id, created_at, updated_at, version, version_created_at, version_created_by, ballot_id_version FROM Voter_version WHERE id = :p0 AND version = :p1';
+        $sql = 'SELECT id, ballot_id, user_id, org_unit_id, created_at, updated_at, version, version_created_at, version_created_by, ballot_id_version FROM Voter_version WHERE id = :p0 AND version = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -427,16 +427,16 @@ abstract class VoterVersionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the affiliate_id column
+     * Filter the query on the org_unit_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByaffiliateId(1234); // WHERE affiliate_id = 1234
-     * $query->filterByaffiliateId(array(12, 34)); // WHERE affiliate_id IN (12, 34)
-     * $query->filterByaffiliateId(array('min' => 12)); // WHERE affiliate_id > 12
+     * $query->filterByorgUnitId(1234); // WHERE org_unit_id = 1234
+     * $query->filterByorgUnitId(array(12, 34)); // WHERE org_unit_id IN (12, 34)
+     * $query->filterByorgUnitId(array('min' => 12)); // WHERE org_unit_id > 12
      * </code>
      *
-     * @param     mixed $affiliateId The value to use as filter.
+     * @param     mixed $orgUnitId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -444,16 +444,16 @@ abstract class VoterVersionQuery extends ModelCriteria
      *
      * @return $this|ChildVoterVersionQuery The current query, for fluid interface
      */
-    public function filterByaffiliateId($affiliateId = null, $comparison = null)
+    public function filterByorgUnitId($orgUnitId = null, $comparison = null)
     {
-        if (is_array($affiliateId)) {
+        if (is_array($orgUnitId)) {
             $useMinMax = false;
-            if (isset($affiliateId['min'])) {
-                $this->addUsingAlias(VoterVersionTableMap::COL_AFFILIATE_ID, $affiliateId['min'], Criteria::GREATER_EQUAL);
+            if (isset($orgUnitId['min'])) {
+                $this->addUsingAlias(VoterVersionTableMap::COL_ORG_UNIT_ID, $orgUnitId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($affiliateId['max'])) {
-                $this->addUsingAlias(VoterVersionTableMap::COL_AFFILIATE_ID, $affiliateId['max'], Criteria::LESS_EQUAL);
+            if (isset($orgUnitId['max'])) {
+                $this->addUsingAlias(VoterVersionTableMap::COL_ORG_UNIT_ID, $orgUnitId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -464,7 +464,7 @@ abstract class VoterVersionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(VoterVersionTableMap::COL_AFFILIATE_ID, $affiliateId, $comparison);
+        return $this->addUsingAlias(VoterVersionTableMap::COL_ORG_UNIT_ID, $orgUnitId, $comparison);
     }
 
     /**
