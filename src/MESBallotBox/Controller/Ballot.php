@@ -84,9 +84,9 @@ class Ballot{
 			$result['timezone'] = $ballot->getTimezone();
 			$result['timezoneNice'] = $ballot->getTimezoneNice();
 			$result['startNice'] = $ballot->getStartDate('F jS Y h:i A');
-			$result['startFormat'] = $ballot->getStartDate('Y-m-d\TH:i:s');
+			$result['startFormat'] = $ballot->getStartDate('Y-m-d\TH:i');
 			$result['endNice'] = $ballot->getEndDate('F jS Y h:i A');
-			$result['endFormat'] = $ballot->getEndDate('Y-m-d\TH:i:s');
+			$result['endFormat'] = $ballot->getEndDate('Y-m-d\TH:i');
 			$result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);
 			return $response->write(json_encode($result));
 		});

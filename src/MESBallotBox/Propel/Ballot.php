@@ -35,7 +35,7 @@ class Ballot extends BaseBallot
     
     public function setStartDate($start){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
-        $startTime = \DateTime::createFromFormat('Y-m-d\TH:i:s',$start,$timezone);
+        $startTime = \DateTime::createFromFormat('Y-m-d\TH:i',$start,$timezone);
         //error_log(var_export(Array('start' => $start, 'timezone' => $timezone, 'startTime' => $startTime),true),3,'/home/ubuntu/mes-ballot-box/date.log');
         //exit;
         $this->setStartTime($startTime->format('U'));
@@ -71,7 +71,7 @@ class Ballot extends BaseBallot
     
     public function setEndDate($end){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
-        $endTime = \DateTime::createFromFormat('Y-m-d\TH:i:s',$end,$timezone);
+        $endTime = \DateTime::createFromFormat('Y-m-d\TH:i',$end,$timezone);
         $this->setEndTime($endTime->format('U'));
     }
     
