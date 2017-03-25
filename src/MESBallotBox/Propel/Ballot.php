@@ -33,9 +33,11 @@ class Ballot extends BaseBallot
         6 => 'Pacific/Honolulu'
     );
     
-    /*public function setStartDate($start){
+    public function setStartDate($start){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
-        $startTime = new \DateTime($start,$timezone);
+        $startTime = \DateTime::createFromFormat('Y-m-d\TH:i:s',$start,$timezone);
+        //error_log(var_export(Array('start' => $start, 'timezone' => $timezone, 'startTime' => $startTime),true),3,'/home/ubuntu/mes-ballot-box/date.log');
+        //exit;
         $this->setStartTime($startTime->format('U'));
         
     }
@@ -47,7 +49,7 @@ class Ballot extends BaseBallot
         return $startTime->format($format);
     }
     
-    public function getStartArray(){
+    /*public function getStartArray(){
         $parts = explode('-',$this->getStartDate('Y-n-d-H-i-s'));
         foreach($parts as &$part){
             $part = (int)$part;
@@ -65,11 +67,11 @@ class Ballot extends BaseBallot
         unset($part);
         $parts[1] -= 1;
         return $parts;
-    }
+    }*/
     
     public function setEndDate($end){
         $timezone = new \DateTimeZone($this->getTimezonePHP());
-        $endTime = new \DateTime($end,$timezone);
+        $endTime = \DateTime::createFromFormat('Y-m-d\TH:i:s',$end,$timezone);
         $this->setEndTime($endTime->format('U'));
     }
     
@@ -78,7 +80,7 @@ class Ballot extends BaseBallot
         $endTime = new \DateTime(false,$timezone);
         $endTime->setTimestamp($this->getEndtime());
         return $endTime->format($format);
-    }*/
+    }
 
     public function getTimezoneNice(){
         return $this->timezonesNice[(int)$this->getTimezone()];

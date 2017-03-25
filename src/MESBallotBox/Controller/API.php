@@ -6,6 +6,14 @@ class API{
             $this->get('current', function ($request, $response) {
                 echo json_encode($_ENV['ballot_user']);
             });
+            $this->get('me', function ($request, $response) {
+                echo json_encode(\MESBallotBox\Controller\Hub::getUser('me'));
+            });
+            $this->get('orgUnitIds', function ($request, $response,$args) {
+                $ids = \MESBallotBox\Controller\Hub::getUserOrgIds();
+                
+                return $response->write(json_encode($ids));
+            });
             $this->get('{membershipNumber}', function ($request, $response,$args) {
                 $q = new \MESBallotBox\Propel\UserQuery();
                 $user = $q->filterByMembershipNumber($args['membershipNumber'])->findOne();
@@ -21,9 +29,17 @@ class API{
                 }
                 return $response->write($user->toJSON());
             });
+            $this->get('fresh/{membershipNumber}', function ($request, $response,$args) {
+                $userInfo = \MESBallotBox\Controller\Hub::getUser($args['membershipNumber']);
+                return $response->write(json_encode($userInfo));
+            });
+            
         });
         $slim->group('ballots', function(){
             \MESBallotBox\Controller\Ballot::route($this);
+        });
+        $slim->group('votes', function(){
+            \MESBallotBox\Controller\Vote::route($this);
         });
         $slim->get('affiliate', function($request, $response){
             $q = new \MESBallotBox\Propel\AffiliateQuery();
@@ -42,7 +58,7 @@ class API{
         });
         $slim->get('orgUnit/{unitId}',function($request,$response,$args){
             $query = $request->getQueryParams();
-            $orgUnit = \MESBallotBox\Controller\Hub::getOrgUnit($args['unitId']);
+            $orgUnit = \MESBallotBox\Controller\Hub::getOrgUnit($args['unitId'],$query);
             return json_encode($orgUnit);
         });
     }

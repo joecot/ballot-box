@@ -19,7 +19,7 @@ class Hub{
 	function getUser($membershipNumber){
 		$client = self::getClient();
 		try{
-			$response = $client->request('GET', 'user/'.$membershipNumber);
+			$response = $client->request('GET', 'user/'.$membershipNumber,Array('query' => Array('private' => true)));
 			$body = (string)$response->getBody();
 		}catch(RequestException $e){
 			$error = $e->getMessage();
@@ -37,7 +37,9 @@ class Hub{
 	function getOrgUnits($args){
 		$client = self::getClient();
 		try{
-			$response = $client->request('GET', 'org-unit/',Array('query' => $args));
+			$query = Array();
+			if($args) $query=$args;
+			$response = $client->request('GET', 'org-unit/',Array('query' => $query));
 			$body = (string)$response->getBody();
 		}catch(RequestException $e){
 			$error = $e->getMessage();
@@ -50,10 +52,12 @@ class Hub{
 		if(!$units) throw new Exception('Invalid user response');
 		return $units;
 	}
-	function getOrgUnit($id){
+	function getOrgUnit($id,$args=false){
 		$client = self::getClient();
 		try{
-			$response = $client->request('GET', 'org-unit/'.$id);
+			$query = Array();
+			if($args) $query=$args;
+			$response = $client->request('GET', 'org-unit/'.$id,Array('query' => $query));
 			$body = (string)$response->getBody();
 		}catch(RequestException $e){
 			$error = $e->getMessage();
@@ -65,5 +69,17 @@ class Hub{
 		$unit = json_decode($body,true);
 		if(!$unit) throw new Exception('Invalid user response');
 		return $unit;
+	}
+	
+	function getUserOrgIds(){
+		if(!$_ENV['ballot_user']['orgUnit']){
+			$user = self::getUser($_ENV['ballot_user']['membershipNumber']);
+			//print_r($user);
+			$_ENV['ballot_user']['orgUnit'] = $user['orgUnit'];
+		}
+		$orgUnit = self::getOrgUnit($_ENV['ballot_user']['orgUnit']['id'], Array('users' => 0,'offices' =>0,'children' =>0, 'parents' => -1));
+		$ids = Array($orgUnit['unit']['id']);
+		foreach($orgUnit['parents'] as $parent) $ids[] = $parent['id'];
+		return $ids;
 	}
 }

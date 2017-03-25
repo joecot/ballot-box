@@ -8,8 +8,14 @@ class Ballot{
 			$ballot = new \MESBallotBox\Propel\Ballot();
 			$ballot->setName($vars['name']);
 			$ballot->setTimezone($vars['timezone']);
-			$ballot->setStartTime($vars['start']);
-			$ballot->setEndTime($vars['end']);
+			if($vars['startFormat'] && $vars['endFormat']){
+				$ballot->setStartDate($vars['startFormat']);
+				$ballot->setEndDate($vars['endFormat']);
+			}
+			else{
+				$ballot->setStartTime($vars['start']);
+				$ballot->setEndTime($vars['end']);
+			}
 			$ballot->setUserId($_ENV['ballot_user']['id']);
 			$ballot->setVersionCreatedBy($_ENV['ballot_user']['id']);
 			if(!$ballot->validate()){
@@ -77,6 +83,10 @@ class Ballot{
 			$result['end'] = $ballot->getEndTime();
 			$result['timezone'] = $ballot->getTimezone();
 			$result['timezoneNice'] = $ballot->getTimezoneNice();
+			$result['startNice'] = $ballot->getStartDate('F jS Y h:i A');
+			$result['startFormat'] = $ballot->getStartDate('Y-m-d\TH:i:s');
+			$result['endNice'] = $ballot->getEndDate('F jS Y h:i A');
+			$result['endFormat'] = $ballot->getEndDate('Y-m-d\TH:i:s');
 			$result['questions'] = \MESBallotBox\Controller\Ballot::getQuestions($ballot);
 			return $response->write(json_encode($result));
 		});
@@ -108,8 +118,14 @@ class Ballot{
 			$vars = $request->getParsedBody();
 			$ballot->setName($vars['name']);
 			$ballot->setTimezone($vars['timezone']);
-			$ballot->setStartTime($vars['start']);
-			$ballot->setEndTime($vars['end']);
+			if($vars['startFormat'] && $vars['endFormat']){
+				$ballot->setStartDate($vars['startFormat']);
+				$ballot->setEndDate($vars['endFormat']);
+			}
+			else{
+				$ballot->setStartTime($vars['start']);
+				$ballot->setEndTime($vars['end']);
+			}
 			$ballot->setVersionCreatedBy($_ENV['ballot_user']['id']);
 
 			if(!$ballot->validate()){

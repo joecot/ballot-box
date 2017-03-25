@@ -5,7 +5,6 @@
     <column name="membership_number" phpName="membershipNumber" type="VARCHAR" size="20" required="true"/>
     <column name="first_name" phpName="firstName" type="VARCHAR" size="128" required="true"/>
     <column name="last_name" phpName="lastName" type="VARCHAR" size="128" required="true"/>
-    <column name="email_address" phpName="emailAddress" type="VARCHAR" size="128" required="true"/>
     <unique name="membership_number">
       <unique-column name="membership_number"/>
     </unique>
