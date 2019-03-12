@@ -1,3 +1,3 @@
-# Mind's Eye Society Ballot Box
+# Ballot Box
 
-Voting software for handling MES Elections
+Voting software for handling Organization Elections
